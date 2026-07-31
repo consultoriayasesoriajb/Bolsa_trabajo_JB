@@ -40,4 +40,18 @@ export const authService = {
     localStorage.removeItem("user");
     window.location.href = "/"; // Redirigir al login
   },
+
+  forgotPassword: async (correo) => {
+    return apiFetch("/users/?action=forgot_password", {
+      method: "POST",
+      body: JSON.stringify({ correo }),
+    });
+  },
+
+  verifyForgotPassword: async ({ correo, codigo, nueva_password }) => {
+    return apiFetch("/users/?action=verify_forgot_password", {
+      method: "POST",
+      body: JSON.stringify({ correo, codigo, nueva_password }),
+    });
+  },
 };

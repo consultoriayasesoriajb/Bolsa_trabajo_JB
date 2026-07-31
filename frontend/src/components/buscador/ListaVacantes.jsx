@@ -27,7 +27,7 @@ function SkeletonCard() {
 export default function ListaVacantes({ vacantes, seleccionadaId, onSelect, loading, error, guardados, onGuardar }) {
   return (
     <div className="flex flex-col">
-      <div className="flex-shrink-0 px-5 py-3 border-b border-gray-100">
+      <div className="shrink-0 px-5 py-3 border-b border-gray-100">
         <p className="text-sm text-gray-500 font-semibold">
           {loading ? 'Buscando...' : `${vacantes.length} vacante${vacantes.length !== 1 ? 's' : ''}`}
         </p>

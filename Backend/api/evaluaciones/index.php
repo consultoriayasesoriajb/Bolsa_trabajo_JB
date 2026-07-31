@@ -26,7 +26,7 @@ if ($method === 'GET' && $action === 'empresas') {
         SELECT 
             e.id, e.nombre, e.sector, e.logo_url,
             e.descripcion, e.anio_fundacion, e.num_empleados,
-            e.sitio_web, e.ubicacion, e.beneficios,
+            e.sitio_web, e.ubicacion, e.beneficios, e.ruc,
             ROUND(AVG(ev.estrellas), 1) AS promedio,
             COUNT(ev.id)               AS total_evaluaciones
         FROM empresas_clientes e
@@ -48,7 +48,7 @@ if ($method === 'GET' && $action === 'detalle') {
         SELECT 
             e.id, e.nombre, e.sector, e.logo_url,
             e.descripcion, e.anio_fundacion, e.num_empleados,
-            e.sitio_web, e.ubicacion, e.beneficios,
+            e.sitio_web, e.ubicacion, e.beneficios, e.ruc,
             ROUND(AVG(ev.estrellas), 1) AS promedio,
             COUNT(ev.id)               AS total_evaluaciones
         FROM empresas_clientes e

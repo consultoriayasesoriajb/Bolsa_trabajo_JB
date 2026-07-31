@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeftIcon, GlobeAltIcon, BuildingOfficeIcon, UsersIcon, CalendarIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, GlobeAltIcon, BuildingOfficeIcon, UsersIcon, CalendarIcon, MapPinIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
 import { useEmpresaDetalle } from "../hooks/useEmpresaDetalle";
 import StarRating from "../components/evaluaciones/StarRating";
 import ComentarioCard from "../components/evaluaciones/ComentarioCard";
@@ -140,6 +140,12 @@ export default function EmpresaDetalle() {
                 <GlobeAltIcon className="w-4 h-4 shrink-0" />
                 Sitio web
               </a>
+            )}
+            {empresa.ruc && (
+              <div className="flex items-center gap-2 text-sm text-[#6b7a9f]">
+                <DocumentTextIcon className="w-4 h-4 text-[#123498] shrink-0" />
+                RUC: {empresa.ruc}
+              </div>
             )}
           </div>
 

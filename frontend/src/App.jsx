@@ -33,6 +33,7 @@ const FavoriteApplications = lazy(
 );
 const Evaluaciones = lazy(() => import("./pages/Evaluaciones"));
 const EmpresaDetalle = lazy(() => import("./pages/EmpresaDetalle"));
+const OlvideContrasena = lazy(() => import("./pages/OlvideContrasena"));
 
 //legal
 const TerminosCondiciones = lazy(() => import("./pages/legales/TerminosCondiciones"));
@@ -111,6 +112,14 @@ function App() {
 
             <Route path="/cuenta-validada" element={<CuentaValidada />} />
             <Route path="/revisa-tu-correo" element={<RevisaCorreo />} />
+
+            <Route path="/olvide-contrasena"      
+              element={
+                <main className="min-h-screen bg-[#f4f6fb]">
+                  <OlvideContrasena />
+                </main>
+              }   
+            />
 
             <Route path="/terminos-condiciones" 
               element={

@@ -12,9 +12,9 @@ export default function Login() {
     <div className="relative min-h-screen overflow-hidden bg-[#f4f6fb] flex items-center justify-center p-0 md:p-8">
 
       {/* ===== FONDO BOKEH (círculos difuminados) ===== */}
-      <div className="pointer-events-none absolute -left-24 -top-32 h-[420px] w-[420px] rounded-full bg-[#f97316] opacity-45 blur-[120px]" />
-      <div className="pointer-events-none absolute -right-32 -bottom-40 h-[460px] w-[460px] rounded-full bg-[#2563eb] opacity-40 blur-[130px]" />
-      <div className="pointer-events-none absolute right-40 -top-24 h-[300px] w-[300px] rounded-full bg-[#fbbf24] opacity-35 blur-[110px]" />
+      <div className="pointer-events-none absolute -left-24 -top-32 h-105 w-105 rounded-full bg-[#f97316] opacity-45 blur-[120px]" />
+      <div className="pointer-events-none absolute -right-32 -bottom-40 h-115 w-115rounded-full bg-[#2563eb] opacity-40 blur-[130px]" />
+      <div className="pointer-events-none absolute right-40 -top-24 h-75 w-75 rounded-full bg-[#fbbf24] opacity-35 blur-[110px]" />
 
       {/* ===== CARD (con z-10 para quedar sobre el fondo) ===== */}
       <div

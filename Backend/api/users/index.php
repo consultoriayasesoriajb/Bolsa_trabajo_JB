@@ -27,6 +27,87 @@ if ($method === 'GET' && $action === 'listar') {
     respond(true, $stmt->fetchAll());
 }
 
+// ─── SOLICITAR CÓDIGO SIN SESIÓN (olvidé mi contraseña) ──
+if ($method === 'POST' && $action === 'forgot_password') {
+    $body   = json_decode(file_get_contents('php://input'), true);
+    $correo = trim($body['correo'] ?? '');
+
+    if (!$correo) respondError('El correo es obligatorio.');
+    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) respondError('Correo no válido.');
+
+    // Verificar que el usuario existe y está activo
+    $stmt = $db->prepare("SELECT id FROM usuarios WHERE correo = ? AND estado = 'activo'");
+    $stmt->execute([$correo]);
+    $user = $stmt->fetch();
+
+    // Por seguridad, siempre respondemos igual aunque no exista el correo
+    // así no revelamos si un correo está registrado o no
+    if ($user) {
+        // Generar código de 6 dígitos
+        $codigo  = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $expira  = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+
+        $stmt = $db->prepare("
+            UPDATE usuarios
+            SET codigo_recuperacion = ?,
+                expiracion_codigo   = ?,
+                ultimo_cambio_password = NULL
+            WHERE id = ?
+        ");
+        $stmt->execute([$codigo, $expira, $user['id']]);
+
+        // Enviar correo con el código
+        require_once __DIR__ . '/../../templates/password_change_email.php';
+        require_once __DIR__ . '/../../helpers/mailer.php';
+
+        $asunto  = "Código de recuperación - Bolsa de Trabajo JB";
+        $cuerpo  = getPasswordChangeEmailTemplate($codigo);
+        enviarCorreo($correo, $asunto, $cuerpo);
+    }
+
+    respond(true, null, 'Si el correo existe, recibirás un código en tu bandeja de entrada.');
+}
+
+// ─── VERIFICAR CÓDIGO SIN SESIÓN (olvidé mi contraseña) ──
+if ($method === 'POST' && $action === 'verify_forgot_password') {
+    $body           = json_decode(file_get_contents('php://input'), true);
+    $correo         = trim($body['correo']         ?? '');
+    $codigo         = trim($body['codigo']         ?? '');
+    $nueva_password = trim($body['nueva_password'] ?? '');
+
+    if (!$correo || !$codigo || !$nueva_password) {
+        respondError('Todos los campos son obligatorios.');
+    }
+
+    // Buscar usuario con ese correo y código válido
+    $stmt = $db->prepare("
+        SELECT id FROM usuarios
+        WHERE correo = ?
+          AND codigo_recuperacion = ?
+          AND expiracion_codigo > NOW()
+          AND estado = 'activo'
+    ");
+    $stmt->execute([$correo, $codigo]);
+    $user = $stmt->fetch();
+
+    if (!$user) respondError('Código incorrecto o expirado.');
+
+    // Actualizar contraseña
+    $hash = password_hash($nueva_password, PASSWORD_BCRYPT);
+    $stmt = $db->prepare("
+        UPDATE usuarios
+        SET password               = ?,
+            codigo_recuperacion    = NULL,
+            expiracion_codigo      = NULL,
+            ultimo_cambio_password = NOW()
+        WHERE id = ?
+    ");
+    $stmt->execute([$hash, $user['id']]);
+
+    respond(true, null, '¡Contraseña actualizada correctamente! Ya puedes iniciar sesión.');
+}
+
+
 // ─── DESDE AQUÍ, TODAS LAS RUTAS REQUIEREN QUE EL USUARIO ESTÉ LOGUEADO ───
 $user = requireAuth();
 $userId = $user['id'];

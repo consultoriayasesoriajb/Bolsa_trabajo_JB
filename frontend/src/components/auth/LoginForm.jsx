@@ -1,12 +1,23 @@
 import { useLoginForm } from "../../hooks/useLoginForm";
-import { EnvelopeIcon, LockClosedIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
+import {
+  EnvelopeIcon,
+  LockClosedIcon,
+  EyeIcon,
+  EyeSlashIcon,
+} from "@heroicons/react/24/outline";
 
 export default function LoginForm() {
   const {
-    formData, errors, generalError,
-    showPassword, setShowPassword,
-    rememberMe, setRememberMe,
-    handleChange, handleSubmit,
+    formData,
+    errors,
+    generalError,
+    showPassword,
+    setShowPassword,
+    rememberMe,
+    setRememberMe,
+    handleChange,
+    handleSubmit,
   } = useLoginForm();
 
   return (
@@ -29,7 +40,7 @@ export default function LoginForm() {
             type="email"
             name="correo"
             aria-label="Ingresa tu correo"
-            value={formData.correo}   
+            value={formData.correo}
             placeholder="Ingresa tu usuario o correo"
             className={`w-full pl-12 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-1 ${errors.correo ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-azul"}`}
             onChange={handleChange}
@@ -60,19 +71,32 @@ export default function LoginForm() {
           {/* Ícono de Ojo */}
           <button
             type="button"
-            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            aria-label={
+              showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+            }
             onClick={() => setShowPassword(!showPassword)}
             className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-gray-600"
           >
-            {showPassword
-              ? <EyeSlashIcon className="w-5 h-5" />
-              : <EyeIcon className="w-5 h-5" />
-            }
+            {showPassword ? (
+              <EyeSlashIcon className="w-5 h-5" />
+            ) : (
+              <EyeIcon className="w-5 h-5" />
+            )}
           </button>
         </div>
         {errors.password && (
           <p className="text-red-500 text-xs mt-1">{errors.password}</p>
         )}
+      </div>
+
+      {/* ENLACE: Olvidé mi contraseña */}
+      <div className="flex justify-end">
+        <Link
+          to="/olvide-contrasena"
+          className="text-xs text-[#123498] hover:underline font-semibold"
+        >
+          ¿Olvidaste tu contraseña?
+        </Link>
       </div>
 
       {/* RECUÉRDAME */}
@@ -87,8 +111,19 @@ export default function LoginForm() {
             }`}
           >
             {rememberMe && (
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={3} className="h-2.5 w-2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth={3}
+                className="h-2.5 w-2.5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.5 12.75l6 6 9-13.5"
+                />
               </svg>
             )}
           </div>
