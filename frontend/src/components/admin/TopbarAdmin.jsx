@@ -1,6 +1,19 @@
 import { Search, Bell, Menu, User } from "lucide-react";
+import { useNotifications } from "../../hooks/useNotifications";
+import NotificationDropdown from "./NotificationDropdown";
 
 export default function TopbarAdmin({ onToggleSidebar }) {
+    const {
+        noLeidasCount,
+        isOpen,
+        notificaciones,
+        loading,
+        toggle,
+        close,
+        marcarLeida,
+        marcarTodasLeidas,
+    } = useNotifications();
+
     return (
         <header className="h-20 bg-white border-b border-slate-200/80 flex items-center justify-between px-4 md:px-8 sticky top-0 z-20">
             {/* Left side: Menu toggle & Corporate Title */}
@@ -30,19 +43,35 @@ export default function TopbarAdmin({ onToggleSidebar }) {
 
             {/* Right side: Badge, Notification, Profile */}
             <div className="flex items-center gap-5">
-                {/* Admin Badge - Styled like EMPLOYEE badge in Asistencia JB */}
+                {/* Admin Badge */}
                 <span className="px-3.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-full text-[#F46F0B] bg-[#F46F0B]/5 border border-[#F46F0B]/20">
                     Administrador
                 </span>
 
                 {/* Notifications Bell */}
-                <button
-                    className="relative w-9 h-9 flex items-center justify-center rounded-xl border border-slate-100 hover:bg-slate-50 transition-all"
-                    aria-label="Notificaciones"
-                >
-                    <Bell size={16} className="text-slate-500" />
-                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#F46F0B]" />
-                </button>
+                <div className="relative">
+                    <button
+                        onClick={toggle}
+                        className="relative w-9 h-9 flex items-center justify-center rounded-xl border border-slate-100 hover:bg-slate-50 transition-all"
+                        aria-label="Notificaciones"
+                    >
+                        <Bell size={16} className="text-slate-500" />
+                        {noLeidasCount > 0 && (
+                            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[#F46F0B] text-white text-[10px] font-bold px-1">
+                                {noLeidasCount > 99 ? "99+" : noLeidasCount}
+                            </span>
+                        )}
+                    </button>
+                    <NotificationDropdown
+                        isOpen={isOpen}
+                        notificaciones={notificaciones}
+                        loading={loading}
+                        onClose={close}
+                        onMarcarLeida={marcarLeida}
+                        onMarcarTodasLeidas={marcarTodasLeidas}
+                        noLeidasCount={noLeidasCount}
+                    />
+                </div>
 
                 {/* User avatar */}
                 <div className="flex items-center gap-3 pl-1.5 border-l border-slate-100">

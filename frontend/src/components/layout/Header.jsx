@@ -9,6 +9,11 @@ import logoColor from "../../assets/images/logo_color.webp";
 const navLinkClasses =
   "relative inline-block py-1 text-gray-700 font-medium transition-colors hover:text-naranja after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-naranja after:transition-all after:duration-300 hover:after:w-full";
 
+const mobileCardLinkClasses =
+  "flex items-center gap-3 px-4 py-3.5 text-[15px] font-medium text-gray-800 active:bg-gray-50 transition-colors";
+
+const logo = "https://consultoradeasesoriaempresarialjb.com/wp-content/uploads/2026/04/logoSinFondo.png";
+
 export default function Header({ hideOnScroll = false }) {
   const {
     user,

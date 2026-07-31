@@ -640,4 +640,50 @@ if ($resource === 'postulaciones') {
     }
 }
 
+// ============================================================
+// MÓDULO: NOTIFICACIONES
+// ============================================================
+if ($resource === 'notificaciones') {
+
+    // LISTAR NOTIFICACIONES
+    if ($method === 'GET' && $action === 'listar') {
+        $adminId = $admin['id'];
+        $stmt = $db->prepare("
+            SELECT * FROM notificaciones
+            WHERE usuario_id = ?
+            ORDER BY created_at DESC
+            LIMIT 20
+        ");
+        $stmt->execute([$adminId]);
+        respond(true, $stmt->fetchAll());
+    }
+
+    // CONTEO DE NO LEÍDAS
+    if ($method === 'GET' && $action === 'no_leidas') {
+        $adminId = $admin['id'];
+        $stmt = $db->prepare("SELECT COUNT(*) as total FROM notificaciones WHERE usuario_id = ? AND leida = 0");
+        $stmt->execute([$adminId]);
+        $row = $stmt->fetch();
+        respond(true, ['total' => (int)$row['total']]);
+    }
+
+    // MARCAR COMO LEÍDA
+    if ($method === 'POST' && $action === 'marcar_leida') {
+        $body = getBody();
+        $id = $body['id'] ?? null;
+        if (!$id) respondError('ID requerido.');
+
+        $stmt = $db->prepare("UPDATE notificaciones SET leida = 1 WHERE id = ? AND usuario_id = ?");
+        $stmt->execute([$id, $admin['id']]);
+        respond(true, [], 'Notificación marcada como leída.');
+    }
+
+    // MARCAR TODAS COMO LEÍDAS
+    if ($method === 'POST' && $action === 'marcar_todas_leidas') {
+        $stmt = $db->prepare("UPDATE notificaciones SET leida = 1 WHERE usuario_id = ? AND leida = 0");
+        $stmt->execute([$admin['id']]);
+        respond(true, [], 'Todas las notificaciones marcadas como leídas.');
+    }
+}
+
 respondError('Recurso o acción no válida para el panel de administración.', 404);

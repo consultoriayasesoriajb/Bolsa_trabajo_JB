@@ -218,6 +218,33 @@ if ($method === 'POST' && $action === 'postular') {
         }
     }
 
+    // ─── NOTIFICAR A ADMINS ─────────────────────────────────────
+    $stmtOferta = $db->prepare("
+        SELECT o.titulo, e.nombre as empresa_nombre
+        FROM ofertas_trabajo o
+        JOIN empresas_clientes e ON o.empresa_id = e.id
+        WHERE o.id = ?
+    ");
+    $stmtOferta->execute([$vacante_id]);
+    $ofertaInfo = $stmtOferta->fetch();
+
+    if ($ofertaInfo) {
+        $notifTitulo = 'Nueva postulación';
+        $notifMensaje = $user['nombre_completo'] . ' se postuló a ' . $ofertaInfo['titulo'] . ' (' . $ofertaInfo['empresa_nombre'] . ')';
+
+        $stmtAdmins = $db->prepare("SELECT id FROM usuarios WHERE rol_id = 1");
+        $stmtAdmins->execute();
+        $admins = $stmtAdmins->fetchAll();
+
+        $stmtNotif = $db->prepare("
+            INSERT INTO notificaciones (usuario_id, tipo, titulo, mensaje, referencia_tipo, referencia_id)
+            VALUES (?, 'nueva_postulacion', ?, ?, 'postulacion', ?)
+        ");
+        foreach ($admins as $admin) {
+            $stmtNotif->execute([$admin['id'], $notifTitulo, $notifMensaje, $postulacion_id]);
+        }
+    }
+
     respond(true, ['id' => $postulacion_id], 'Te has postulado exitosamente.');
 }
 

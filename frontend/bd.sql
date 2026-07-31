@@ -379,3 +379,19 @@ ALTER TABLE ofertas_trabajo
 ALTER TABLE ofertas_trabajo 
 ADD COLUMN fecha_publicacion DATETIME NULL DEFAULT NULL 
 AFTER fecha_creacion;
+
+-- 5) Tabla de notificaciones para el admin
+CREATE TABLE `notificaciones` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `usuario_id` varchar(36) NOT NULL,
+  `tipo` varchar(50) NOT NULL DEFAULT 'nueva_postulacion',
+  `titulo` varchar(255) NOT NULL,
+  `mensaje` text NOT NULL,
+  `leida` tinyint(1) NOT NULL DEFAULT 0,
+  `referencia_tipo` varchar(50) DEFAULT NULL,
+  `referencia_id` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_notif_usuario` (`usuario_id`),
+  KEY `idx_notif_leida` (`leida`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
