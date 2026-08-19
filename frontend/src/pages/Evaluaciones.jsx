@@ -1,6 +1,7 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useEvaluaciones } from "../hooks/useEvaluaciones";
 import EmpresaCard from "../components/evaluaciones/EmpresaCard";
+import EmpresasDestacadas from "../components/evaluaciones/EmpresasDestacadas";
 
 export default function Evaluaciones() {
   const { empresas, total, isLoading, busqueda, setBusqueda } = useEvaluaciones();
@@ -11,7 +12,7 @@ export default function Evaluaciones() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#1c2a52] font-heading">
+          <h1 className="text-3xl font-bold text-azul font-heading">
             Evaluaciones de Empresas
           </h1>
           <p className="mt-2 text-[#6b7a9f]">
@@ -31,9 +32,12 @@ export default function Evaluaciones() {
           />
         </div>
 
+        {/* Empresas Destacadas */}
+        <EmpresasDestacadas />
+
         {/* Contador */}
         {!isLoading && (
-          <p className="text-sm text-[#9aa3bd] mb-5">
+          <p className="text-sm text-gris-oscuro mb-5">
             {empresas.length} {empresas.length === 1 ? "empresa encontrada" : "empresas encontradas"}
           </p>
         )}
@@ -42,7 +46,7 @@ export default function Evaluaciones() {
         {isLoading ? (
           <div className="text-center py-20 text-[#9aa3bd] text-sm">Cargando empresas...</div>
         ) : empresas.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="flex flex-col gap-5">
             {empresas.map(empresa => (
               <EmpresaCard key={empresa.id} empresa={empresa} />
             ))}

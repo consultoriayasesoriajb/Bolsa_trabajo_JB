@@ -9,6 +9,25 @@ $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
 $db = getDB();
 
+// ─── EMPRESAS DESTACADAS (top 3 por promedio) ────────────
+if ($method === 'GET' && $action === 'destacadas') {
+    $stmt = $db->query("
+        SELECT
+            e.id, e.nombre, e.sector, e.logo_url,
+            ROUND(AVG(ev.estrellas), 1)  AS promedio,
+            COUNT(DISTINCT ev.id)        AS total_evaluaciones,
+            COUNT(DISTINCT o.id)         AS total_ofertas
+        FROM empresas_clientes e
+        LEFT JOIN evaluaciones ev ON ev.empresa_id = e.id AND ev.estado = 'visible'
+        LEFT JOIN ofertas_trabajo o ON o.empresa_id = e.id AND o.estado = 'activa'
+        GROUP BY e.id
+        HAVING promedio IS NOT NULL
+        ORDER BY promedio DESC
+        LIMIT 3
+    ");
+    respond(true, $stmt->fetchAll());
+}
+
 // ─── LISTAR EMPRESAS CON PROMEDIO ────────────────────────
 if ($method === 'GET' && $action === 'empresas') {
     $busqueda = $_GET['busqueda'] ?? '';
@@ -28,9 +47,11 @@ if ($method === 'GET' && $action === 'empresas') {
             e.descripcion, e.anio_fundacion, e.num_empleados,
             e.sitio_web, e.ubicacion, e.beneficios, e.ruc,
             ROUND(AVG(ev.estrellas), 1) AS promedio,
-            COUNT(ev.id)               AS total_evaluaciones
+            COUNT(ev.id)               AS total_evaluaciones,
+            COUNT(DISTINCT o.id)         AS total_ofertas
         FROM empresas_clientes e
         LEFT JOIN evaluaciones ev ON ev.empresa_id = e.id AND ev.estado = 'visible'
+        LEFT JOIN ofertas_trabajo o ON o.empresa_id = e.id AND o.estado = 'activa'
         WHERE $where
         GROUP BY e.id
         ORDER BY e.nombre ASC
