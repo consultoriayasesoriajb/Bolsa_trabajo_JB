@@ -49,8 +49,7 @@ const Loading = () => (
   </div>
 );
 
-const GOOGLE_CLIENT_ID =
-  "102292791934-vdo8ihbfaqrkmvsp91r1druc46pes4ho.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 function MainLayout() {
   const location = useLocation();
