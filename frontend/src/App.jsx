@@ -31,8 +31,8 @@ const Applications = lazy(
 const FavoriteApplications = lazy(
   () => import("./components/profile/FavoriteApplication/FavoriteApplications"),
 );
-const Evaluaciones = lazy(() => import("./pages/Evaluaciones"));
-const EmpresaDetalle = lazy(() => import("./pages/EmpresaDetalle"));
+const ListadoEmpresas = lazy(() => import("./pages/ListadoEmpresas"));
+const PerfilEmpresa = lazy(() => import("./pages/PerfilEmpresa"));
 const OlvideContrasena = lazy(() => import("./pages/OlvideContrasena"));
 
 //legal
@@ -87,8 +87,8 @@ function App() {
                 <Route path="postulaciones" element={<Applications />} />
                 <Route path="favoritos" element={<FavoriteApplications />} />
               </Route>
-              <Route path="/evaluaciones" element={<Evaluaciones />} />
-              <Route path="/evaluaciones/:id" element={<EmpresaDetalle />} />
+              <Route path="/empresas" element={<ListadoEmpresas />} />
+              <Route path="/empresas/:slug" element={<PerfilEmpresa />} />
             </Route>
 
             <Route

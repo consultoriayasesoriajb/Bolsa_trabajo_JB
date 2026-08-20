@@ -18,8 +18,8 @@ export default function NavDesktop({ isActive }) {
           </Link>
         </li>
         <li>
-          <Link to="/evaluaciones" className={navLinkClasses} aria-current={isActive("/evaluaciones") ? "page" : undefined}>
-            Evaluaciones de empresa
+          <Link to="/empresas" className={navLinkClasses} aria-current={isActive("/empresas") ? "page" : undefined}>
+            Empresas
           </Link>
         </li>
       </ul>

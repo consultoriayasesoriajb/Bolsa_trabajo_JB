@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const ACCESOS = [
   { label: "Inicio", href: "#hero" },
   { label: "Buscar Empleo", href: "/buscar-empleo" },
-  { label: "Evaluaciones de empresa", href: "/evaluaciones" },
+  { label: "Empresas", href: "/empresas" },
 ];
 
 const INFORMACION = [

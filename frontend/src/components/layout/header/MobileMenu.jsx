@@ -74,7 +74,7 @@ export default function MobileMenu({ isOpen, onClose, user, isActive, handleLogo
               <ul className="list-none bg-white rounded-2xl shadow-sm divide-y divide-gray-100 overflow-hidden">
                 <MobileLinkItem to="/" icon={HomeIcon} label="Inicio" onClick={onClose} />
                 <MobileLinkItem to="/buscar-empleo" icon={MagnifyingGlassIcon} label="Buscar empleo" onClick={onClose} />
-                <MobileLinkItem to="/evaluaciones" icon={BuildingOfficeIcon} label="Evaluaciones de empresa" onClick={onClose} />
+                <MobileLinkItem to="/empresas" icon={BuildingOfficeIcon} label="Listado de Empresas" onClick={onClose} />
               </ul>
             </nav>
           </section>

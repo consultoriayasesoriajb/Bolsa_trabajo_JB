@@ -1,7 +1,7 @@
 import { MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { useEvaluaciones } from "../hooks/useEvaluaciones";
-import EmpresaCard from "../components/evaluaciones/EmpresaCard";
-import EmpresasDestacadas from "../components/evaluaciones/EmpresasDestacadas";
+import { useEvaluaciones } from "../hooks/useListadoEmpresas";
+import EmpresaCard from "../components/empresas/EmpresaCard";
+import EmpresasDestacadas from "../components/empresas/EmpresasDestacadas";
 
 export default function Evaluaciones() {
   const {

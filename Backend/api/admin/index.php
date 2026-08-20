@@ -14,6 +14,18 @@ $resource = $_GET['resource'] ?? ''; // Ej: categorias, empresas, ofertas
 $action = $_GET['action'] ?? '';     // Ej: listar, crear, editar
 $db = getDB();
 
+function generarSlug($texto) {
+    $texto = mb_strtolower($texto, 'UTF-8');
+    $texto = str_replace(
+        ['á','é','í','ó','ú','ü','ñ','à','è','ì','ò','ù'],
+        ['a','e','i','o','u','u','n','a','e','i','o','u'],
+        $texto
+    );
+    $texto = preg_replace('/[^a-z0-9\s-]/', '', $texto);
+    $texto = preg_replace('/[\s-]+/', '-', trim($texto));
+    return $texto;
+}
+
 // ─── PROTECCIÓN DE RUTA (SOLO ADMIN) ─────────────────────────
 // requireAdmin() debe verificar el token JWT y asegurarse de que el rol_id sea 1.
 $admin = requireAdmin(); 
@@ -40,8 +52,16 @@ if ($resource === 'categorias') {
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $nombre)));
 
         try {
-            $stmt = $db->prepare("INSERT INTO categorias (nombre, slug) VALUES (?, ?)");
-            $stmt->execute([$nombre, $slug]);
+            $stmt = $db->prepare("
+                INSERT INTO empresas_clientes
+                    (nombre, slug, ruc, sector, logo_url, descripcion, ubicacion,
+                    anio_fundacion, num_empleados, sitio_web, beneficios, estado)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'activo')
+            ");
+            $stmt->execute([
+                $nombre, $slug, $ruc, $sector, $logo_url, $descripcion, $ubicacion,
+                $anio, $empleados ?: null, $web ?: null, $beneficios
+            ]);
             respond(true, ['id' => $db->lastInsertId(), 'nombre' => $nombre, 'slug' => $slug], 'Categoría creada con éxito.');
         } catch (PDOException $e) {
             if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
@@ -56,6 +76,7 @@ if ($resource === 'categorias') {
         $body = getBody();
         $id = $body['id'] ?? null;
         $nombre = sanitizarTexto($body['nombre'] ?? '');
+        $slug = generarSlug($nombre);
 
         if (!$id) respondError('ID de categoría requerido.');
         if (!$nombre) respondError('El nombre de la categoría es requerido.');
@@ -125,6 +146,8 @@ if ($resource === 'empresas') {
         if (!$nombre || !$ruc || !$sector) {
             respondError('Los campos nombre, ruc y sector son obligatorios.');
         }
+
+        $slug = generarSlug($nombre);
 
         // Validar que beneficios sea JSON válido
         if (!json_decode($beneficios)) $beneficios = '[]';
@@ -204,13 +227,13 @@ if ($resource === 'empresas') {
         try {
             $stmt = $db->prepare("
                 UPDATE empresas_clientes
-                SET nombre = ?, ruc = ?, sector = ?, logo_url = ?,  descripcion = ?,
+                SET nombre = ?, slug = ?, ruc = ?, sector = ?, logo_url = ?, descripcion = ?,
                     ubicacion = ?, anio_fundacion = ?, num_empleados = ?,
                     sitio_web = ?, beneficios = ?
-                WHERE id = ?
+                    WHERE id = ?
             ");
             $stmt->execute([
-                $nombre, $ruc, $sector, $logo_url, $descripcion, $ubicacion,
+                $nombre, $slug, $ruc, $sector, $logo_url, $descripcion, $ubicacion,
                 $anio, $empleados ?: null, $web ?: null, $beneficios, $id
             ]);
             respond(true, [], 'Empresa actualizada correctamente.');

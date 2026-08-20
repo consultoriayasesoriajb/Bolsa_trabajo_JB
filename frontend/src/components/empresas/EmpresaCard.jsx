@@ -7,17 +7,22 @@ const BASE_URL = import.meta.env.VITE_API_URL.replace("/api", "");
 export default function EmpresaCard({ empresa }) {
   const navigate = useNavigate();
   const {
-    id, nombre, sector, logo_url, promedio,
-    total_evaluaciones, total_ofertas,
-    ubicacion, num_empleados, descripcion,
+    id,
+    nombre,
+    sector,
+    logo_url,
+    promedio,
+    total_evaluaciones,
+    total_ofertas,
+    ubicacion,
+    num_empleados,
+    descripcion,
   } = empresa;
 
   return (
     <div className="bg-white rounded-2xl border border-[#e8edf5] p-5 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row gap-5">
-
       {/* Izquierda — info principal */}
       <div className="flex-1 flex flex-col gap-3 min-w-0">
-
         {/* Logo + Nombre */}
         <div className="flex items-center gap-3">
           {logo_url ? (
@@ -55,7 +60,9 @@ export default function EmpresaCard({ empresa }) {
               {sector && (
                 <>
                   <span className="text-[#e8edf5]">|</span>
-                  <span className="text-xs text-[#9aa3bd] truncate">{sector}</span>
+                  <span className="text-xs text-[#9aa3bd] truncate">
+                    {sector}
+                  </span>
                 </>
               )}
             </div>
@@ -75,46 +82,38 @@ export default function EmpresaCard({ empresa }) {
             {total_ofertas} {total_ofertas === 1 ? "oferta" : "ofertas"}
           </span>
           <span className="px-3 py-1 bg-[#fcf1e3] text-[#d38215] text-xs font-bold rounded-full">
-            {total_evaluaciones} {total_evaluaciones === 1 ? "evaluación" : "evaluaciones"}
+            {total_evaluaciones}{" "}
+            {total_evaluaciones === 1 ? "evaluación" : "evaluaciones"}
           </span>
         </div>
       </div>
 
       {/* Derecha — promedio + botones */}
-      <div className="flex flex-col items-center justify-between gap-3 shrink-0 sm:border-l sm:border-[#e8edf5] sm:pl-5">
-
+      <div className="flex flex-col items-center justify-center gap-3 shrink-0 sm:border-l sm:border-[#e8edf5] sm:pl-5">
         {/* Promedio */}
         <div className="flex flex-col items-center gap-1">
           <span className="text-3xl font-black text-[#1c2a52]">
             {promedio ? Number(promedio).toFixed(1) : "0.0"}
           </span>
           <div className="flex items-center gap-0.5">
-            {[1, 2, 3, 4, 5].map(star => (
-              star <= Math.round(promedio || 0)
-                ? <StarSolid  key={star} className="w-4 h-4 text-[#FDB907]" />
-                : <StarIcon   key={star} className="w-4 h-4 text-[#e8edf5]" />
-            ))}
+            {[1, 2, 3, 4, 5].map((star) =>
+              star <= Math.round(promedio || 0) ? (
+                <StarSolid key={star} className="w-4 h-4 text-[#FDB907]" />
+              ) : (
+                <StarIcon key={star} className="w-4 h-4 text-[#e8edf5]" />
+              ),
+            )}
           </div>
         </div>
 
-        {/* Botones */}
-        <div className="flex flex-col gap-2 w-full">
-          <button
-            type="button"
-            onClick={() => navigate(`/evaluaciones/${id}`)}
-            className="w-full px-4 py-2 bg-[#123498] hover:bg-[#0f2a80] text-white text-xs font-bold rounded-xl transition-colors"
-          >
-            Ver empresa
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate(`/evaluaciones/${id}`)}
-            className="w-full px-4 py-2 border border-[#FDB907] text-[#FDB907] hover:bg-[#FDB907]/10 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1"
-          >
-            <StarSolid className="w-3.5 h-3.5" />
-            Calificar
-          </button>
-        </div>
+        {/* Boton */}
+        <button
+          type="button"
+          onClick={() => navigate(`/empresas/${empresa.slug}`)}
+          className="w-full px-4 py-2 bg-[#123498] hover:bg-[#0f2a80] text-white text-xs font-bold rounded-xl transition-colors"
+        >
+          Ver empresa
+        </button>
       </div>
     </div>
   );

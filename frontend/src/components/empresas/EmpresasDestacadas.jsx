@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { evaluacionesService } from "../../services/evaluacionesService";
+import { listadoEmpresasService  } from "../../services/listadoEmpresasService";
 import StarRating from "./StarRating";
 import { TrendingUp } from "lucide-react";
 
@@ -12,7 +12,7 @@ export default function EmpresasDestacadas() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    evaluacionesService
+    listadoEmpresasService
       .destacadas()
       .then((data) => setEmpresas(data || []))
       .catch(() => setEmpresas([]))
@@ -35,7 +35,7 @@ export default function EmpresasDestacadas() {
           <button
             key={empresa.id}
             type="button"
-            onClick={() => navigate(`/evaluaciones/${empresa.id}`)}
+            onClick={() => navigate(`/empresas/${empresa.slug}`)}
             className="relative rounded-2xl bg-white p-5 pt-7 shadow-sm hover:shadow-md transition-all text-left flex flex-col gap-4 w-full overflow-hidden"
           >
             {/* Borde superior en gradiente (8px / h-2) */}

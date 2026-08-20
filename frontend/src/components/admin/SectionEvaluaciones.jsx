@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Star, Eye, EyeOff, Trash2, Search, X, FileText } from "lucide-react";
-import { evaluacionesService } from "../../services/evaluacionesService";
+import { listadoEmpresasService  } from "../../services/listadoEmpresasService";
 
 export default function SectionEvaluaciones() {
   const [evaluaciones, setEvaluaciones] = useState([]);
@@ -12,7 +12,7 @@ export default function SectionEvaluaciones() {
   const reload = async () => {
     setLoading(true);
     try {
-      setEvaluaciones(await evaluacionesService.adminListar());
+      setEvaluaciones(await listadoEmpresasService.adminListar());
     } catch {
       setEvaluaciones([]);
     } finally {
@@ -25,7 +25,7 @@ export default function SectionEvaluaciones() {
   const handleEstado = async (id, estadoActual) => {
     const nuevoEstado = estadoActual === "visible" ? "oculto" : "visible";
     try {
-      await evaluacionesService.adminCambiarEstado(id, nuevoEstado);
+      await listadoEmpresasService.adminCambiarEstado(id, nuevoEstado);
       await reload();
       if (modalEval?.id === id) {
         setModalEval(prev => ({ ...prev, estado: nuevoEstado }));
@@ -38,7 +38,7 @@ export default function SectionEvaluaciones() {
   const handleEliminar = async (id, empresa) => {
     if (!window.confirm(`¿Eliminar la evaluación de "${empresa}"?`)) return;
     try {
-      await evaluacionesService.adminEliminar(id);
+      await listadoEmpresasService.adminEliminar(id);
       await reload();
       if (modalEval?.id === id) setModalEval(null);
     } catch (err) {

@@ -13,7 +13,7 @@ $db = getDB();
 if ($method === 'GET' && $action === 'destacadas') {
     $stmt = $db->query("
         SELECT
-            e.id, e.nombre, e.sector, e.logo_url,
+            e.id, e.nombre, e.slug, e.sector, e.logo_url,
             ROUND(AVG(ev.estrellas), 1)  AS promedio,
             COUNT(DISTINCT ev.id)        AS total_evaluaciones,
             COUNT(DISTINCT o.id)         AS total_ofertas
@@ -43,7 +43,7 @@ if ($method === 'GET' && $action === 'empresas') {
 
     $stmt = $db->prepare("
         SELECT 
-            e.id, e.nombre, e.sector, e.logo_url,
+            e.id, e.nombre, e.slug, e.sector, e.logo_url,
             e.descripcion, e.anio_fundacion, e.num_empleados,
             e.sitio_web, e.ubicacion, e.beneficios, e.ruc,
             ROUND(AVG(ev.estrellas), 1) AS promedio,
@@ -67,26 +67,26 @@ if ($method === 'GET' && $action === 'detalle') {
 
     $stmt = $db->prepare("
         SELECT 
-            e.id, e.nombre, e.sector, e.logo_url,
+            e.id, e.nombre, e.slug, e.sector, e.logo_url,
             e.descripcion, e.anio_fundacion, e.num_empleados,
             e.sitio_web, e.ubicacion, e.beneficios, e.ruc,
             ROUND(AVG(ev.estrellas), 1) AS promedio,
             COUNT(ev.id)               AS total_evaluaciones
         FROM empresas_clientes e
         LEFT JOIN evaluaciones ev ON ev.empresa_id = e.id AND ev.estado = 'visible'
-        WHERE e.id = ?
+        WHERE e.slug = ? OR e.id = ?
         GROUP BY e.id
     ");
-    $stmt->execute([$empresa_id]);
+    $stmt->execute([$empresa_id, $empresa_id]);
     $empresa = $stmt->fetch();
     if (!$empresa) respondError('Empresa no encontrada.', 404);
 
-    // Parsear beneficios JSON
     if ($empresa['beneficios']) {
         $empresa['beneficios'] = json_decode($empresa['beneficios'], true);
     }
 
-    // Traer evaluaciones visibles
+    $idReal = $empresa['id']; // ← ID numérico real
+
     $stmtEv = $db->prepare("
         SELECT 
             ev.id, ev.relacion, ev.tiempo_relacion,
@@ -103,7 +103,7 @@ if ($method === 'GET' && $action === 'detalle') {
         WHERE ev.empresa_id = ? AND ev.estado = 'visible'
         ORDER BY ev.fecha_creacion DESC
     ");
-    $stmtEv->execute([$empresa_id]);
+    $stmtEv->execute([$idReal]); // ← usa el ID numérico, no el slug
     $empresa['evaluaciones'] = $stmtEv->fetchAll();
 
     respond(true, $empresa);
@@ -115,11 +115,17 @@ if ($method === 'GET' && $action === 'ya_evaluo') {
     $empresa_id = $_GET['empresa_id'] ?? null;
     if (!$empresa_id) respondError('ID de empresa requerido.');
 
+    // Resolver slug o id al id real
+    $stmtEmp = $db->prepare("SELECT id FROM empresas_clientes WHERE slug = ? OR id = ?");
+    $stmtEmp->execute([$empresa_id, $empresa_id]);
+    $empresa = $stmtEmp->fetch();
+    if (!$empresa) respond(true, ['ya_evaluo' => false]);
+
     $stmt = $db->prepare("
         SELECT id FROM evaluaciones 
         WHERE usuario_id = ? AND empresa_id = ?
     ");
-    $stmt->execute([$user['id'], $empresa_id]);
+    $stmt->execute([$user['id'], $empresa['id']]);
     respond(true, ['ya_evaluo' => (bool)$stmt->fetch()]);
 }
 
@@ -215,5 +221,32 @@ if ($method === 'DELETE' && $action === 'admin_eliminar') {
     $stmt->execute([$id]);
     respond(true, null, 'Evaluación eliminada.');
 }
+
+// ─── OFERTAS DE UNA EMPRESA ──────────────────────────────
+if ($method === 'GET' && $action === 'ofertas_empresa') {
+    $empresa_id = $_GET['empresa_id'] ?? null;
+    if (!$empresa_id) respondError('empresa_id requerido.');
+
+    $stmtEmp = $db->prepare("SELECT id FROM empresas_clientes WHERE slug = ? OR id = ?");
+    $stmtEmp->execute([$empresa_id, $empresa_id]);
+    $empresa = $stmtEmp->fetch();
+    if (!$empresa) respondError('Empresa no encontrada.', 404);
+
+    $stmt = $db->prepare("
+        SELECT
+            o.id, o.titulo, o.ubicacion, o.modalidad, o.horario,
+            o.tipo_contrato, o.salario_min, o.salario_max,
+            o.descripcion, o.fecha_publicacion, o.fecha_expiracion,
+            o.nivel_experiencia, o.fecha_creacion
+        FROM ofertas_trabajo o
+        WHERE o.empresa_id = ?
+          AND o.estado = 'activa'
+          AND o.fecha_expiracion > NOW()
+        ORDER BY o.fecha_publicacion DESC
+    ");
+    $stmt->execute([$empresa['id']]);
+    respond(true, $stmt->fetchAll());
+}
+
 
 respondError('Acción no válida.', 404);

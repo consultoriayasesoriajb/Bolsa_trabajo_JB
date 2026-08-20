@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { evaluacionesService } from "../services/evaluacionesService";
+import { listadoEmpresasService } from "../services/listadoEmpresasService";
 
 const POR_PAGINA = 5;
 
@@ -13,7 +13,7 @@ export function useEvaluaciones() {
     const cargar = async () => {
       setIsLoading(true);
       try {
-        const data = await evaluacionesService.listarEmpresas();
+        const data = await listadoEmpresasService.listarEmpresas();
         setEmpresas(data);
       } catch {
         setEmpresas([]);

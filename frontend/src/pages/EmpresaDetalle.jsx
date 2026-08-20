@@ -1,14 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeftIcon, GlobeAltIcon, BuildingOfficeIcon, UsersIcon, CalendarIcon, MapPinIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
 import { useEmpresaDetalle } from "../hooks/useEmpresaDetalle";
-import StarRating from "../components/evaluaciones/StarRating";
-import ComentarioCard from "../components/evaluaciones/ComentarioCard";
-import FormularioEvaluacion from "../components/evaluaciones/FormularioEvaluacion";
+import StarRating from "../components/empresas/StarRating";
+import ComentarioCard from "../components/empresas/ComentarioCard";
+import FormularioEvaluacion from "../components/empresas/FormularioEvaluacion";
 
 const BASE_URL = import.meta.env.VITE_API_URL.replace("/api", "");
 
 export default function EmpresaDetalle() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
 
   const {
@@ -16,7 +16,7 @@ export default function EmpresaDetalle() {
     modalAbierto, abrirModal, cerrarModal,
     form, handleChange, errors,
     enviando, exito, handleEnviar,
-  } = useEmpresaDetalle(id);
+  } = useEmpresaDetalle(slug);
 
   if (isLoading) {
     return (
@@ -52,7 +52,7 @@ export default function EmpresaDetalle() {
 
         {/* Volver */}
         <button
-          onClick={() => navigate("/evaluaciones")}
+          onClick={() => navigate("/empresas")}
           className="flex items-center gap-2 text-sm text-[#6b7a9f] hover:text-[#123498] transition-colors w-fit"
         >
           <ArrowLeftIcon className="w-4 h-4" />
@@ -97,7 +97,7 @@ export default function EmpresaDetalle() {
                 : "bg-[#F46F0B] hover:bg-[#d65f09] text-white shadow-sm"
             }`}
           >
-            {yaEvaluo ? "Ya evaluaste esta empresa" : "Evaluar esta empresa"}
+            {yaEvaluo ? "Ya calificaste a esta empresa" : "Calificar esta empresa"}
           </button>
         </div>
 
