@@ -1,5 +1,15 @@
-export const BASE_URL = import.meta.env.VITE_API_URL;
-export const UPLOADS_BASE_URL = BASE_URL.replace(/\/api\/?$/, "") + "/";
+export const BASE_URL = import.meta.env.VITE_API_URL ?? "";
+
+if (!BASE_URL) {
+  console.error(
+    "[api.js] ⚠️  La variable de entorno VITE_API_URL no está definida. " +
+    "Configúrala en Vercel → Settings → Environment Variables."
+  );
+}
+
+export const UPLOADS_BASE_URL = BASE_URL
+  ? BASE_URL.replace(/\/api\/?$/, "") + "/"
+  : "/";
 
 export const apiFetch = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
