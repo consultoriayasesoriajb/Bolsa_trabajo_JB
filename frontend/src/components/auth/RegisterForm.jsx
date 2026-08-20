@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { authService } from "../../services/authService";
 import {
   UserIcon, EnvelopeIcon, LockClosedIcon, EyeIcon,
-  EyeSlashIcon, PhoneIcon, CheckCircleIcon,
+  EyeSlashIcon, CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 
 export default function RegisterForm() {
@@ -13,8 +13,9 @@ export default function RegisterForm() {
   const [successMessage, setSuccessMessage] = useState("");
   const [generalError, setGeneralError] = useState("");
   const [errors, setErrors] = useState({});
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
   const [formData, setFormData] = useState({
-    nombre: "", correo: "", password: "", telefono: "", cv: null,
+    nombre: "", correo: "", password: "", cv: null,
   });
 
   const hasMinLength = formData.password.length >= 8;
@@ -41,9 +42,7 @@ export default function RegisterForm() {
     if (!formData.password) { newErrors.password = "La contraseña es obligatoria."; isValid = false; }
     else if (!pwdRegex.test(formData.password)) { newErrors.password = "La contraseña no cumple con los requisitos."; isValid = false; }
 
-    const telRegex = /^\d{9}$/;
-    if (!formData.telefono) { newErrors.telefono = "El teléfono es obligatorio."; isValid = false; }
-    else if (!telRegex.test(formData.telefono)) { newErrors.telefono = "Debe contener exactamente 9 dígitos."; isValid = false; }
+    if (!aceptaTerminos) { newErrors.terminos = "Debes aceptar los términos y condiciones."; isValid = false; }
 
     setErrors(newErrors);
     return isValid;
@@ -61,11 +60,11 @@ export default function RegisterForm() {
           nombre_completo: formData.nombre,
           correo: formData.correo,
           password: formData.password,
-          telefono: formData.telefono,
         });
         if (response.success) {
           navigate("/revisa-tu-correo");
-          setFormData({ nombre: "", correo: "", password: "", telefono: "", cv: null });
+          setFormData({ nombre: "", correo: "", password: "", cv: null });
+          setAceptaTerminos(false);
         }
       } catch (error) {
         setGeneralError(error.message);
@@ -149,16 +148,44 @@ export default function RegisterForm() {
         ))}
       </div>
 
-      {/* TELÉFONO */}
-      <div className="flex flex-col gap-1.5 mt-1">
-        <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Teléfono</label>
-        <div className="relative flex items-center">
-          <PhoneIcon className="absolute left-4 w-5 h-5 text-azul" />
-          <input type="tel" name="telefono" value={formData.telefono} placeholder="999 999 999"
-            className={`w-full pl-12 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-1 ${errors.telefono ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-azul"}`}
-            onChange={handleChange} />
-        </div>
-        {errors.telefono && <p className="text-red-500 text-xs mt-1">{errors.telefono}</p>}
+      {/* TÉRMINOS Y CONDICIONES */}
+      <div className="flex flex-col gap-1">
+        <label className="flex items-start gap-3 cursor-pointer select-none group">
+          <div className="relative mt-0.5 flex-shrink-0">
+            <input
+              id="aceptaTerminos"
+              type="checkbox"
+              checked={aceptaTerminos}
+              onChange={(e) => {
+                setAceptaTerminos(e.target.checked);
+                if (errors.terminos) setErrors({ ...errors, terminos: null });
+              }}
+              className="sr-only peer"
+            />
+            <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200
+              peer-focus:ring-2 peer-focus:ring-azul/30
+              ${aceptaTerminos ? "bg-azul border-azul" : errors.terminos ? "border-red-500 bg-red-50" : "border-gray-300 bg-white group-hover:border-azul"}`}
+            >
+              {aceptaTerminos && (
+                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </div>
+          </div>
+          <span className="text-sm text-gray-600 leading-snug">
+            He leído y acepto los{" "}
+            <Link
+              to="/terminos-condiciones"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-azul hover:underline"
+            >
+              Términos y Condiciones
+            </Link>
+          </span>
+        </label>
+        {errors.terminos && <p className="text-red-500 text-xs mt-1 ml-8">{errors.terminos}</p>}
       </div>
 
       {/* BOTÓN */}

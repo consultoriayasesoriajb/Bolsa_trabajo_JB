@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowLeftIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useLibroReclamaciones } from "../../hooks/useLibroReclamaciones";
-import Footer from "../../components/layout/Footer";
+
 
 const inputCls = (err) =>
   `w-full px-4 py-2.5 text-sm rounded-xl border ${
@@ -348,8 +348,7 @@ export default function LibroReclamaciones() {
         </div>
       </form>
 
-      {/* Footer */}
-      <Footer />
+
 
     </div>
   );
