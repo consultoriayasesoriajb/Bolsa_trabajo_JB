@@ -10,6 +10,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 // ── Imports directos (no lazy) — solo los que se necesitan siempre ──
 import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ScrollToTop from "./components/layout/ScrollToTop";
 
@@ -60,6 +61,7 @@ function MainLayout() {
       <main id="main-content" className="bg-slate-50">
         <Outlet />
       </main>
+      <Footer />
     </>
   );
 }
@@ -90,6 +92,12 @@ function App() {
               </Route>
               <Route path="/evaluaciones" element={<Evaluaciones />} />
               <Route path="/evaluaciones/:id" element={<EmpresaDetalle />} />
+
+              {/* Páginas legales — incluyen el Header via MainLayout */}
+              <Route path="/terminos-condiciones" element={<TerminosCondiciones />} />
+              <Route path="/politica-privacidad" element={<PoliticaPrivacidad />} />
+              <Route path="/aviso-legal" element={<AvisoLegal />} />
+              <Route path="/libro-reclamaciones" element={<LibroReclamaciones />} />
             </Route>
 
             <Route
@@ -121,34 +129,7 @@ function App() {
               }   
             />
 
-            <Route path="/terminos-condiciones" 
-              element={
-                <main className="min-h-screen">
-                  <TerminosCondiciones />
-                </main>
-              }
-            />
-            <Route path="/politica-privacidad"
-              element={
-                <main className="min-h-screen">
-                  <PoliticaPrivacidad />
-                </main>
-              }
-            />
-            <Route path="/aviso-legal"
-              element={
-                <main className="min-h-screen">
-                  <AvisoLegal />
-                </main>
-              }
-            />
-            <Route path="/libro-reclamaciones"
-              element={
-                <main className="min-h-screen">
-                  <LibroReclamaciones />
-                </main>
-              }
-            />
+
 
           </Routes>
         </Suspense>
