@@ -14,7 +14,7 @@ export default function QuienesSomosSection() {
           </h2>
           <div className="w-15 h-1 bg-[#F46F0B] mt-2 mb-1 rounded-full" />
           <p
-            className="text-slate-400 text-sm font-bold mt-1 max-w-2xl leading-relaxed"
+            className="text-slate-400 text-lg font-bold mt-1 max-w-2xl leading-relaxed"
             style={{ fontFamily: "'Lato', sans-serif" }}
           >
             Somos la{" "}

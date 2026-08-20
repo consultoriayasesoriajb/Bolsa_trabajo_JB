@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import {
     LayoutDashboard,
     Building2,
@@ -6,7 +6,7 @@ import {
     Users,
     Star,
     LogOut,
-    ChevronRight, BookOpen,
+    ChevronRight, BookOpen, Home
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -28,14 +28,14 @@ export default function SidebarAdmin({ onCloseMobile }) {
     return (
         <aside className="relative left-0 top-0 h-full w-[248px] bg-white border-r border-slate-200/80 flex flex-col z-30">
             {/* Logo */}
-            <div className="flex flex-col justify-center px-6 h-20 border-b border-slate-100">
+            <Link to="/" className="flex flex-col justify-center px-6 h-20 border-b border-slate-100">
                 <span className="font-black text-[#123498] text-[16px] tracking-wide font-heading uppercase">
                     Bolsa Trabajo <span className="text-[#F46F0B]">JB</span>
                 </span>
                 <span className="text-[8px] font-bold text-slate-400 tracking-[0.2em] mt-0.5 uppercase">
                     Sistema Corporativo
                 </span>
-            </div>
+            </Link>
 
             {/* Navegación */}
             <nav className="flex-1 px-4 py-6 space-y-1.5">
@@ -65,8 +65,16 @@ export default function SidebarAdmin({ onCloseMobile }) {
                 ))}
             </nav>
 
-            {/* Cerrar sesión */}
-            <div className="px-4 pb-4">
+            {/* Acciones Inferiores */}
+            <div className="px-4 pb-4 flex flex-col gap-2">
+                <Link
+                    to="/"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all text-slate-500 hover:bg-[#123498]/5 hover:text-[#123498]"
+                >
+                    <Home size={16} strokeWidth={2.4} />
+                    Volver al Home
+                </Link>
+
                 <button
                     onClick={() => {
                             localStorage.removeItem("token");
