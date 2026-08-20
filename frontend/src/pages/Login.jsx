@@ -9,7 +9,7 @@ export default function Login() {
   const [isRegister, setIsRegister] = useState(false);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#f4f6fb] flex items-center justify-center p-0 md:p-8">
+    <div className="relative min-h-screen overflow-hidden bg-[#F9F9F9] flex items-center justify-center p-0 md:p-8">
 
       {/* ===== FONDO BOKEH (círculos difuminados) ===== */}
       <div className="pointer-events-none absolute -left-24 -top-32 h-105 w-105 rounded-full bg-[#f97316] opacity-45 blur-[120px]" />

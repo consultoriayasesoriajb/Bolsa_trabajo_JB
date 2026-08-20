@@ -6,7 +6,7 @@ export default function Evaluaciones() {
   const { empresas, total, isLoading, busqueda, setBusqueda } = useEvaluaciones();
 
   return (
-    <div className="min-h-screen bg-[#f4f6fb] font-sans">
+    <div className="min-h-screen bg-[#F9F9F9] font-sans">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
         {/* Header */}

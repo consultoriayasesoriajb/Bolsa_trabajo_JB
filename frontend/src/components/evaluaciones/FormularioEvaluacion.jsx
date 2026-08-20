@@ -39,7 +39,7 @@ export default function FormularioEvaluacion({
           </div>
           <button
             onClick={onCerrar}
-            className="p-2 rounded-xl hover:bg-[#f4f6fb] text-[#6b7a9f] transition-colors"
+            className="p-2 rounded-xl hover:bg-[#F9F9F9] text-[#6b7a9f] transition-colors"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>

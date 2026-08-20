@@ -63,7 +63,7 @@ function ItemFAQ({ item, abierto, onToggle }) {
         type="button"
         onClick={onToggle}
         aria-expanded={abierto}
-        className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-slate-50"
+        className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-[#F9F9F9]"
       >
         <span
           className={`text-base font-bold leading-snug transition-colors ${
@@ -129,7 +129,7 @@ export default function PreguntasFrecuentes() {
   };
 
   return (
-    <section id="preguntas-frecuentes" className="bg-slate-50 py-16 sm:py-20">
+    <section id="preguntas-frecuentes" className="bg-[#F9F9F9] py-16 sm:py-20">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-12">

@@ -11,7 +11,7 @@ export default function EmpresasSection() {
   const empresasDestacadas = empresas.slice(0, 4);
 
   return (
-    <section className="bg-slate-50 border-b border-slate-100 py-16">
+    <section className="bg-[#F9F9F9] border-b border-slate-100 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10">
           <h2 className="text-2xl sm:text-3xl font-black text-[#123498] tracking-tight font-heading uppercase">

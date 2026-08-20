@@ -32,7 +32,7 @@ export default function ComentarioCard({ evaluacion }) {
           <div className="w-10 h-10 rounded-full bg-[#123498]/10 text-[#123498] flex items-center justify-center font-bold text-sm shrink-0">
             {iniciales}
           </div>
-          <span className="inline-block text-xs font-semibold text-[#6b7a9f] bg-[#f4f6fb] px-2.5 py-1 rounded-full">
+          <span className="inline-block text-xs font-semibold text-[#6b7a9f] bg-[#F9F9F9] px-2.5 py-1 rounded-full">
             {RELACION_LABEL[relacion] || relacion}
           </span>
         </div>
