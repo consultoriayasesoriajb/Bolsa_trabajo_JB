@@ -19,10 +19,10 @@ export default function EmpresaCard({ empresa }) {
           <img
             src={`${BASE_URL}/${logo_url}`}
             alt={nombre}
-            className="w-12 h-12 rounded-xl object-cover shrink-0 border border-[#e8edf5]"
+            className="w-16 h-16 rounded-xl object-contain shrink-0 border border-[#e8edf5] bg-white p-2"
           />
         ) : (
-          <div className="w-12 h-12 rounded-xl bg-[#123498] flex items-center justify-center text-white font-bold text-lg shrink-0">
+          <div className="w-16 h-16 rounded-xl bg-[#123498] flex items-center justify-center text-white font-bold text-xl shrink-0">
             {nombre.charAt(0).toUpperCase()}
           </div>
         )}

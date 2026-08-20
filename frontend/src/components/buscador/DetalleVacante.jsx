@@ -14,7 +14,7 @@ export default function DetalleVacante({ vacante }) {
           <img
             src={`${import.meta.env.VITE_API_URL.replace('/api', '')}/${vacante.logo_url}`}
             alt={vacante.empresa_nombre}
-            className="w-14 h-14 rounded-lg object-cover border border-gray-200 shrink-0"
+            className="w-16 h-16 rounded-xl object-contain shrink-0 bg-white border border-gray-200 p-1"
           />
         )}
         <div className="min-w-0">

@@ -202,10 +202,10 @@ export default function SectionEmpresas() {
                   <img
                     src={UPLOADS_BASE_URL + c.logo_url}
                     alt={c.nombre}
-                    className="w-10 h-10 rounded-xl object-cover shrink-0"
+                    className="w-12 h-12 rounded-xl object-contain shrink-0 bg-white border border-slate-200 p-1"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-lg shrink-0 bg-[#123498]">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-lg shrink-0 bg-[#123498]">
                     {c.nombre.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -446,7 +446,7 @@ export default function SectionEmpresas() {
                     <img
                       src={UPLOADS_BASE_URL + editingCompany.logo_url}
                       alt="Logo actual"
-                      className="w-16 h-16 rounded-xl object-cover border border-slate-200"
+                      className="w-16 h-16 rounded-xl object-contain bg-white border border-slate-200 p-1"
                     />
                   ) : null}
                 </div>
