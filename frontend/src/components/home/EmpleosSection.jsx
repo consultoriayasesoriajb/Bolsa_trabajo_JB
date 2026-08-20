@@ -43,7 +43,7 @@ export default function EmpleosSection() {
             Empleos Recientes
           </h2>
           <div className="w-8 h-1 bg-[#F46F0B] mt-2 mb-1 rounded-full" />
-          <p className="text-slate-400 text-xs font-bold mt-1">
+          <p className="text-slate-400 text-base font-bold mt-1">
             Las últimas vacantes publicadas en nuestra red
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function EmpleosSection() {
           <h3 className="font-extrabold text-lg text-[#123498] mb-2 font-heading">
             No hay vacantes disponibles
           </h3>
-          <p className="text-slate-400 text-sm font-medium">
+          <p className="text-slate-400 text-base font-medium">
             Pronto publicaremos nuevas oportunidades. ¡Vuelve pronto!
           </p>
         </div>

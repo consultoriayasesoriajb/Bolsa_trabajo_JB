@@ -37,7 +37,7 @@ export default function TopbarAdmin({ onToggleSidebar }) {
                 <input
                     type="text"
                     placeholder="Buscar postulante, vacante..."
-                    className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200/80 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] transition-all placeholder:text-slate-400"
+                    className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-slate-200/80 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] transition-all placeholder:text-slate-400"
                 />
             </div>
 
@@ -57,7 +57,7 @@ export default function TopbarAdmin({ onToggleSidebar }) {
                     >
                         <Bell size={16} className="text-slate-500" />
                         {noLeidasCount > 0 && (
-                            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[#F46F0B] text-white text-[10px] font-bold px-1">
+                            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[#F46F0B] text-white text-xs font-bold px-1">
                                 {noLeidasCount > 99 ? "99+" : noLeidasCount}
                             </span>
                         )}

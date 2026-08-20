@@ -56,8 +56,18 @@ export default function Header({ hideOnScroll = false }) {
               <NavDesktop isActive={isActive} />
             </div>
 
-            {/* DERECHA: Usuario + Publicar (Desktop) */}
+            {/* DERECHA: Publicar + Usuario (Desktop) */}
             <div className="hidden lg:flex items-center gap-6">
+              {/* Solo visible para admins */}
+              {user?.rol_nombre === "admin" && (
+                <>
+                  <Link to="/admin/ofertas" className={navLinkClasses}>
+                    Publicar empleos
+                  </Link>
+                  <div className="h-6 w-px bg-gray-300" aria-hidden="true" />
+                </>
+              )}
+
               {user ? (
                 <UserMenuDesktop
                   user={user}
@@ -73,16 +83,6 @@ export default function Header({ hideOnScroll = false }) {
                 >
                   Iniciar sesión
                 </Link>
-              )}
-
-              {/* Solo visible para admins */}
-              {user?.rol_nombre === "admin" && (
-                <>
-                  <div className="h-6 w-px bg-gray-300" aria-hidden="true" />
-                  <Link to="/admin/ofertas" className={navLinkClasses}>
-                    Publicar empleos
-                  </Link>
-                </>
               )}
             </div>
 

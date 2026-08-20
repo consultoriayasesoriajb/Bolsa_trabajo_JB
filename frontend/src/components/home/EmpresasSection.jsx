@@ -15,7 +15,7 @@ export default function EmpresasSection() {
             Empresas Destacadas
           </h2>
           <div className="w-8 h-1 bg-naranja mt-2 mb-1 rounded-full" />
-          <p className="text-slate-400 text-xs font-bold mt-1">
+          <p className="text-slate-400 text-base font-bold mt-1">
             Conoce las organizaciones que publican sus vacantes en nuestra red
           </p>
         </div>
@@ -28,11 +28,11 @@ export default function EmpresasSection() {
                 title={emp.name}
                 className="flex justify-center shrink-0"
               >
-                <div className="bg-white rounded-xl p-4 flex items-center justify-center border border-slate-200/80 shadow-sm w-44 h-28 hover:scale-105 transition-transform duration-200 cursor-pointer">
+                <div className="bg-white rounded-xl p-4 flex items-center justify-center border border-slate-200/80 shadow-sm w-64 h-40 hover:scale-105 transition-transform duration-200 cursor-pointer">
                   <img
                     src={emp.logoUrl}
                     alt={`Logo de ${emp.name}`}
-                    className="max-h-16 max-w-35 object-contain"
+                    className="max-h-24 max-w-[14rem] object-contain"
                   />
                 </div>
               </div>
