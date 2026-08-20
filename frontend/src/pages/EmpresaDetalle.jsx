@@ -65,10 +65,10 @@ export default function EmpresaDetalle() {
             <img
               src={`${BASE_URL}/${empresa.logo_url}`}
               alt={empresa.nombre}
-              className="w-20 h-20 rounded-2xl object-cover border border-[#e8edf5] shrink-0"
+              className="w-28 h-28 rounded-2xl object-contain shrink-0 bg-white border border-[#e8edf5] p-3"
             />
           ) : (
-            <div className="w-20 h-20 rounded-2xl bg-[#123498] flex items-center justify-center text-white font-bold text-2xl shrink-0">
+            <div className="w-28 h-28 rounded-2xl bg-[#123498] flex items-center justify-center text-white font-bold text-3xl shrink-0">
               {empresa.nombre.charAt(0).toUpperCase()}
             </div>
           )}
