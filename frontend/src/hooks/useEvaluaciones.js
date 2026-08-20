@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
 import { evaluacionesService } from "../services/evaluacionesService";
 
+const POR_PAGINA = 5;
+
 export function useEvaluaciones() {
-  const [empresas, setEmpresas] = useState([]);
+  const [empresas, setEmpresas]   = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [busqueda, setBusqueda] = useState("");
+  const [busqueda, setBusqueda]   = useState("");
+  const [pagina, setPagina]       = useState(1);
 
   useEffect(() => {
     const cargar = async () => {
@@ -21,7 +24,11 @@ export function useEvaluaciones() {
     cargar();
   }, []);
 
-  // Filtrado local por busqueda para respuesta inmediata
+  // Resetear a página 1 cuando cambia la búsqueda
+  useEffect(() => {
+    setPagina(1);
+  }, [busqueda]);
+
   const empresasFiltradas = useMemo(() => {
     if (!busqueda.trim()) return empresas;
     const q = busqueda.toLowerCase();
@@ -31,11 +38,18 @@ export function useEvaluaciones() {
     );
   }, [empresas, busqueda]);
 
+  const totalPaginas  = Math.ceil(empresasFiltradas.length / POR_PAGINA);
+  const empresasPagina = empresasFiltradas.slice(
+    (pagina - 1) * POR_PAGINA,
+    pagina * POR_PAGINA
+  );
+
   return {
-    empresas: empresasFiltradas,
-    total: empresas.length,
+    empresas: empresasPagina,
+    total: empresasFiltradas.length,
     isLoading,
-    busqueda,
-    setBusqueda,
+    busqueda, setBusqueda,
+    pagina, setPagina,
+    totalPaginas,
   };
 }
