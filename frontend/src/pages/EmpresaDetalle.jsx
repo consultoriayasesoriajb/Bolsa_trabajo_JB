@@ -20,7 +20,7 @@ export default function EmpresaDetalle() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#f4f6fb] flex items-center justify-center text-[#9aa3bd] text-sm">
+      <div className="min-h-screen bg-[#F9F9F9] flex items-center justify-center text-[#9aa3bd] text-sm">
         Cargando...
       </div>
     );
@@ -28,7 +28,7 @@ export default function EmpresaDetalle() {
 
   if (!empresa) {
     return (
-      <div className="min-h-screen bg-[#f4f6fb] flex items-center justify-center text-[#9aa3bd] text-sm">
+      <div className="min-h-screen bg-[#F9F9F9] flex items-center justify-center text-[#9aa3bd] text-sm">
         Empresa no encontrada.
       </div>
     );
@@ -47,7 +47,7 @@ export default function EmpresaDetalle() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f6fb] font-sans">
+    <div className="min-h-screen bg-[#F9F9F9] font-sans">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col gap-6">
 
         {/* Volver */}
@@ -93,7 +93,7 @@ export default function EmpresaDetalle() {
             disabled={yaEvaluo}
             className={`shrink-0 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors ${
               yaEvaluo
-                ? "bg-[#f4f6fb] text-[#9aa3bd] cursor-not-allowed border border-[#e8edf5]"
+                ? "bg-[#F9F9F9] text-[#9aa3bd] cursor-not-allowed border border-[#e8edf5]"
                 : "bg-[#F46F0B] hover:bg-[#d65f09] text-white shadow-sm"
             }`}
           >

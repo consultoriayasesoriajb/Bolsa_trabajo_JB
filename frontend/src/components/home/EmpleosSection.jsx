@@ -34,7 +34,7 @@ export default function EmpleosSection() {
   }, []);
 
   return (
-    <section className="bg-slate-50 border-b border-slate-100 py-16">
+    <section className="bg-[#F9F9F9] border-b border-slate-100 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
       <div className="flex items-center justify-between mb-10">
@@ -82,7 +82,7 @@ export default function EmpleosSection() {
             >
               {/* Ícono + Badge Nuevo */}
               <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 shrink-0 shadow-inner">
+                <div className="w-12 h-12 bg-[#F9F9F9] rounded-xl flex items-center justify-center border border-slate-100 shrink-0 shadow-inner">
                   <BriefcaseIcon className="w-5 h-5 text-[#123498]" />
                 </div>
 
@@ -131,7 +131,7 @@ export default function EmpleosSection() {
                   className="flex items-center gap-2 text-xs font-black text-[#123498] hover:text-[#096ACC] tracking-wider transition-colors cursor-pointer group/btn"
                 >
                   <span>DETALLES</span>
-                  <div className="w-6 h-6 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-[#123498] group-hover/btn:bg-[#123498] group-hover/btn:text-white transition-all">
+                  <div className="w-6 h-6 rounded-full bg-[#F9F9F9] border border-slate-100 flex items-center justify-center text-[#123498] group-hover/btn:bg-[#123498] group-hover/btn:text-white transition-all">
                     <ChevronRightIcon className="w-3 h-3 transform group-hover/btn:translate-x-0.5 transition-transform" strokeWidth="3.5" />
                   </div>
                 </button>

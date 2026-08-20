@@ -27,7 +27,7 @@ export default function LibroReclamaciones() {
 
   if (exito) {
     return (
-      <div className="min-h-screen bg-[#f4f6fb] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#F9F9F9] flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-10 max-w-md w-full text-center flex flex-col items-center gap-5">
           <CheckCircleIcon className="w-16 h-16 text-green-500" />
           <h2 className="text-2xl font-black text-[#123498] font-heading">
@@ -56,7 +56,7 @@ export default function LibroReclamaciones() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f6fb] font-sans">
+    <div className="min-h-screen bg-[#F9F9F9] font-sans">
 
       {/* Header */}
       <div className="bg-white border-b border-slate-200 py-6 px-4">

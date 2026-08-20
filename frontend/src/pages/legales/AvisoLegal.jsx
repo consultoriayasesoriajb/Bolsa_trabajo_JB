@@ -78,7 +78,7 @@ const CONTENIDOS = [
 // ── Componente principal ─────────────────────────────────────
 export default function AvisoLegal() {
   return (
-    <div className="min-h-screen bg-[#f4f6fb] font-sans">
+    <div className="min-h-screen bg-[#F9F9F9] font-sans">
 
       {/* ── HERO ─────────────────────────────────────────── */}
       <div className="bg-white border-b border-slate-200">
