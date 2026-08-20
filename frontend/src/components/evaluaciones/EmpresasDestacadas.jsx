@@ -25,7 +25,7 @@ export default function EmpresasDestacadas() {
     <div className="mb-10">
       <div className="flex items-center gap-2 mb-5">
         <TrendingUp className="w-5 h-5 text-naranja" />
-        <h2 className="text-base font-bold text-[#1c2a52] font-heading uppercase tracking-wide">
+        <h2 className="text-base font-bold text-azul font-heading uppercase tracking-wide">
           Empresas Destacadas
         </h2>
       </div>

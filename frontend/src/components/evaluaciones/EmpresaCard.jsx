@@ -86,7 +86,7 @@ export default function EmpresaCard({ empresa }) {
         {/* Promedio */}
         <div className="flex flex-col items-center gap-1">
           <span className="text-3xl font-black text-[#1c2a52]">
-            {promedio ? Number(promedio).toFixed(1) : "—"}
+            {promedio ? Number(promedio).toFixed(1) : "0.0"}
           </span>
           <div className="flex items-center gap-0.5">
             {[1, 2, 3, 4, 5].map(star => (
@@ -95,9 +95,6 @@ export default function EmpresaCard({ empresa }) {
                 : <StarIcon   key={star} className="w-4 h-4 text-[#e8edf5]" />
             ))}
           </div>
-          <span className="text-xs text-[#9aa3bd]">
-            {total_evaluaciones} {total_evaluaciones === 1 ? "opinión" : "opiniones"}
-          </span>
         </div>
 
         {/* Botones */}
