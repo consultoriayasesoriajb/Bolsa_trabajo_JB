@@ -8,17 +8,20 @@ export default function NavDesktop({ isActive }) {
     <nav className="hidden lg:flex" aria-label="Navegación principal">
       <ul className="flex gap-6 list-none">
         <li>
-          <Link to="/" className={navLinkClasses} aria-current={isActive("/") ? "page" : undefined}>
-            Inicio
-          </Link>
-        </li>
-        <li>
-          <Link to="/buscar-empleo" className={navLinkClasses} aria-current={isActive("/buscar-empleo") ? "page" : undefined}>
+          <Link
+            to="/buscar-empleo"
+            className={navLinkClasses}
+            aria-current={isActive("/buscar-empleo") ? "page" : undefined}
+          >
             Buscar empleo
           </Link>
         </li>
         <li>
-          <Link to="/evaluaciones" className={navLinkClasses} aria-current={isActive("/evaluaciones") ? "page" : undefined}>
+          <Link
+            to="/evaluaciones"
+            className={navLinkClasses}
+            aria-current={isActive("/evaluaciones") ? "page" : undefined}
+          >
             Evaluaciones de empresa
           </Link>
         </li>
