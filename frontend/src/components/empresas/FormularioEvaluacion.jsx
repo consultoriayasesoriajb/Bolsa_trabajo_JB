@@ -194,7 +194,7 @@ function ContenidoFormulario({
             Opcional · {(form.texto_positivo || "").length}/500
           </span>
         </div>
-        
+
         <textarea
           value={form.texto_positivo}
           onChange={(e) => handleChange("texto_positivo", e.target.value)}
@@ -258,14 +258,35 @@ function ContenidoFormulario({
       </div>
 
       {/* Botón enviar */}
-      <button
-        type="button"
-        onClick={handleEnviar}
-        disabled={enviando}
-        className="w-full py-3 bg-[#F46F0B] hover:bg-[#d65f09] disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-colors"
-      >
-        {enviando ? "Enviando..." : "Enviar evaluación"}
-      </button>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2">
+        {/* Texto informativo izquierdo */}
+        <p className="text-xs text-[#9aa3bd] leading-tight">
+          Se publicará de forma anónima.
+        </p>
+
+        {/* Contenedor de botones derecho */}
+        <div className="flex items-center gap-2 w-full">
+          {/* Botón Cancelar */}
+          <button
+            type="button"
+            // Reemplaza "onClose" o "onCancel" por la función que uses para cerrar tu modal/formulario
+            onClick={() => console.log("Cancelar click")}
+            className="flex-1 sm:flex-none px-6 py-2.5 rounded-lg border border-[#e8edf5] text-[#123498] text-xs font-semibold hover:bg-[#f4f6fb] transition-colors"
+          >
+            Cancelar
+          </button>
+
+          {/* Botón Enviar (ahora en azul como la imagen) */}
+          <button
+            type="button"
+            onClick={handleEnviar}
+            disabled={enviando}
+            className="flex-1 sm:flex-none px-6 py-2.5 bg-[#123498] hover:bg-[#0e2a7a] disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold rounded-lg transition-colors shadow-sm"
+          >
+            {enviando ? "Enviando..." : "Enviar evaluación"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
