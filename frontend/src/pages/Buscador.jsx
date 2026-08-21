@@ -352,16 +352,23 @@ export default function Buscador() {
               seleccionadaId ? "hidden lg:flex" : "flex"
             }`}
           >
-            <div className="flex items-center gap-3 bg-[#F9F9F9] border-b border-gray-200/50 py-3 px-5 sticky top-0 z-0">
-              <BriefcaseIcon
-                className="w-5 h-5 text-naranja shrink-0"
-                strokeWidth={2}
-              />
-              <span className="font-heading font-bold text-azul text-base">
-                EMPLEOS PARA TI
+            <div className="flex items-center justify-between py-3 mb-2 sticky top-0 z-10 bg-[#F9F9F9]">
+              <div className="flex items-center gap-2">
+                <BriefcaseIcon
+                  className="w-6 h-6 text-naranja shrink-0"
+                  strokeWidth={2}
+                />
+                <h2 className="font-heading font-black text-[#123498] tracking-tight uppercase text-lg sm:text-xl">
+                  Empleos para ti
+                </h2>
+              </div>
+              <span className="font-heading font-bold text-azul text-sm sm:text-base">
+                {listaLoading
+                  ? "Buscando..."
+                  : `${visibles.length} vacante${visibles.length !== 1 ? "s" : ""}`}
               </span>
             </div>
-            <aside className="flex flex-col bg-[#F9F9F9] rounded-lg shadow-sm">
+            <aside className="flex flex-col w-full">
               <ListaVacantes
                 vacantes={visibles}
                 seleccionadaId={seleccionadaId}

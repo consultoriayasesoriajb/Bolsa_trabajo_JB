@@ -208,7 +208,7 @@ export default function FiltrosVacantes({ filtros, onFilterChange }) {
       {/* ══════════════════════════════════════════════════════════════ */}
       {/* BARRA DE BÚSQUEDA UNIFICADA (Mobile + Desktop)                 */}
       {/* ══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-[900px] mx-auto gap-3 md:gap-0 bg-transparent md:bg-white md:border md:border-gray-200 md:rounded-full md:shadow-sm md:p-1.5 transition-all relative z-40">
+      <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-225 mx-auto gap-3 md:gap-0 bg-transparent md:bg-white md:border md:border-gray-200 md:rounded-full md:shadow-sm md:p-1.5 transition-all relative z-40">
         {/* ── Campo CARGO ── */}
         <div className="relative flex items-center w-full md:flex-1 min-w-0 bg-white md:bg-transparent border border-gray-200 md:border-none rounded-lg md:rounded-none px-3 md:px-0 md:pl-3">
           <svg
@@ -263,7 +263,7 @@ export default function FiltrosVacantes({ filtros, onFilterChange }) {
           />
           {/* Menú Desplegable (Historial + Novedades / Sugerencias) */}
           {inputCargoFoco && (
-            <div className="absolute top-full left-0 mt-3.5 w-full md:min-w-[400px] bg-white border border-gray-200 rounded-xl md:rounded-2xl shadow-xl z-50 overflow-hidden">
+            <div className="absolute top-full left-0 mt-3.5 w-full md:min-w-100 bg-white border border-gray-200 rounded-xl md:rounded-2xl shadow-xl z-50 overflow-hidden">
               {/* ── Historial (input vacío) ── */}
               {locales.cargo.length === 0 && busquedasRecientes.length > 0 && (
                 <div className="py-2 border-b border-gray-100">
@@ -376,7 +376,7 @@ export default function FiltrosVacantes({ filtros, onFilterChange }) {
                         className="w-full flex items-center gap-3 text-left px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors group"
                       >
                         {/* Avatar con inicial */}
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-naranja/20 to-orange-100 flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-linear-to-br from-naranja/20 to-orange-100 flex items-center justify-center shrink-0">
                           <span className="text-xs font-bold text-naranja">
                             {empresa.nombre.charAt(0).toUpperCase()}
                           </span>
@@ -494,7 +494,7 @@ export default function FiltrosVacantes({ filtros, onFilterChange }) {
           />
           {/* Dropdown Lugar */}
           {inputUbicacionFoco && sugerencias.length > 0 && (
-            <div className="absolute top-full left-0 mt-3.5 w-full md:min-w-[260px] bg-white border border-gray-200 rounded-xl md:rounded-2xl shadow-xl z-50 py-2 max-h-64 overflow-y-auto">
+            <div className="absolute top-full left-0 mt-3.5 w-full md:min-w-65 bg-white border border-gray-200 rounded-xl md:rounded-2xl shadow-xl z-50 py-2 max-h-64 overflow-y-auto">
               <div className="px-4 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">
                 Ubicaciones
               </div>

@@ -25,7 +25,9 @@ export default function EmpresasSection() {
 
         <div className="max-w-7xl mx-auto px-4">
           {isLoading ? (
-            <div className="text-center text-slate-400 font-bold py-10">Cargando empresas destacadas...</div>
+            <div className="text-center text-slate-400 font-bold py-10">
+              Cargando empresas destacadas...
+            </div>
           ) : empresasDestacadas.length > 0 ? (
             <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
               {empresasDestacadas.map((emp) => (
@@ -40,7 +42,7 @@ export default function EmpresasSection() {
                       <img
                         src={`${BASE_URL}/${emp.logo_url}`}
                         alt={`Logo de ${emp.nombre}`}
-                        className="max-h-24 max-w-[14rem] object-contain"
+                        className="max-h-24 max-w-56 object-contain"
                       />
                     ) : (
                       <div className="w-24 h-24 rounded-full bg-[#123498] flex items-center justify-center text-white font-black text-4xl shadow-sm">
@@ -52,7 +54,9 @@ export default function EmpresasSection() {
               ))}
             </div>
           ) : (
-            <div className="text-center text-slate-400 font-bold py-10">Aún no hay empresas registradas.</div>
+            <div className="text-center text-slate-400 font-bold py-10">
+              Aún no hay empresas registradas.
+            </div>
           )}
         </div>
       </div>

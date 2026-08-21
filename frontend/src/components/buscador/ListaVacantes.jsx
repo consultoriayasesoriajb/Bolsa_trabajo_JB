@@ -23,16 +23,8 @@ export default function ListaVacantes({
   onGuardar,
 }) {
   return (
-    <div className="flex flex-col">
-      <div className="shrink-0 px-5 py-3 border-b border-gray-100">
-        <p className="text-sm text-gray-500 font-semibold">
-          {loading
-            ? "Buscando..."
-            : `${vacantes.length} vacante${vacantes.length !== 1 ? "s" : ""}`}
-        </p>
-      </div>
-
-      <div className="p-5 space-y-4">
+    <div className="flex flex-col w-full">
+      <div className="flex flex-col gap-4 py-2">
         {loading && (
           <div className="space-y-2">
             <SkeletonCard />
