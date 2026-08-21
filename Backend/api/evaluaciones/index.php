@@ -70,8 +70,17 @@ if ($method === 'GET' && $action === 'detalle') {
             e.id, e.nombre, e.slug, e.sector, e.logo_url,
             e.descripcion, e.anio_fundacion, e.num_empleados,
             e.sitio_web, e.ubicacion, e.beneficios, e.ruc,
-            ROUND(AVG(ev.estrellas), 1) AS promedio,
-            COUNT(ev.id)               AS total_evaluaciones
+            ROUND(AVG(ev.estrellas), 1)       AS promedio,
+            COUNT(ev.id)                      AS total_evaluaciones,
+            ROUND(AVG(ev.cat_ambiente), 1)    AS prom_ambiente,
+            ROUND(AVG(ev.cat_beneficios), 1)  AS prom_beneficios,
+            ROUND(AVG(ev.cat_balance), 1)     AS prom_balance,
+            ROUND(AVG(ev.cat_crecimiento), 1) AS prom_crecimiento,
+            SUM(CASE WHEN ev.estrellas = 5 THEN 1 ELSE 0 END) AS est_5,
+            SUM(CASE WHEN ev.estrellas = 4 THEN 1 ELSE 0 END) AS est_4,
+            SUM(CASE WHEN ev.estrellas = 3 THEN 1 ELSE 0 END) AS est_3,
+            SUM(CASE WHEN ev.estrellas = 2 THEN 1 ELSE 0 END) AS est_2,
+            SUM(CASE WHEN ev.estrellas = 1 THEN 1 ELSE 0 END) AS est_1
         FROM empresas_clientes e
         LEFT JOIN evaluaciones ev ON ev.empresa_id = e.id AND ev.estado = 'visible'
         WHERE e.slug = ? OR e.id = ?
@@ -134,35 +143,49 @@ if ($method === 'POST' && $action === 'crear') {
     $user = requireAuth();
     $body = json_decode(file_get_contents('php://input'), true);
 
-    $empresa_id     = $body['empresa_id']     ?? null;
-    $relacion       = $body['relacion']       ?? null;
-    $tiempo_relacion = $body['tiempo_relacion'] ?? null;
-    $estrellas      = $body['estrellas']      ?? null;
-    $texto_positivo = $body['texto_positivo'] ?? null;
-    $texto_negativo = $body['texto_negativo'] ?? null;
-    $recomendaria   = $body['recomendaria']   ?? null;
+    $empresa_id      = $body['empresa_id']      ?? null;
+    $relacion        = $body['relacion']         ?? null;
+    $tiempo_relacion = $body['tiempo_relacion']  ?? null;
+    $estrellas       = $body['estrellas']        ?? null;
+    $texto_positivo  = $body['texto_positivo']   ?? null;
+    $texto_negativo  = $body['texto_negativo']   ?? null;
+    $recomendaria    = $body['recomendaria']     ?? null;
+    $cat_ambiente    = $body['cat_ambiente']     ?? null;
+    $cat_beneficios  = $body['cat_beneficios']   ?? null;
+    $cat_balance     = $body['cat_balance']      ?? null;
+    $cat_crecimiento = $body['cat_crecimiento']  ?? null;
 
     if (!$empresa_id || !$relacion || !$tiempo_relacion || !$estrellas || !$recomendaria) {
         respondError('Faltan campos obligatorios.');
     }
 
-    if ($estrellas < 1 || $estrellas > 5) {
-        respondError('Las estrellas deben estar entre 1 y 5.');
+    // Validar categorías (obligatorias para nuevas evaluaciones)
+    if (!$cat_ambiente || !$cat_beneficios || !$cat_balance || !$cat_crecimiento) {
+        respondError('Debes calificar todas las categorías.');
     }
 
-    // Verificar que no haya evaluado antes
+    // Validar rango 1-5
+    foreach ([$estrellas, $cat_ambiente, $cat_beneficios, $cat_balance, $cat_crecimiento] as $val) {
+        if ($val < 1 || $val > 5) respondError('Las calificaciones deben estar entre 1 y 5.');
+    }
+
+    if ($estrellas < 1 || $estrellas > 5) respondError('Las estrellas deben estar entre 1 y 5.');
+
     $stmt = $db->prepare("SELECT id FROM evaluaciones WHERE usuario_id = ? AND empresa_id = ?");
     $stmt->execute([$user['id'], $empresa_id]);
     if ($stmt->fetch()) respondError('Ya has evaluado esta empresa.');
 
     $stmt = $db->prepare("
-        INSERT INTO evaluaciones 
-            (usuario_id, empresa_id, relacion, tiempo_relacion, estrellas, texto_positivo, texto_negativo, recomendaria)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO evaluaciones (
+            usuario_id, empresa_id, relacion, tiempo_relacion,
+            estrellas, texto_positivo, texto_negativo, recomendaria,
+            cat_ambiente, cat_beneficios, cat_balance, cat_crecimiento
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
     $stmt->execute([
         $user['id'], $empresa_id, $relacion, $tiempo_relacion,
-        $estrellas, $texto_positivo, $texto_negativo, $recomendaria
+        $estrellas, $texto_positivo, $texto_negativo, $recomendaria,
+        $cat_ambiente, $cat_beneficios, $cat_balance, $cat_crecimiento
     ]);
 
     respond(true, null, 'Evaluación enviada correctamente. ¡Gracias por tu opinión!');

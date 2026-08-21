@@ -12,7 +12,7 @@ export default function Evaluaciones() {
 
   return (
     <div className="min-h-screen bg-[#f4f6fb] font-sans">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
         {/* Header */}
         <div className="mb-8">

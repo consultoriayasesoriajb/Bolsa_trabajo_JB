@@ -7,16 +7,8 @@ const BASE_URL = import.meta.env.VITE_API_URL.replace("/api", "");
 export default function EmpresaCard({ empresa }) {
   const navigate = useNavigate();
   const {
-    id,
-    nombre,
-    sector,
-    logo_url,
-    promedio,
-    total_evaluaciones,
-    total_ofertas,
-    ubicacion,
-    num_empleados,
-    descripcion,
+    id, nombre, sector, logo_url, promedio, total_evaluaciones,
+    total_ofertas, ubicacion, num_empleados, descripcion,
   } = empresa;
 
   return (
