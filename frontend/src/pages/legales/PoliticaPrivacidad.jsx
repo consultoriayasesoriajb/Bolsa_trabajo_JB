@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import Footer from "../../components/layout/Footer";
+
 
 const SECCIONES = [
   {
@@ -202,8 +202,7 @@ export default function PoliticaPrivacidad() {
         </div>
       </div>
 
-      {/* Footer */}
-      <Footer />
+
     </div>
   );
 }

@@ -28,7 +28,7 @@ export default function ApplicationCard({ aplicacion }) {
         <img
           src={`${import.meta.env.VITE_API_URL.replace('/api', '')}/${logo_url}`}
           alt={empresa}
-          className="h-12 w-12 rounded-xl object-cover shrink-0"
+          className="h-12 w-12 rounded-xl object-contain shrink-0 bg-white p-1 border border-slate-200"
         />
       ) : (
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#123498] text-sm font-bold text-white">

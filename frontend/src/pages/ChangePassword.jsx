@@ -70,7 +70,7 @@ export default function ChangePassword() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f4f6fb] px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[#F9F9F9] px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm border border-[#e8edf5] border-t-naranja border-t-2">
 
         {/* Ícono + título */}

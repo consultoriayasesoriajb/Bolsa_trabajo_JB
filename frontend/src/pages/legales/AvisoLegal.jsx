@@ -16,7 +16,7 @@ import {
   UserCircleIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
-import Footer from "../../components/layout/Footer";
+
 
 // ── Datos ────────────────────────────────────────────────────
 const CONDICIONES_IZQUIERDA = [
@@ -78,7 +78,7 @@ const CONTENIDOS = [
 // ── Componente principal ─────────────────────────────────────
 export default function AvisoLegal() {
   return (
-    <div className="min-h-screen bg-[#f4f6fb] font-sans">
+    <div className="min-h-screen bg-[#F9F9F9] font-sans">
 
       {/* ── HERO ─────────────────────────────────────────── */}
       <div className="bg-white border-b border-slate-200">
@@ -344,8 +344,7 @@ export default function AvisoLegal() {
         </div>
       </div>
 
-      {/* Footer */}
-      <Footer />
+
     </div>
   );
 }

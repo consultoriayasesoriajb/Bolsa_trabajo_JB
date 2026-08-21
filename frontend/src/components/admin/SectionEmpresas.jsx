@@ -6,9 +6,8 @@ import {
   saveCompany,
   deleteCompany,
 } from "../../services/adminService";
+import { UPLOADS_BASE_URL } from "../../services/api";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "") + "/";
 
 // Beneficios predefinidos para seleccionar fácilmente
 const BENEFICIOS_OPCIONES = [
@@ -168,7 +167,7 @@ export default function SectionEmpresas() {
         </div>
         <button
           onClick={openNew}
-          className="flex items-center justify-center gap-2 bg-[#F46F0B] hover:bg-[#d85f05] text-white px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all shrink-0"
+          className="flex items-center justify-center gap-2 bg-[#F46F0B] hover:bg-[#d85f05] text-white px-5 py-3 rounded-xl text-sm font-black uppercase tracking-wider shadow-sm transition-all shrink-0"
         >
           <Plus size={14} strokeWidth={2.8} />
           Registrar Empresa
@@ -186,7 +185,7 @@ export default function SectionEmpresas() {
           placeholder="Buscar empresa..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-9 pr-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] transition-all placeholder:text-slate-400"
+          className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] transition-all placeholder:text-slate-400"
         />
       </div>
 
@@ -201,24 +200,24 @@ export default function SectionEmpresas() {
               <div className="flex items-center gap-3">
                 {c.logo_url ? (
                   <img
-                    src={API_BASE_URL + c.logo_url}
+                    src={UPLOADS_BASE_URL + c.logo_url}
                     alt={c.nombre}
-                    className="w-10 h-10 rounded-xl object-cover shrink-0"
+                    className="w-12 h-12 rounded-xl object-contain shrink-0 bg-white border border-slate-200 p-1"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0 bg-[#123498]">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-lg shrink-0 bg-[#123498]">
                     {c.nombre.charAt(0).toUpperCase()}
                   </div>
                 )}
                 <div>
-                  <h3 className="text-sm font-black text-[#1A1A1A]">
+                  <h3 className="text-base font-black text-[#1A1A1A]">
                     {c.nombre}
                   </h3>
-                  <p className="text-[10px] text-slate-400 font-semibold">
+                  <p className="text-sm text-slate-400 font-semibold">
                     {c.sector}
                   </p>
                   {c.ubicacion && (
-                    <p className="text-[10px] text-slate-400">{c.ubicacion}</p>
+                    <p className="text-sm text-slate-400">{c.ubicacion}</p>
                   )}
                 </div>
               </div>
@@ -237,10 +236,10 @@ export default function SectionEmpresas() {
                 </button>
               </div>
             </div>
-            <p className="text-[11px] text-slate-500 leading-relaxed mb-3 line-clamp-2">
+            <p className="text-sm text-slate-500 leading-relaxed mb-3 line-clamp-2">
               {c.descripcion || "Sin descripción"}
             </p>
-            <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#123498]">
+            <div className="flex items-center gap-1.5 text-sm font-bold text-[#123498]">
               <Briefcase size={11} />
               <span>{getOffersCount(c.id)} ofertas activas</span>
             </div>
@@ -279,14 +278,14 @@ export default function SectionEmpresas() {
               <div className="grid grid-cols-2 gap-3">
                 {/* Nombre */}
                 <div>
-                  <label className="text-[10px] font-black text-azul uppercase tracking-wider mb-1 block">
+                  <label className="text-xs font-black text-azul uppercase tracking-wider mb-1 block">
                     Nombre *
                   </label>
                   <input
                     type="text"
                     value={formNombre}
                     onChange={(e) => setFormNombre(e.target.value)}
-                    className="w-full px-3 py-2.5 text-xs text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
+                    className="w-full px-3 py-2.5 text-sm text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
                     placeholder="Nombre de la empresa"
                     required
                   />
@@ -294,14 +293,14 @@ export default function SectionEmpresas() {
 
                 {/* RUC */}
                 <div>
-                  <label className="text-[10px] font-black text-azul uppercase tracking-wider mb-1 block">
+                  <label className="text-xs font-black text-azul uppercase tracking-wider mb-1 block">
                     RUC *
                   </label>
                   <input
                     type="text"
                     value={formRuc}
                     onChange={(e) => setFormRuc(e.target.value)}
-                    className="w-full px-3 py-2.5 text-xs text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
+                    className="w-full px-3 py-2.5 text-sm text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
                     placeholder="Ej: 20546321847"
                     required
                   />
@@ -309,14 +308,14 @@ export default function SectionEmpresas() {
 
                 {/* Sector */}
                 <div>
-                  <label className="text-[10px] font-black text-azul uppercase tracking-wider mb-1 block">
+                  <label className="text-xs font-black text-azul uppercase tracking-wider mb-1 block">
                     Sector *
                   </label>
                   <input
                     type="text"
                     value={formSector}
                     onChange={(e) => setFormSector(e.target.value)}
-                    className="w-full px-3 py-2.5 text-xs text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
+                    className="w-full px-3 py-2.5 text-sm text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
                     placeholder="Ej: Tecnología, Seguridad..."
                     required
                   />
@@ -324,7 +323,7 @@ export default function SectionEmpresas() {
 
                 {/* Año de fundación */}
                 <div>
-                  <label className="text-[10px] font-black text-azul uppercase tracking-wider mb-1 block">
+                  <label className="text-xs font-black text-azul uppercase tracking-wider mb-1 block">
                     Año de fundación
                   </label>
                   <input
@@ -333,7 +332,7 @@ export default function SectionEmpresas() {
                     onChange={(e) => setFormAnio(e.target.value)}
                     min="1900"
                     max={new Date().getFullYear()}
-                    className="w-full px-3 py-2.5 text-xs text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
+                    className="w-full px-3 py-2.5 text-sm text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
                     placeholder="Ej: 2005"
                   />
                 </div>
@@ -341,14 +340,14 @@ export default function SectionEmpresas() {
 
               {/* Descripción */}
               <div>
-                <label className="text-[10px] font-black text-azul uppercase tracking-wider mb-1 block">
+                <label className="text-xs font-black text-azul uppercase tracking-wider mb-1 block">
                   Descripción
                 </label>
                 <textarea
                   value={formDescripcion}
                   onChange={(e) => setFormDescripcion(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2.5 text-xs text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul resize-none"
+                  className="w-full px-3 py-2.5 text-sm text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul resize-none"
                   placeholder="Breve descripción de la empresa..."
                 />
               </div>
@@ -357,26 +356,26 @@ export default function SectionEmpresas() {
               <div className="grid grid-cols-2 gap-3">
                 {/* Ubicación*/}
                 <div>
-                  <label className="text-[10px] font-black text-azul uppercase tracking-wider mb-1 block">
+                  <label className="text-xs font-black text-azul uppercase tracking-wider mb-1 block">
                     Ubicación
                   </label>
                   <input
                     type="text"
                     value={formUbicacion}
                     onChange={(e) => setFormUbicacion(e.target.value)}
-                    className="w-full px-3 py-2.5 text-xs text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
+                    className="w-full px-3 py-2.5 text-sm text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
                     placeholder="Lima, Perú"
                   />
                 </div>
                 {/* N° de empleados */}
                 <div>
-                  <label className="text-[10px] font-black text-azul uppercase tracking-wider mb-1 block">
+                  <label className="text-xs font-black text-azul uppercase tracking-wider mb-1 block">
                     N° de empleados
                   </label>
                   <select
                     value={formEmpleados}
                     onChange={(e) => setFormEmpleados(e.target.value)}
-                    className="w-full px-3 py-2.5 text-xs text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
+                    className="w-full px-3 py-2.5 text-sm text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
                   >
                     <option value="">Sin especificar</option>
                     <option value="1-10">1 - 10</option>
@@ -390,21 +389,21 @@ export default function SectionEmpresas() {
 
               {/* Sitio web */}
               <div>
-                <label className="text-[10px] font-black text-azuluppercase tracking-wider mb-1 block">
+                <label className="text-xs font-black text-azuluppercase tracking-wider mb-1 block">
                   Sitio web
                 </label>
                 <input
                   type="url"
                   value={formWeb}
                   onChange={(e) => setFormWeb(e.target.value)}
-                  className="w-full px-3 py-2.5 text-xs text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
+                  className="w-full px-3 py-2.5 text-sm text-black/80 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
                   placeholder="https://..."
                 />
               </div>
 
               {/* Beneficios */}
               <div>
-                <label className="text-[10px] font-black text-azul uppercase tracking-wider mb-2 block">
+                <label className="text-xs font-black text-azul uppercase tracking-wider mb-2 block">
                   Beneficios destacados
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -413,7 +412,7 @@ export default function SectionEmpresas() {
                       key={b}
                       type="button"
                       onClick={() => toggleBeneficio(b)}
-                      className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-colors ${
                         formBeneficios.includes(b)
                           ? "bg-[#123498] text-white"
                           : "bg-slate-100 text-slate-500 hover:bg-[#123498]/10 hover:text-[#123498]"
@@ -427,14 +426,14 @@ export default function SectionEmpresas() {
 
               {/* Logo */}
               <div>
-                <label className="text-[10px] font-black text-azul uppercase tracking-wider mb-1 block">
+                <label className="text-xs font-black text-azul uppercase tracking-wider mb-1 block">
                   Logo de la empresa
                 </label>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp,image/svg+xml"
                   onChange={(e) => setLogoFile(e.target.files[0])}
-                  className="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-amarillo-hansa/10 file:text-amarillo-hansa hover:file:bg-amarillo-hansa/20 file:cursor-pointer"
+                  className="w-full text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-black file:uppercase file:tracking-wider file:bg-amarillo-hansa/10 file:text-amarillo-hansa hover:file:bg-amarillo-hansa/20 file:cursor-pointer"
                 />
                 <div className="mt-2">
                   {logoFile ? (
@@ -445,9 +444,9 @@ export default function SectionEmpresas() {
                     />
                   ) : editingCompany?.logo_url ? (
                     <img
-                      src={API_BASE_URL + editingCompany.logo_url}
+                      src={UPLOADS_BASE_URL + editingCompany.logo_url}
                       alt="Logo actual"
-                      className="w-16 h-16 rounded-xl object-cover border border-slate-200"
+                      className="w-16 h-16 rounded-xl object-contain bg-white border border-slate-200 p-1"
                     />
                   ) : null}
                 </div>
@@ -456,7 +455,7 @@ export default function SectionEmpresas() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-naranja hover:bg-naranja/80 disabled:opacity-50 text-white py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-colors"
+                className="w-full bg-naranja hover:bg-naranja/80 disabled:opacity-50 text-white py-3 rounded-xl text-sm font-black uppercase tracking-wider transition-colors"
               >
                 {loading
                   ? "Guardando..."
