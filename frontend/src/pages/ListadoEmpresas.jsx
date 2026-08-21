@@ -11,15 +11,15 @@ export default function Evaluaciones() {
   } = useEvaluaciones();
 
   return (
-    <div className="min-h-screen bg-[#f4f6fb] font-sans">
+    <div className="min-h-screen bg-[#f9f9f9] font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#1c2a52] font-heading">
+          <h1 className="text-2xl sm:text-3xl font-black text-[#123498] tracking-tight font-heading uppercase">
             Evaluaciones de Empresas
           </h1>
-          <p className="mt-2 text-[#6b7a9f]">
+          <p className="text-slate-400 text-base font-bold mt-1">
             Descubre la experiencia de candidatos y empleados en cada empresa.
           </p>
         </div>
