@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEvaluaciones } from "../../hooks/useEvaluaciones";
+import { useEvaluaciones } from "../../hooks/useListadoEmpresas";
 
 const BASE_URL = import.meta.env.VITE_API_URL.replace("/api", "");
 
