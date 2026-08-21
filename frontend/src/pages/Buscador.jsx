@@ -8,7 +8,6 @@ import ListaVacantes from "../components/buscador/ListaVacantes";
 import PanelDetalle from "../components/buscador/PanelDetalle";
 import { BriefcaseIcon } from "@heroicons/react/24/outline";
 
-
 const ITEMS_POR_PAGINA = 15;
 
 const FILTROS_INICIALES = {
@@ -77,11 +76,13 @@ export default function Buscador() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    vacantesService.misPostulaciones()
-      .then(ids => setVacantesPostuladas(ids.map(String)))
+    vacantesService
+      .misPostulaciones()
+      .then((ids) => setVacantesPostuladas(ids.map(String)))
       .catch(() => {});
-    favoritosService.listar()
-      .then(favs => setGuardados(new Set(favs.map(f => f.oferta_id))))
+    favoritosService
+      .listar()
+      .then((favs) => setGuardados(new Set(favs.map((f) => f.oferta_id))))
       .catch(() => {});
   }, []);
 
@@ -93,7 +94,10 @@ export default function Buscador() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target)
+      ) {
         setIsProfileMenuOpen(false);
       }
     };
@@ -125,8 +129,12 @@ export default function Buscador() {
         vacanteDetalle.categoria_nombre,
         vacanteDetalle.empresa_nombre,
         vacanteDetalle.ubicacion,
-        "empleo", "trabajo", "Perú",
-      ].filter(Boolean).join(", ");
+        "empleo",
+        "trabajo",
+        "Perú",
+      ]
+        .filter(Boolean)
+        .join(", ");
       meta.content = keywords;
     }
   }, [vacanteDetalle, panelEstado]);
@@ -169,24 +177,27 @@ export default function Buscador() {
     setRespuestasFiltro({});
   }, []);
 
-  const handleGuardar = useCallback(async (id) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-    try {
-      const resultado = await favoritosService.toggle(id);
-      setGuardados((prev) => {
-        const next = new Set(prev);
-        if (resultado.es_favorito) next.add(id);
-        else next.delete(id);
-        return next;
-      });
-    } catch {
-      // silenciar error
-    }
-  }, [navigate]);
+  const handleGuardar = useCallback(
+    async (id) => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      try {
+        const resultado = await favoritosService.toggle(id);
+        setGuardados((prev) => {
+          const next = new Set(prev);
+          if (resultado.es_favorito) next.add(id);
+          else next.delete(id);
+          return next;
+        });
+      } catch {
+        // silenciar error
+      }
+    },
+    [navigate],
+  );
 
   const handleIniciarPostulacion = useCallback(() => {
     const token = localStorage.getItem("token");
@@ -213,28 +224,39 @@ export default function Buscador() {
     setRespuestasFiltro({});
   }, []);
 
-  const handlePostularConCV = useCallback(async (cvFile) => {
-    if (!seleccionadaId || postulando) return;
+  const handlePostularConCV = useCallback(
+    async (cvFile) => {
+      if (!seleccionadaId || postulando) return;
 
-    setPostulando(true);
-    setMensajePostulacion("");
+      setPostulando(true);
+      setMensajePostulacion("");
 
-    try {
-      const result = await vacantesService.postular(seleccionadaId, respuestasFiltro, cvFile);
-      setMensajePostulacion(result.message);
-      setPostulacionStep('exito');
-      setRespuestasFiltro({});
-      setVacantesPostuladas(prev => prev.includes(String(seleccionadaId)) ? prev : [...prev, String(seleccionadaId)]);
-    } catch (err) {
-      if (err.message === "Debes iniciar sesión para postularte") {
-        navigate("/login");
-      } else {
-        setMensajePostulacion(err.message || "Error al postularte");
+      try {
+        const result = await vacantesService.postular(
+          seleccionadaId,
+          respuestasFiltro,
+          cvFile,
+        );
+        setMensajePostulacion(result.message);
+        setPostulacionStep("exito");
+        setRespuestasFiltro({});
+        setVacantesPostuladas((prev) =>
+          prev.includes(String(seleccionadaId))
+            ? prev
+            : [...prev, String(seleccionadaId)],
+        );
+      } catch (err) {
+        if (err.message === "Debes iniciar sesión para postularte") {
+          navigate("/login");
+        } else {
+          setMensajePostulacion(err.message || "Error al postularte");
+        }
+      } finally {
+        setPostulando(false);
       }
-    } finally {
-      setPostulando(false);
-    }
-  }, [seleccionadaId, respuestasFiltro, postulando, navigate]);
+    },
+    [seleccionadaId, respuestasFiltro, postulando, navigate],
+  );
 
   const handleReintentar = useCallback(() => {
     if (seleccionadaId) handleSelect(seleccionadaId);
@@ -256,7 +278,7 @@ export default function Buscador() {
     "flex items-center gap-3 px-4 py-3.5 text-[15px] font-medium text-gray-800 active:bg-gray-50 transition-colors";
 
   return (
-    <div className="min-h-dvh bg-[#eef3f9] flex flex-col overflow-x-clip font-sans antialiased text-slate-800">
+    <div className="min-h-dvh bg-[#F9F9F9] flex flex-col overflow-x-clip font-sans antialiased text-slate-800">
       {mensajePostulacion && (
         <div className="fixed top-4 right-4 z-50 animate-fade-slide">
           <div
@@ -297,8 +319,18 @@ export default function Buscador() {
                 className="ml-auto p-0.5 rounded hover:bg-black/5 transition-colors shrink-0 cursor-pointer"
                 title="Cerrar"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -320,11 +352,23 @@ export default function Buscador() {
               seleccionadaId ? "hidden lg:flex" : "flex"
             }`}
           >
-            <div className="flex items-center gap-3 bg-[#eef3f9] border-b border-gray-200/50 py-3 px-5 sticky top-0 z-40">
-              <BriefcaseIcon className="w-5 h-5 text-naranja shrink-0" strokeWidth={2} />
-              <span className="font-heading font-bold text-azul text-base">EMPLEOS PARA TI</span>
+            <div className="flex items-center justify-between py-3 mb-2 sticky top-0 z-10 bg-[#F9F9F9]">
+              <div className="flex items-center gap-2">
+                <BriefcaseIcon
+                  className="w-6 h-6 text-naranja shrink-0"
+                  strokeWidth={2}
+                />
+                <h2 className="font-heading font-black text-[#123498] tracking-tight uppercase text-lg sm:text-xl">
+                  Empleos para ti
+                </h2>
+              </div>
+              <span className="font-heading font-bold text-azul text-sm sm:text-base">
+                {listaLoading
+                  ? "Buscando..."
+                  : `${visibles.length} vacante${visibles.length !== 1 ? "s" : ""}`}
+              </span>
             </div>
-            <aside className="flex flex-col bg-[#eef3f9] rounded-lg shadow-sm">
+            <aside className="flex flex-col w-full">
               <ListaVacantes
                 vacantes={visibles}
                 seleccionadaId={seleccionadaId}

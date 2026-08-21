@@ -63,10 +63,10 @@ function ItemFAQ({ item, abierto, onToggle }) {
         type="button"
         onClick={onToggle}
         aria-expanded={abierto}
-        className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-slate-50"
+        className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-[#F9F9F9]"
       >
         <span
-          className={`text-sm font-bold leading-snug transition-colors ${
+          className={`text-base font-bold leading-snug transition-colors ${
             abierto ? "text-[#123498]" : "text-[#1c2a52]"
           }`}
         >
@@ -88,7 +88,7 @@ function ItemFAQ({ item, abierto, onToggle }) {
         } overflow-hidden`}
       >
         <div className="px-6 pb-5 border-t border-slate-100">
-          <p className="text-sm text-[#6b7a9f] leading-relaxed pt-4">
+          <p className="text-base text-[#6b7a9f] leading-relaxed pt-4">
             {item.respuesta}
           </p>
         </div>
@@ -129,7 +129,7 @@ export default function PreguntasFrecuentes() {
   };
 
   return (
-    <section id="preguntas-frecuentes" className="bg-slate-50 py-16 sm:py-20">
+    <section id="preguntas-frecuentes" className="bg-[#F9F9F9] py-16 sm:py-20">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-12">
@@ -137,7 +137,7 @@ export default function PreguntasFrecuentes() {
             Preguntas Frecuentes
           </h2>
           <div className="w-8 h-1 bg-[#F46F0B] mx-auto mt-3 mb-4 rounded-full" />
-          <p className="text-sm text-[#6b7a9f] font-medium max-w-md mx-auto leading-relaxed">
+          <p className="text-base text-[#6b7a9f] font-medium max-w-md mx-auto leading-relaxed">
             Resuelve tus dudas sobre nuestro proceso de selección y plataforma
           </p>
         </div>

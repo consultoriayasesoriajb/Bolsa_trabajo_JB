@@ -100,7 +100,7 @@ export default function SectionReclamaciones() {
             Gestiona y responde los reclamos recibidos
           </p>
         </div>
-        <div className="flex items-center gap-2 text-[10px] font-black text-slate-500">
+        <div className="flex items-center gap-2 text-xs font-black text-slate-500">
           <span className={`px-2.5 py-1 rounded-full border text-[9px] font-black uppercase tracking-wider ${ESTADO_BADGE.pendiente}`}>
             {reclamos.filter(r => r.estado === "pendiente").length} pendientes
           </span>
@@ -116,13 +116,13 @@ export default function SectionReclamaciones() {
             placeholder="Buscar por nombre o correo..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] transition-all placeholder:text-slate-400"
+            className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] transition-all placeholder:text-slate-400"
           />
         </div>
         <select
           value={filterTipo}
           onChange={e => setFilterTipo(e.target.value)}
-          className="px-3 py-2.5 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]"
+          className="px-3 py-2.5 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]"
         >
           <option value="">Todos los tipos</option>
           <option value="Reclamacion">Reclamación</option>
@@ -131,7 +131,7 @@ export default function SectionReclamaciones() {
         <select
           value={filterEstado}
           onChange={e => setFilterEstado(e.target.value)}
-          className="px-3 py-2.5 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]"
+          className="px-3 py-2.5 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]"
         >
           <option value="">Todos los estados</option>
           {ESTADOS.map(e => <option key={e} value={e}>{ESTADO_LABEL[e]}</option>)}
@@ -141,7 +141,7 @@ export default function SectionReclamaciones() {
       {/* Tabla */}
       <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-[9px] text-slate-400 uppercase tracking-widest border-b border-slate-100 bg-slate-50/50">
                 <th className="px-5 py-3.5 font-black">N°</th>
@@ -227,7 +227,7 @@ export default function SectionReclamaciones() {
                 {/* Header modal */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                    <p className="text-xs font-black text-slate-400 uppercase tracking-wider">
                       Reclamo #{String(modalReclamo.id).padStart(6, "0")}
                     </p>
                     <h2 className="text-sm font-black text-[#123498]">
@@ -243,10 +243,10 @@ export default function SectionReclamaciones() {
 
                   {/* Datos del consumidor */}
                   <section>
-                    <p className="text-[10px] font-black text-[#F46F0B] uppercase tracking-wider mb-3">
+                    <p className="text-xs font-black text-[#F46F0B] uppercase tracking-wider mb-3">
                       Datos del consumidor
                     </p>
-                    <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-xs">
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
                       {[
                         ["Documento",  `${modalReclamo.tipo_documento} - ${modalReclamo.numero_documento}`],
                         ["Celular",    modalReclamo.celular],
@@ -266,10 +266,10 @@ export default function SectionReclamaciones() {
 
                   {/* Detalle del reclamo */}
                   <section>
-                    <p className="text-[10px] font-black text-[#F46F0B] uppercase tracking-wider mb-3">
+                    <p className="text-xs font-black text-[#F46F0B] uppercase tracking-wider mb-3">
                       Detalle del reclamo
                     </p>
-                    <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-xs mb-4">
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm mb-4">
                       {[
                         ["Tipo",         modalReclamo.tipo_reclamo],
                         ["Consumo",      modalReclamo.tipo_consumo],
@@ -291,8 +291,8 @@ export default function SectionReclamaciones() {
                         ["Pedido del cliente",                modalReclamo.pedido_cliente],
                       ].map(([label, value]) => (
                         <div key={label} className="bg-slate-50 rounded-xl p-3">
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">{label}</p>
-                          <p className="text-xs text-slate-600 leading-relaxed">{value}</p>
+                          <p className="text-xs font-black text-slate-400 uppercase tracking-wider mb-1">{label}</p>
+                          <p className="text-sm text-slate-600 leading-relaxed">{value}</p>
                         </div>
                       ))}
                     </div>
@@ -300,18 +300,18 @@ export default function SectionReclamaciones() {
 
                   {/* Gestión admin */}
                   <section className="border-t border-slate-100 pt-5 flex flex-col gap-4">
-                    <p className="text-[10px] font-black text-[#123498] uppercase tracking-wider">
+                    <p className="text-xs font-black text-[#123498] uppercase tracking-wider">
                       Gestión del reclamo
                     </p>
 
                     <div>
-                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1 block">
+                      <label className="text-xs font-black text-slate-500 uppercase tracking-wider mb-1 block">
                         Estado
                       </label>
                       <select
                         value={estadoEdit}
                         onChange={e => setEstadoEdit(e.target.value)}
-                        className="w-full px-3 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]"
+                        className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]"
                       >
                         {ESTADOS.map(e => (
                           <option key={e} value={e}>{ESTADO_LABEL[e]}</option>
@@ -320,7 +320,7 @@ export default function SectionReclamaciones() {
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1 block">
+                      <label className="text-xs font-black text-slate-500 uppercase tracking-wider mb-1 block">
                         Respuesta al cliente
                       </label>
                       <textarea
@@ -328,21 +328,21 @@ export default function SectionReclamaciones() {
                         onChange={e => setRespuesta(e.target.value)}
                         rows={4}
                         placeholder="Escribe la respuesta para el cliente..."
-                        className="w-full px-3 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] resize-none"
+                        className="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] resize-none"
                       />
                     </div>
 
                     <div className="flex gap-2 justify-end">
                       <button
                         onClick={() => setModalReclamo(null)}
-                        className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-black text-slate-500 hover:bg-slate-50 transition-colors"
+                        className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-black text-slate-500 hover:bg-slate-50 transition-colors"
                       >
                         Cancelar
                       </button>
                       <button
                         onClick={handleGuardar}
                         disabled={guardando}
-                        className="px-5 py-2.5 rounded-xl bg-[#123498] hover:bg-[#0f2a80] disabled:opacity-60 text-white text-xs font-black uppercase tracking-wider transition-colors"
+                        className="px-5 py-2.5 rounded-xl bg-[#123498] hover:bg-[#0f2a80] disabled:opacity-60 text-white text-sm font-black uppercase tracking-wider transition-colors"
                       >
                         {guardando ? "Guardando..." : "Guardar cambios"}
                       </button>

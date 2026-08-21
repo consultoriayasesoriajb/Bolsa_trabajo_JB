@@ -184,8 +184,8 @@ export default function SectionOfertas() {
     )
     .filter(o => !filterEmpresa || o.empresa_nombre === filterEmpresa);
 
-  const inputCls = "w-full px-3 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]";
-  const labelCls = "text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1 block";
+  const inputCls = "w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]";
+  const labelCls = "text-xs font-black text-slate-500 uppercase tracking-wider mb-1 block";
 
   return (
     <div className="space-y-6">
@@ -195,7 +195,7 @@ export default function SectionOfertas() {
           <h1 className="text-xl font-black text-[#123498] uppercase tracking-wide">Gestión de Ofertas</h1>
           <p className="text-sm text-slate-400">Administra las convocatorias laborales</p>
         </div>
-        <button onClick={openNew} className="flex items-center justify-center gap-2 bg-[#F46F0B] hover:bg-[#d85f05] text-white px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all shrink-0">
+        <button onClick={openNew} className="flex items-center justify-center gap-2 bg-[#F46F0B] hover:bg-[#d85f05] text-white px-5 py-3 rounded-xl text-sm font-black uppercase tracking-wider shadow-sm transition-all shrink-0">
           <Plus size={14} strokeWidth={2.8} />Nueva Oferta
         </button>
       </div>
@@ -204,9 +204,9 @@ export default function SectionOfertas() {
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative max-w-sm flex-1">
           <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input type="text" placeholder="Buscar oferta..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2.5 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] transition-all placeholder:text-slate-400" />
+          <input type="text" placeholder="Buscar oferta..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] transition-all placeholder:text-slate-400" />
         </div>
-        <select value={filterEmpresa} onChange={e => setFilterEmpresa(e.target.value)} className="px-3 py-2.5 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] font-semibold text-slate-600">
+        <select value={filterEmpresa} onChange={e => setFilterEmpresa(e.target.value)} className="px-3 py-2.5 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] font-semibold text-slate-600">
           <option value="">Todas las empresas</option>
           {companies.map(c => <option key={c.id} value={c.nombre}>{c.nombre}</option>)}
         </select>
@@ -215,7 +215,7 @@ export default function SectionOfertas() {
       {/* Tabla */}
       <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-[9px] text-slate-400 uppercase tracking-widest border-b border-slate-100 bg-slate-50/50">
                 <th className="px-5 py-3.5 font-black">Título</th>
@@ -330,17 +330,17 @@ export default function SectionOfertas() {
                   <label className={labelCls}>Categoría</label>
                   {showNewCategory ? (
                     <div className="flex gap-1.5">
-                      <input type="text" value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} onKeyDown={e => e.key === "Enter" && (e.preventDefault(), handleCreateCategory())} className="flex-1 min-w-0 px-3 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]" placeholder="Nombre de categoría" autoFocus />
-                      <button type="button" onClick={handleCreateCategory} className="px-2.5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl text-xs font-bold shrink-0">✓</button>
-                      <button type="button" onClick={() => { setShowNewCategory(false); setNewCategoryName(""); }} className="px-2.5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-xl text-xs font-bold shrink-0">✕</button>
+                      <input type="text" value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} onKeyDown={e => e.key === "Enter" && (e.preventDefault(), handleCreateCategory())} className="flex-1 min-w-0 px-3 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]" placeholder="Nombre de categoría" autoFocus />
+                      <button type="button" onClick={handleCreateCategory} className="px-2.5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-bold shrink-0">✓</button>
+                      <button type="button" onClick={() => { setShowNewCategory(false); setNewCategoryName(""); }} className="px-2.5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-xl text-sm font-bold shrink-0">✕</button>
                     </div>
                   ) : (
                     <div className="flex gap-1.5">
-                      <select value={form.categoria_id} onChange={e => setForm({ ...form, categoria_id: e.target.value })} className="flex-1 min-w-0 px-3 py-2.5 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]">
+                      <select value={form.categoria_id} onChange={e => setForm({ ...form, categoria_id: e.target.value })} className="flex-1 min-w-0 px-3 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]">
                         <option value="">Sin categoría</option>
                         {categories.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
                       </select>
-                      <button type="button" onClick={() => setShowNewCategory(true)} className="px-2.5 py-2.5 bg-[#123498] hover:bg-[#0f2b7a] text-white rounded-xl text-xs font-bold shrink-0" title="Nueva categoría">+</button>
+                      <button type="button" onClick={() => setShowNewCategory(true)} className="px-2.5 py-2.5 bg-[#123498] hover:bg-[#0f2b7a] text-white rounded-xl text-sm font-bold shrink-0" title="Nueva categoría">+</button>
                     </div>
                   )}
                 </div>
@@ -433,31 +433,31 @@ export default function SectionOfertas() {
               {/* Preguntas de filtro */}
               <div className="border-t border-slate-100 pt-4">
                 <div className="flex items-center justify-between mb-3">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                  <label className="text-xs font-black text-slate-500 uppercase tracking-wider">
                     Preguntas de filtro ({preguntas.length})
                   </label>
-                  <button type="button" onClick={addPregunta} className="flex items-center gap-1 px-2.5 py-1.5 bg-[#123498] hover:bg-[#0f2b7a] text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors">
+                  <button type="button" onClick={addPregunta} className="flex items-center gap-1 px-2.5 py-1.5 bg-[#123498] hover:bg-[#0f2b7a] text-white rounded-lg text-xs font-black uppercase tracking-wider transition-colors">
                     <Plus size={11} strokeWidth={2.8} />Agregar
                   </button>
                 </div>
                 {preguntas.length === 0 && (
-                  <p className="text-[11px] text-slate-400 italic">Sin preguntas.</p>
+                  <p className="text-xs text-slate-400 italic">Sin preguntas.</p>
                 )}
                 <div className="space-y-3">
                   {preguntas.map((q, idx) => (
                     <div key={idx} className="bg-slate-50 rounded-xl p-3 space-y-2">
                       <div className="flex items-start gap-2">
-                        <span className="text-[10px] font-black text-slate-400 mt-2.5 w-4 shrink-0">{idx + 1}.</span>
+                        <span className="text-xs font-black text-slate-400 mt-2.5 w-4 shrink-0">{idx + 1}.</span>
                         <div className="flex-1 space-y-2">
-                          <input type="text" value={q.pregunta} onChange={e => updatePregunta(idx, "pregunta", e.target.value)} className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] bg-white" placeholder="Escribe la pregunta..." />
+                          <input type="text" value={q.pregunta} onChange={e => updatePregunta(idx, "pregunta", e.target.value)} className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] bg-white" placeholder="Escribe la pregunta..." />
                           <div className="flex items-center gap-2">
-                            <select value={q.tipo} onChange={e => { updatePregunta(idx, "tipo", e.target.value); if (e.target.value !== "opciones") updatePregunta(idx, "opciones", []); }} className="px-2 py-1.5 text-[10px] rounded-lg border border-slate-200 focus:outline-none bg-white">
+                            <select value={q.tipo} onChange={e => { updatePregunta(idx, "tipo", e.target.value); if (e.target.value !== "opciones") updatePregunta(idx, "opciones", []); }} className="px-2 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none bg-white">
                               <option value="texto">Texto libre</option>
                               <option value="numero">Número</option>
                               <option value="si_no">Sí / No</option>
                               <option value="opciones">Opciones</option>
                             </select>
-                            <label className="flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold cursor-pointer select-none">
+                            <label className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold cursor-pointer select-none">
                               <input type="checkbox" checked={q.obligatoria === 1} onChange={e => updatePregunta(idx, "obligatoria", e.target.checked ? 1 : 0)} className="w-3.5 h-3.5 rounded border-slate-300" />
                               Obligatoria
                             </label>
@@ -466,11 +466,11 @@ export default function SectionOfertas() {
                             <div className="space-y-1.5 pl-1">
                               {(q.opciones || []).map((opt, oi) => (
                                 <div key={oi} className="flex items-center gap-1.5">
-                                  <input type="text" value={opt} onChange={e => { const newOpts = [...q.opciones]; newOpts[oi] = e.target.value; updatePregunta(idx, "opciones", newOpts); }} className="flex-1 px-2.5 py-1.5 text-[10px] rounded-lg border border-slate-200 bg-white focus:outline-none" placeholder={`Opción ${oi + 1}`} />
+                                  <input type="text" value={opt} onChange={e => { const newOpts = [...q.opciones]; newOpts[oi] = e.target.value; updatePregunta(idx, "opciones", newOpts); }} className="flex-1 px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white focus:outline-none" placeholder={`Opción ${oi + 1}`} />
                                   <button type="button" onClick={() => updatePregunta(idx, "opciones", q.opciones.filter((_, i) => i !== oi))} className="p-1 text-slate-400 hover:text-red-500"><Trash2 size={10} /></button>
                                 </div>
                               ))}
-                              <button type="button" onClick={() => updatePregunta(idx, "opciones", [...(q.opciones || []), ""])} className="text-[10px] font-bold text-[#123498] hover:text-[#0f2b7a]">+ Agregar opción</button>
+                              <button type="button" onClick={() => updatePregunta(idx, "opciones", [...(q.opciones || []), ""])} className="text-xs font-bold text-[#123498] hover:text-[#0f2b7a]">+ Agregar opción</button>
                             </div>
                           )}
                         </div>
@@ -481,7 +481,7 @@ export default function SectionOfertas() {
                 </div>
               </div>
 
-              <button type="submit" disabled={loading} className="w-full bg-[#123498] hover:bg-[#0f2b7a] disabled:opacity-50 text-white py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-colors">
+              <button type="submit" disabled={loading} className="w-full bg-[#123498] hover:bg-[#0f2b7a] disabled:opacity-50 text-white py-3 rounded-xl text-sm font-black uppercase tracking-wider transition-colors">
                 {loading ? "Guardando..." : editingOffer ? "Guardar Cambios" : "Publicar Oferta"}
               </button>
             </form>

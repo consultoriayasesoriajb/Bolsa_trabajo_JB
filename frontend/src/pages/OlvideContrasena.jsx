@@ -53,7 +53,7 @@ export default function OlvideContrasena() {
   } = useForgotPassword();
 
   return (
-    <div className="min-h-screen bg-[#f4f6fb] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#F9F9F9] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
 
         {/* Logo / volver */}
