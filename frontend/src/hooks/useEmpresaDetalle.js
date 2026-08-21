@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { evaluacionesService } from "../services/evaluacionesService";
+import { listadoEmpresasService } from "../services/listadoEmpresasService";
 
 const FORM_INICIAL = {
   relacion: "",
@@ -26,9 +26,9 @@ export function useEmpresaDetalle(empresa_id) {
       setIsLoading(true);
       try {
         const [data, evalData] = await Promise.all([
-          evaluacionesService.detalle(empresa_id),
+          listadoEmpresasService.detalle(empresa_id),
           localStorage.getItem("token")
-            ? evaluacionesService.yaEvaluo(empresa_id)
+            ? listadoEmpresasService.yaEvaluo(empresa_id)
             : Promise.resolve({ ya_evaluo: false }),
         ]);
         setEmpresa(data);
@@ -61,11 +61,11 @@ export function useEmpresaDetalle(empresa_id) {
     if (!validateForm()) return;
     setEnviando(true);
     try {
-      await evaluacionesService.crear({ ...form, empresa_id });
+      await listadoEmpresasService.crear({ ...form, empresa_id });
       setExito(true);
       setYaEvaluo(true);
       // Recargar evaluaciones
-      const data = await evaluacionesService.detalle(empresa_id);
+      const data = await listadoEmpresasService.detalle(empresa_id);
       setEmpresa(data);
     } catch (err) {
       setErrors({ general: err.message });

@@ -24,7 +24,7 @@ export default function UserMenuDesktop({ user, isProfileMenuOpen, setIsProfileM
         <span className="bg-naranja text-white rounded-full w-8 h-8 flex items-center justify-center font-bold uppercase shadow-sm" aria-hidden="true">
           {user.nombre_completo.charAt(0)}
         </span>
-        <span className="truncate max-w-[120px] text-sm">
+        <span className="truncate max-w-30 text-sm">
           {user.nombre_completo.split(" ")[0]}
         </span>
         <ChevronDownIcon className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isProfileMenuOpen ? "rotate-180" : ""}`} aria-hidden="true" />

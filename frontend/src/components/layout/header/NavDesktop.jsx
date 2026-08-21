@@ -9,11 +9,11 @@ export default function NavDesktop({ isActive }) {
       <ul className="flex gap-6 list-none">
         <li>
           <Link
-            to="/buscar-empleo"
+            to="/empresas"
             className={navLinkClasses}
-            aria-current={isActive("/buscar-empleo") ? "page" : undefined}
+            aria-current={isActive("/empresas") ? "page" : undefined}
           >
-            Buscar empleo
+            Empresas
           </Link>
         </li>
         <li>

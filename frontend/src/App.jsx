@@ -32,16 +32,21 @@ const Applications = lazy(
 const FavoriteApplications = lazy(
   () => import("./components/profile/FavoriteApplication/FavoriteApplications"),
 );
-const Evaluaciones = lazy(() => import("./pages/Evaluaciones"));
-const EmpresaDetalle = lazy(() => import("./pages/EmpresaDetalle"));
+const ListadoEmpresas = lazy(() => import("./pages/ListadoEmpresas"));
+const PerfilEmpresa = lazy(() => import("./pages/PerfilEmpresa"));
 const OlvideContrasena = lazy(() => import("./pages/OlvideContrasena"));
 
 //legal
-const TerminosCondiciones = lazy(() => import("./pages/legales/TerminosCondiciones"));
-const PoliticaPrivacidad = lazy(() => import("./pages/legales/PoliticaPrivacidad"));
+const TerminosCondiciones = lazy(
+  () => import("./pages/legales/TerminosCondiciones"),
+);
+const PoliticaPrivacidad = lazy(
+  () => import("./pages/legales/PoliticaPrivacidad"),
+);
 const AvisoLegal = lazy(() => import("./pages/legales/AvisoLegal"));
-const LibroReclamaciones = lazy(() => import("./pages/legales/LibroReclamaciones"));
-
+const LibroReclamaciones = lazy(
+  () => import("./pages/legales/LibroReclamaciones"),
+);
 
 // ── Fallback de carga ────────────────────────────────────────────────
 const Loading = () => (
@@ -50,8 +55,7 @@ const Loading = () => (
   </div>
 );
 
-const GOOGLE_CLIENT_ID =
-  "102292791934-vdo8ihbfaqrkmvsp91r1druc46pes4ho.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 function MainLayout() {
   const location = useLocation();
@@ -90,14 +94,23 @@ function App() {
                 <Route path="postulaciones" element={<Applications />} />
                 <Route path="favoritos" element={<FavoriteApplications />} />
               </Route>
-              <Route path="/evaluaciones" element={<Evaluaciones />} />
-              <Route path="/evaluaciones/:id" element={<EmpresaDetalle />} />
+              <Route path="/empresas" element={<ListadoEmpresas />} />
+              <Route path="/empresas/:slug" element={<PerfilEmpresa />} />
 
               {/* Páginas legales — incluyen el Header via MainLayout */}
-              <Route path="/terminos-condiciones" element={<TerminosCondiciones />} />
-              <Route path="/politica-privacidad" element={<PoliticaPrivacidad />} />
+              <Route
+                path="/terminos-condiciones"
+                element={<TerminosCondiciones />}
+              />
+              <Route
+                path="/politica-privacidad"
+                element={<PoliticaPrivacidad />}
+              />
               <Route path="/aviso-legal" element={<AvisoLegal />} />
-              <Route path="/libro-reclamaciones" element={<LibroReclamaciones />} />
+              <Route
+                path="/libro-reclamaciones"
+                element={<LibroReclamaciones />}
+              />
             </Route>
 
             <Route
@@ -121,16 +134,14 @@ function App() {
             <Route path="/cuenta-validada" element={<CuentaValidada />} />
             <Route path="/revisa-tu-correo" element={<RevisaCorreo />} />
 
-            <Route path="/olvide-contrasena"      
+            <Route
+              path="/olvide-contrasena"
               element={
                 <main className="min-h-screen bg-[#f4f6fb]">
                   <OlvideContrasena />
                 </main>
-              }   
+              }
             />
-
-
-
           </Routes>
         </Suspense>
       </Router>

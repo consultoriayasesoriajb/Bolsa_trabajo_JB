@@ -19,5 +19,5 @@ export const NAV_ITEMS = [
     path: "/mi-perfil/favoritos",
     label: "Mis Favoritos",
     icon: HeartIcon,
-  },
+  }
 ];

@@ -79,7 +79,7 @@ export default function Header({ hideOnScroll = false }) {
               ) : (
                 <Link
                   to="/login"
-                  className="flex items-center justify-center w-[140px] py-2 bg-slate-50 border border-gray-200 rounded-full text-gray-700 hover:border-naranja hover:text-naranja hover:bg-orange-50 transition-all duration-300 font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-naranja text-sm"
+                  className="flex items-center justify-center w-35 py-2 bg-slate-50 border border-gray-200 rounded-full text-gray-700 hover:border-naranja hover:text-naranja hover:bg-orange-50 transition-all duration-300 font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-naranja text-sm"
                 >
                   Iniciar sesión
                 </Link>

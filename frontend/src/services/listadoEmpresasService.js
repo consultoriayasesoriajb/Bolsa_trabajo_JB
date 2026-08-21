@@ -6,8 +6,12 @@ function listarEmpresas(busqueda = "") {
   return apiFetch(`/evaluaciones/?${params}`).then(r => r.data);
 }
 
-function detalle(empresa_id) {
-  return apiFetch(`/evaluaciones/?action=detalle&empresa_id=${empresa_id}`).then(r => r.data);
+function destacadas() {
+  return apiFetch(`/evaluaciones/?action=destacadas`).then(r => r.data);
+}
+
+function detalle(slug) {
+  return apiFetch(`/evaluaciones/?action=detalle&empresa_id=${slug}`).then(r => r.data);
 }
 
 function yaEvaluo(empresa_id) {
@@ -39,7 +43,12 @@ function adminEliminar(id) {
   });
 }
 
-export const evaluacionesService = {
+function ofertasEmpresa(slug) {
+  return apiFetch(`/evaluaciones/?action=ofertas_empresa&empresa_id=${slug}`)
+    .then(r => r.data);
+}
+
+export const listadoEmpresasService = {
   listarEmpresas, detalle, yaEvaluo, crear,
-  adminListar, adminCambiarEstado, adminEliminar,
+  adminListar, adminCambiarEstado, adminEliminar, destacadas, ofertasEmpresa
 };
