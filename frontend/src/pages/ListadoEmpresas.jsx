@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useEvaluaciones } from "../hooks/useListadoEmpresas";
 import EmpresaCard from "../components/empresas/EmpresaCard";
@@ -10,16 +12,38 @@ export default function Evaluaciones() {
     pagina, setPagina, totalPaginas,
   } = useEvaluaciones();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const paginaEnUrl = Number(searchParams.get("pagina")) || 1;
+    if (paginaEnUrl !== pagina) {
+      setPagina(paginaEnUrl);
+    }
+  }, [searchParams]);
+
+  const cambiarPagina = (nuevaPagina) => {
+    setPagina(nuevaPagina); // Cambia el estado de tu hook
+    
+    // Cambia la URL
+    const params = new URLSearchParams(searchParams);
+    if (nuevaPagina > 1) {
+      params.set("pagina", nuevaPagina); // Agrega ?pagina=2
+    } else {
+      params.delete("pagina"); // Si vuelve a la pág 1, deja la URL limpia (/empresas)
+    }
+    setSearchParams(params);
+  };
+
   return (
-    <div className="min-h-screen bg-[#f4f6fb] font-sans">
+    <div className="min-h-screen bg-[#f9f9f9] font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#1c2a52] font-heading">
+          <h1 className="text-2xl sm:text-3xl font-black text-[#123498] tracking-tight font-heading uppercase">
             Evaluaciones de Empresas
           </h1>
-          <p className="mt-2 text-[#6b7a9f]">
+          <p className="text-slate-400 text-base font-bold mt-1">
             Descubre la experiencia de candidatos y empleados en cada empresa.
           </p>
         </div>
@@ -71,7 +95,7 @@ export default function Evaluaciones() {
             {/* Anterior */}
             <button
               type="button"
-              onClick={() => setPagina(p => Math.max(1, p - 1))}
+              onClick={() => cambiarPagina(p => Math.max(1, p - 1))}
               disabled={pagina === 1}
               className="flex items-center gap-1 px-4 py-2 rounded-xl border border-[#e8edf5] bg-white text-sm font-semibold text-[#6b7a9f] hover:border-[#123498] hover:text-[#123498] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
@@ -84,7 +108,7 @@ export default function Evaluaciones() {
               <button
                 key={n}
                 type="button"
-                onClick={() => setPagina(n)}
+                onClick={() => cambiarPagina(n)}
                 className={`w-9 h-9 rounded-xl text-sm font-bold transition-colors ${
                   n === pagina
                     ? "bg-[#123498] text-white"
@@ -98,7 +122,7 @@ export default function Evaluaciones() {
             {/* Siguiente */}
             <button
               type="button"
-              onClick={() => setPagina(p => Math.min(totalPaginas, p + 1))}
+              onClick={() => cambiarPagina(p => Math.min(totalPaginas, p + 1))}
               disabled={pagina === totalPaginas}
               className="flex items-center gap-1 px-4 py-2 rounded-xl border border-[#e8edf5] bg-white text-sm font-semibold text-[#6b7a9f] hover:border-[#123498] hover:text-[#123498] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >

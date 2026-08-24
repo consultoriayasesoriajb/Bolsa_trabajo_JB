@@ -34,7 +34,7 @@ export default function EmpresaHeader({ empresa, totalOfertas }) {
           </div>
 
           {/* Estrellas + opiniones */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center flex-wrap gap-2">
             <span className="text-base font-black text-[#1c2a52]">
               {empresa.promedio ? Number(empresa.promedio).toFixed(1) : "—"}
             </span>
@@ -49,7 +49,7 @@ export default function EmpresaHeader({ empresa, totalOfertas }) {
               {empresa.total_evaluaciones} {empresa.total_evaluaciones === 1 ? "opinión" : "opiniones"}
             </span>
 
-            <div className="border border-[#dedfe2] h-4 ml-2"></div>
+            <div className="hidden sm:block border border-[#dedfe2] h-4 ml-2"></div>
 
             {/* Badge busca activamente */}
             {buscaActivamente && (
@@ -63,7 +63,7 @@ export default function EmpresaHeader({ empresa, totalOfertas }) {
 
       {/* Derecha: total empleos */}
       {buscaActivamente && (
-        <div className="text-right shrink-0">
+        <div className="text-left sm:text-right mt-2 sm:mt-0 shrink-0">
           <span className="text-2xl font-black text-azul">{totalOfertas}</span>
           <p className="text-xs text-[#9aa3bd]">empleos disponibles</p>
         </div>
