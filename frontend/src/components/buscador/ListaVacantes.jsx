@@ -79,7 +79,7 @@ export default function ListaVacantes({
             <TarjetaVacante
               key={v.id}
               vacante={v}
-              seleccionada={v.id === seleccionadaId}
+              seleccionada={String(v.id) === seleccionadaId}
               onClick={() => onSelect(v.id)}
               esGuardada={guardados?.has(v.id)}
               onGuardar={onGuardar}
