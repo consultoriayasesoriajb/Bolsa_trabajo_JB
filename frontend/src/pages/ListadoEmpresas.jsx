@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useEvaluaciones } from "../hooks/useListadoEmpresas";
 import EmpresaCard from "../components/empresas/EmpresaCard";
@@ -9,6 +11,28 @@ export default function Evaluaciones() {
     busqueda, setBusqueda,
     pagina, setPagina, totalPaginas,
   } = useEvaluaciones();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const paginaEnUrl = Number(searchParams.get("pagina")) || 1;
+    if (paginaEnUrl !== pagina) {
+      setPagina(paginaEnUrl);
+    }
+  }, [searchParams]);
+
+  const cambiarPagina = (nuevaPagina) => {
+    setPagina(nuevaPagina); // Cambia el estado de tu hook
+    
+    // Cambia la URL
+    const params = new URLSearchParams(searchParams);
+    if (nuevaPagina > 1) {
+      params.set("pagina", nuevaPagina); // Agrega ?pagina=2
+    } else {
+      params.delete("pagina"); // Si vuelve a la pág 1, deja la URL limpia (/empresas)
+    }
+    setSearchParams(params);
+  };
 
   return (
     <div className="min-h-screen bg-[#f9f9f9] font-sans">
@@ -71,7 +95,7 @@ export default function Evaluaciones() {
             {/* Anterior */}
             <button
               type="button"
-              onClick={() => setPagina(p => Math.max(1, p - 1))}
+              onClick={() => cambiarPagina(p => Math.max(1, p - 1))}
               disabled={pagina === 1}
               className="flex items-center gap-1 px-4 py-2 rounded-xl border border-[#e8edf5] bg-white text-sm font-semibold text-[#6b7a9f] hover:border-[#123498] hover:text-[#123498] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
@@ -84,7 +108,7 @@ export default function Evaluaciones() {
               <button
                 key={n}
                 type="button"
-                onClick={() => setPagina(n)}
+                onClick={() => cambiarPagina(n)}
                 className={`w-9 h-9 rounded-xl text-sm font-bold transition-colors ${
                   n === pagina
                     ? "bg-[#123498] text-white"
@@ -98,7 +122,7 @@ export default function Evaluaciones() {
             {/* Siguiente */}
             <button
               type="button"
-              onClick={() => setPagina(p => Math.min(totalPaginas, p + 1))}
+              onClick={() => cambiarPagina(p => Math.min(totalPaginas, p + 1))}
               disabled={pagina === totalPaginas}
               className="flex items-center gap-1 px-4 py-2 rounded-xl border border-[#e8edf5] bg-white text-sm font-semibold text-[#6b7a9f] hover:border-[#123498] hover:text-[#123498] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >

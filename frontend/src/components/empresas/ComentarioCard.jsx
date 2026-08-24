@@ -5,15 +5,15 @@ import { StarIcon } from "@heroicons/react/24/outline";
 import StarRating from "./StarRating";
 
 const RELACION_LABEL = {
-  candidato:    "Candidato en proceso",
-  empleado:     "Empleado",
-  "ex-empleado": "Ex-empleado",
+  candidato: "Candidato en proceso",
+  empleado: "Empleado",
+  "ex-empleado": "Ex colaborador",
 };
 
 const RECOMENDARIA_LABEL = {
-  si:      "Sí la recomendaría",
-  no:      "No la recomendaría",
-  depende: "Depende",
+  si: "Sí la recomendaría",
+  no: "No la recomendaría",
+  depende: "Depende del perfil",
 };
 
 const RECOMENDARIA_STYLE = {
@@ -40,7 +40,7 @@ function MiniStars({ value }) {
       {[1,2,3,4,5].map(s =>
         s <= Math.round(value || 0)
           ? <StarSolid key={s} className="w-3.5 h-3.5 text-[#FDB907]" />
-          : <StarIcon  key={s} className="w-3.5 h-3.5 text-[#e8edf5]" />
+          : <StarIcon  key={s} className="w-3.5 h-3.5 text-[#9aa3bd]" />
       )}
       <span className="ml-1 text-xs font-bold text-[#1c2a52]">
         {Number(value).toFixed(1)}
@@ -59,7 +59,7 @@ export default function ComentarioCard({ evaluacion }) {
     cat_ambiente, cat_beneficios, cat_balance, cat_crecimiento,
   } = evaluacion;
 
-  const tieneCategorias = cat_ambiente || cat_beneficios || cat_balance || cat_crecimiento;
+  const tieneCategorias = Number(cat_ambiente) > 0 || Number(cat_beneficios) > 0 || Number(cat_balance) > 0  || Number(cat_crecimiento) > 0;
 
   return (
     <div className="bg-white rounded-2xl border border-[#e8edf5] shadow-sm overflow-hidden">
@@ -75,7 +75,7 @@ export default function ComentarioCard({ evaluacion }) {
             </div>
             <div className="flex flex-col gap-0.5">
               <span className="text-sm font-bold text-[#1c2a52]">
-                {RELACION_LABEL[relacion] || relacion}
+                {RELACION_LABEL[relacion?.trim()?.toLowerCase()] || relacion}
               </span>
               <span className="text-xs text-[#9aa3bd] flex items-center gap-1">
                 <ClockIcon className="w-3.5 h-3.5" />
@@ -84,23 +84,28 @@ export default function ComentarioCard({ evaluacion }) {
             </div>
           </div>
           <div className="flex flex-col items-end gap-1 shrink-0">
-            <StarRating value={estrellas} size="sm" />
+            <div className="flex flex-row items-center gap-1">
+              <StarRating value={estrellas} size="sm" />
+              <span className="font-bold text-[#1c2a52] text-xs mr-1">
+                {Number(estrellas).toFixed(1)}
+              </span>
+            </div>
             <span className="text-[10px] text-[#9aa3bd]">Calificación general</span>
           </div>
         </div>
 
         {/* Textos */}
         {texto_positivo && (
-          <div className="border-l-2 border-green-400 pl-3">
-            <p className="text-[10px] font-black text-green-600 uppercase tracking-wider mb-1">
-              Lo que destaca
+          <div className="border-l-4 border-[#91cdbb] pl-3">
+            <p className="text-[10px] font-black text-[#9ca0ba] uppercase tracking-wider mb-1">
+              destacable
             </p>
             <p className="text-sm text-[#3a4566] leading-relaxed">{texto_positivo}</p>
           </div>
         )}
         {texto_negativo && (
-          <div className="border-l-2 border-red-400 pl-3">
-            <p className="text-[10px] font-black text-red-500 uppercase tracking-wider mb-1">
+          <div className="border-l-4 border-[#ced4e3] pl-3">
+            <p className="text-[10px] font-black text-[#9ca0ba] uppercase tracking-wider mb-1">
               Lo que mejoraría
             </p>
             <p className="text-sm text-[#3a4566] leading-relaxed">{texto_negativo}</p>
@@ -119,7 +124,7 @@ export default function ComentarioCard({ evaluacion }) {
               onClick={() => setExpandido(v => !v)}
               className="flex items-center gap-1 text-xs font-semibold text-[#123498] hover:text-[#0f2a80] transition-colors"
             >
-              {expandido ? "Ocultar" : "Más detalle"}
+              {expandido ? "Ocultar categorías" : "Ver calificación por categoría"}
               {expandido
                 ? <ChevronUpIcon   className="w-3.5 h-3.5" />
                 : <ChevronDownIcon className="w-3.5 h-3.5" />
@@ -130,13 +135,13 @@ export default function ComentarioCard({ evaluacion }) {
       </div>
 
       {/* Panel expandible — categorías */}
-      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+      <div className={`bg-[#f8fafd] transition-all duration-300 ease-in-out overflow-hidden ${
         expandido ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
       }`}>
         <div className="border-t border-[#e8edf5] px-5 py-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
           {CATEGORIAS.map(({ key, label }) => {
             const val = evaluacion[key];
-            if (!val) return null;
+            if (!Number(val)) return null;
             return (
               <div key={key} className="flex flex-col gap-1.5">
                 <span className="text-[10px] text-[#9aa3bd] font-semibold">{label}</span>

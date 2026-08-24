@@ -27,17 +27,23 @@ export default function OfertaEmpresaCard({ oferta, onVerEmpleo }) {
     <div className="bg-white rounded-2xl border border-[#e8edf5] p-5 shadow-sm hover:shadow-md transition-all flex flex-col gap-3">
 
       {/* Header */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex flex-col gap-1 min-w-0">
+      <div className="flex flex-col gap-1 min-w-0">
+        <div className="flex flex-row gap-1">
+          {fecha_publicacion && (
+            <span className="shrink-0 text-[10px] text-[#9aa3bd] whitespace-nowrap">
+              {formatFecha(fecha_publicacion)}
+            </span>
+          )}
           {esNueva && (
             <span className="self-start text-[10px] font-black uppercase tracking-wider text-[#41C4C0] bg-[#41C4C0]/10 px-2.5 py-0.5 rounded-full mb-1">
               NUEVO
             </span>
           )}
-          <h3 className="font-bold text-[#1c2a52] text-sm font-heading leading-snug">
+        </div>
+        <h3 className="font-bold text-[#1c2a52] text-sm font-heading leading-snug">
             {titulo}
-          </h3>
-          <div className="flex items-center gap-3 flex-wrap text-xs text-[#9aa3bd]">
+        </h3>
+        <div className="flex items-center gap-3 flex-wrap text-xs text-[#9aa3bd]">
             {ubicacion && (
               <span className="flex items-center gap-1">
                 <MapPinIcon className="w-3.5 h-3.5 shrink-0" />
@@ -59,14 +65,7 @@ export default function OfertaEmpresaCard({ oferta, onVerEmpleo }) {
                 {salario_max && ` – ${Number(salario_max).toLocaleString()}`}
               </span>
             )}
-          </div>
         </div>
-
-        {fecha_publicacion && (
-          <span className="shrink-0 text-[10px] text-[#9aa3bd] whitespace-nowrap">
-            {formatFecha(fecha_publicacion)}
-          </span>
-        )}
       </div>
 
       {/* Descripción */}

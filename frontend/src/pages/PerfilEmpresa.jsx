@@ -58,7 +58,7 @@ export default function PerfilEmpresa() {
           <EmpresaInfoPanel empresa={empresa} />
 
           {/* Panel derecho */}
-          <div className="flex-1 min-w-0 flex flex-col gap-4">
+          <div className="flex-1 min-w-0 w-full flex flex-col gap-4">
             <EmpresaTabs
               pestana={pestana}
               setPestana={setPestana}
