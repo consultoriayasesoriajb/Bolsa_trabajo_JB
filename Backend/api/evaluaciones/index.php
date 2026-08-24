@@ -100,7 +100,9 @@ if ($method === 'GET' && $action === 'detalle') {
         SELECT 
             ev.id, ev.relacion, ev.tiempo_relacion,
             ev.estrellas, ev.texto_positivo, ev.texto_negativo,
-            ev.recomendaria, ev.fecha_creacion,
+            ev.recomendaria, 
+            ev.cat_ambiente, ev.cat_beneficios, ev.cat_balance, ev.cat_crecimiento, 
+            ev.fecha_creacion,
             CONCAT(
                 UPPER(LEFT(u.nombre_completo, 1)),
                 '.',
