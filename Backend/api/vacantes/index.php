@@ -58,6 +58,7 @@ if ($method === 'GET' && $action === 'listar') {
         SELECT
             o.id,
             o.titulo,
+            o.slug,
             o.ubicacion,
             o.salario_min,
             o.salario_max,
@@ -113,24 +114,25 @@ if ($method === 'GET' && $action === 'categorias') {
 
 // ─── DETALLE DE VACANTE ───────────────────────────────────
 if ($method === 'GET' && $action === 'detalle') {
-    $id = $_GET['id'] ?? null;
-    if (!$id) respondError('ID de vacante requerido.');
+    $identificador = $_GET['id'] ?? null;
+    if (!$identificador) respondError('ID o slug de vacante requerido.');
 
     $stmt = $db->prepare("
-        SELECT o.*, e.nombre as empresa_nombre, e.logo_url, e.sector,
+        SELECT o.*, e.nombre as empresa_nombre, e.slug as empresa_slug, e.logo_url, e.sector,
                e.descripcion as empresa_descripcion,
                c.nombre as categoria_nombre
         FROM ofertas_trabajo o
         LEFT JOIN empresas_clientes e ON o.empresa_id = e.id
         LEFT JOIN categorias c ON o.categoria_id = c.id
-        WHERE o.id = ? AND o.estado = 'activa'
+        WHERE (o.id = ? OR o.slug = ?) AND o.estado = 'activa'
     ");
-    $stmt->execute([$id]);
+    $stmt->execute([$identificador, $identificador]);
     $row = $stmt->fetch();
     if (!$row) respondError('Vacante no encontrada.', 404);
 
+    $real_id = $row['id'];
     $stmtP = $db->prepare("SELECT * FROM preguntas_oferta WHERE oferta_id = ? ORDER BY orden ASC");
-    $stmtP->execute([$id]);
+    $stmtP->execute([$real_id]);
     $preguntas = $stmtP->fetchAll();
     foreach ($preguntas as &$p) {
         if (isset($p['opciones']) && is_string($p['opciones'])) {

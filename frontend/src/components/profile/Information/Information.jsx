@@ -17,9 +17,12 @@ import { userService } from "../../../services/userService";
 
 const Information = () => {
   const {
-    telefono, setTelefono,
-    presentacion, setPresentacion,
-    cvArchivo, setCvArchivo,
+    telefono,
+    setTelefono,
+    presentacion,
+    setPresentacion,
+    cvArchivo,
+    setCvArchivo,
     errors,
     clearError,
     isDirty,
@@ -59,15 +62,12 @@ const Information = () => {
       />
 
       <form onSubmit={handleGuardar} className="space-y-6">
-
         {/* ── DOS COLUMNAS ─────────────────────────────────────── */}
         <div className="grid grid-cols-1 gap-1 lg:grid-cols-2 lg:gap-6 items-start">
-
           {/* COLUMNA IZQUIERDA — Datos personales */}
           <div className="flex flex-col">
             <SectionCard icon={UserIcon} title="Datos personales" tone="blue">
               <div className="flex flex-col gap-4">
-
                 {/* Nombre — solo lectura */}
                 <Field label="Nombre completo">
                   <TextInput
@@ -94,9 +94,11 @@ const Information = () => {
                 {/* Teléfono — editable */}
                 <Field
                   label="Número de teléfono"
-                  hint={!errors.telefono
-                    ? "Usaremos este número para contactarte sobre postulaciones activas."
-                    : undefined}
+                  hint={
+                    !errors.telefono
+                      ? "Usaremos este número para contactarte sobre postulaciones activas."
+                      : undefined
+                  }
                 >
                   <TextInput
                     inputMode="tel"
@@ -110,7 +112,9 @@ const Information = () => {
                     aria-label="Número de teléfono"
                   />
                   {errors.telefono && (
-                    <p className="mt-2 text-xs text-red-500">{errors.telefono}</p>
+                    <p className="mt-2 text-xs text-red-500">
+                      {errors.telefono}
+                    </p>
                   )}
                 </Field>
               </div>
@@ -142,9 +146,12 @@ const Information = () => {
 
           {/* COLUMNA DERECHA — Datos de postulante */}
           <div className="flex flex-col gap-6">
-            <SectionCard icon={DocumentTextIcon} title="Datos de postulante" tone="orange">
+            <SectionCard
+              icon={DocumentTextIcon}
+              title="Datos de postulante"
+              tone="orange"
+            >
               <div className="flex flex-col gap-6">
-
                 {/* CV */}
                 <Field label="Currículum (CV)">
                   <CvUploader
@@ -158,7 +165,9 @@ const Information = () => {
                 {/* Presentación */}
                 <Field
                   label="Presentación personal"
-                  hint={!errors.presentacion ? "Máximo 500 caracteres" : undefined}
+                  hint={
+                    !errors.presentacion ? "Máximo 500 caracteres" : undefined
+                  }
                   hintAlign="right"
                 >
                   <TextArea
@@ -173,7 +182,9 @@ const Information = () => {
                     focusColor={errors.presentacion ? "#ef4444" : "#41C4C0"}
                   />
                   {errors.presentacion && (
-                    <p className="mt-2 text-xs text-red-500">{errors.presentacion}</p>
+                    <p className="mt-2 text-xs text-red-500">
+                      {errors.presentacion}
+                    </p>
                   )}
                 </Field>
               </div>
@@ -200,7 +211,7 @@ const Information = () => {
             type="button"
             aria-label="Descartar cambios"
             onClick={handleDescartar}
-            className="rounded-xl border-[1.5px] border-[#cdd6ea] bg-white px-[22px] py-3 text-sm font-semibold text-[#123498] transition hover:bg-[#f2f5fc]"
+            className="rounded-xl border-[1.5px] border-[#cdd6ea] bg-white px-5.5 py-3 text-sm font-semibold text-[#123498] transition hover:bg-[#f2f5fc]"
           >
             Descartar cambios
           </button>

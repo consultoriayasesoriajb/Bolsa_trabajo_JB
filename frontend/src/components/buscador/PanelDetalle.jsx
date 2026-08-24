@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
 import {
   StarIcon,
@@ -148,8 +149,18 @@ export default function PanelDetalle({
                   className="lg:hidden self-start p-1.5 -ml-1 rounded-md hover:bg-gray-100 transition-colors cursor-pointer"
                   title="Volver a la lista"
                 >
-                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  <svg
+                    className="w-5 h-5 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
                   </svg>
                 </button>
               )}
@@ -171,7 +182,25 @@ export default function PanelDetalle({
               }`}
             >
               <div className="flex items-center gap-2.5">
-                {vacante.logo_url ? (
+                {vacante.empresa_slug ? (
+                  <Link
+                    to={`/empresas/${vacante.empresa_slug}`}
+                    className="flex shrink-0"
+                  >
+                    {vacante.logo_url ? (
+                      <img
+                        src={`${BASE_URL}/${vacante.logo_url}`}
+                        alt={vacante.empresa_nombre}
+                        className="w-15 h-15 rounded-lg object-contain border border-gray-100 bg-white p-0.5 shadow-sm"
+                      />
+                    ) : (
+                      <div className="w-15 h-15 rounded-lg bg-naranja flex items-center justify-center text-white font-black text-xs shadow-sm">
+                        {vacante.empresa_nombre?.slice(0, 2).toUpperCase() ??
+                          "EM"}
+                      </div>
+                    )}
+                  </Link>
+                ) : vacante.logo_url ? (
                   <img
                     src={`${BASE_URL}/${vacante.logo_url}`}
                     alt={vacante.empresa_nombre}
@@ -182,20 +211,33 @@ export default function PanelDetalle({
                     {vacante.empresa_nombre?.slice(0, 2).toUpperCase() ?? "EM"}
                   </div>
                 )}
+
                 <div className="flex items-center gap-2 flex-wrap min-w-0">
-                  <span className="text-base font-bold text-naranja truncate">
-                    {vacante.empresa_nombre}
-                  </span>
-                  <button
-                    type="button"
-                    title="Ver perfil de la empresa"
-                    className="p-0.5 rounded hover:bg-orange-50 transition-colors cursor-pointer shrink-0"
-                  >
-                    <ArrowTopRightOnSquareIcon
-                      className="w-4 h-4 text-naranja/60 hover:text-naranja transition-colors"
-                      strokeWidth={2}
-                    />
-                  </button>
+                  {vacante.empresa_slug ? (
+                    <Link
+                      to={`/empresas/${vacante.empresa_slug}`}
+                      className="text-base font-bold text-naranja truncate hover:underline"
+                    >
+                      {vacante.empresa_nombre}
+                    </Link>
+                  ) : (
+                    <span className="text-base font-bold text-naranja truncate">
+                      {vacante.empresa_nombre}
+                    </span>
+                  )}
+
+                  {vacante.empresa_slug && (
+                    <Link
+                      to={`/empresas/${vacante.empresa_slug}`}
+                      title="Ver perfil de la empresa"
+                      className="p-0.5 rounded hover:bg-orange-50 transition-colors cursor-pointer shrink-0"
+                    >
+                      <ArrowTopRightOnSquareIcon
+                        className="w-4 h-4 text-naranja/60 hover:text-naranja transition-colors"
+                        strokeWidth={2}
+                      />
+                    </Link>
+                  )}
                   {tieneRating && (
                     <MiniStars
                       promedio={vacante.promedio}
@@ -214,7 +256,10 @@ export default function PanelDetalle({
             >
               {vacante.ubicacion && (
                 <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
-                  <MapPinIcon className="w-3.5 h-3.5 shrink-0 text-gray-400" strokeWidth={2} />
+                  <MapPinIcon
+                    className="w-3.5 h-3.5 shrink-0 text-gray-400"
+                    strokeWidth={2}
+                  />
                   {vacante.ubicacion}
                 </div>
               )}
@@ -227,13 +272,25 @@ export default function PanelDetalle({
               }`}
             >
               <div className="flex items-center gap-1.5 text-xs text-gray-500 truncate">
-                <span className="font-semibold text-naranja truncate">
-                  {vacante.empresa_nombre}
-                </span>
+                {vacante.empresa_slug ? (
+                  <Link
+                    to={`/empresas/${vacante.empresa_slug}`}
+                    className="font-semibold text-naranja truncate hover:underline"
+                  >
+                    {vacante.empresa_nombre}
+                  </Link>
+                ) : (
+                  <span className="font-semibold text-naranja truncate">
+                    {vacante.empresa_nombre}
+                  </span>
+                )}
                 {vacante.ubicacion && (
                   <>
                     <span className="text-gray-300">·</span>
-                    <MapPinIcon className="w-3 h-3 shrink-0 text-gray-400" strokeWidth={2} />
+                    <MapPinIcon
+                      className="w-3 h-3 shrink-0 text-gray-400"
+                      strokeWidth={2}
+                    />
                     <span className="truncate">{vacante.ubicacion}</span>
                   </>
                 )}
@@ -364,7 +421,11 @@ export default function PanelDetalle({
       </div>
 
       {/* ── Cuerpo scrolleable ── */}
-      <div ref={bodyRef} onScroll={handleScroll} className="flex-1 overflow-y-auto">
+      <div
+        ref={bodyRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto"
+      >
         {/* Paso: preguntas de filtrado */}
         {postulacionStep === "preguntas" && vacante && (
           <PreguntasFiltro

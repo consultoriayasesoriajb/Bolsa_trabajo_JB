@@ -89,6 +89,7 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<Home />} />
               <Route path="/buscar-empleo" element={<Buscador />} />
+              <Route path="/buscar-empleo/:slug" element={<Buscador />} />
               <Route path="/mi-perfil" element={<Profile />}>
                 <Route index element={<Information />} />
                 <Route path="postulaciones" element={<Applications />} />

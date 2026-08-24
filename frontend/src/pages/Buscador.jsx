@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link, useParams } from "react-router-dom";
 import { vacantesService } from "../services/vacantesService";
 import { authService } from "../services/authService";
 import { favoritosService } from "../services/favoritosService";
@@ -21,6 +21,7 @@ const FILTROS_INICIALES = {
 export default function Buscador() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { slug } = useParams();
 
   const [user, setUser] = useState(null);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -61,15 +62,21 @@ export default function Buscador() {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const vacanteId = params.get("vacante");
-    if (vacanteId) {
-      handleSelect(vacanteId);
+    if (slug) {
+      handleSelect(slug);
       cargarLista(FILTROS_INICIALES);
     } else {
-      cargarLista(FILTROS_INICIALES).then((primerId) => {
-        if (primerId) handleSelect(primerId);
-      });
+      // Compatibilidad con query param ?vacante=id
+      const params = new URLSearchParams(location.search);
+      const vacanteId = params.get("vacante");
+      if (vacanteId) {
+        handleSelect(vacanteId);
+        cargarLista(FILTROS_INICIALES);
+      } else {
+        cargarLista(FILTROS_INICIALES).then((primerId) => {
+          if (primerId) handleSelect(primerId);
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -172,8 +179,7 @@ export default function Buscador() {
     [cargarLista],
   );
 
-  const handleSelect = useCallback(async (id) => {
-    setSeleccionadaId(String(id));
+  const handleSelect = useCallback(async (idOrSlug) => {
     setPanelEstado("loading");
     setVacanteDetalle(null);
     setMensajePostulacion("");
@@ -181,14 +187,20 @@ export default function Buscador() {
     setRespuestasFiltro({});
 
     try {
-      const data = await vacantesService.detalle(id);
+      const data = await vacantesService.detalle(idOrSlug);
+      setSeleccionadaId(String(data.id));
       setVacanteDetalle(data);
       setPanelEstado("detail");
+      
+      // Actualizar la URL con el slug si es posible, sin añadir al historial
+      if (data.slug) {
+        navigate(`/buscar-empleo/${data.slug}`, { replace: true });
+      }
     } catch {
       setPanelEstado("error");
       setVacanteDetalle(null);
     }
-  }, []);
+  }, [navigate]);
 
   const handleVolver = useCallback(() => {
     setSeleccionadaId(null);
@@ -196,7 +208,8 @@ export default function Buscador() {
     setPanelEstado("empty");
     setPostulacionStep(null);
     setRespuestasFiltro({});
-  }, []);
+    navigate("/buscar-empleo", { replace: true });
+  }, [navigate]);
 
   const handleGuardar = useCallback(
     async (id) => {
