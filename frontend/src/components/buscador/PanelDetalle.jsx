@@ -6,10 +6,12 @@ import {
   HeartIcon,
   MapPinIcon,
   ArrowTopRightOnSquareIcon,
+  ShareIcon,
 } from "@heroicons/react/24/outline";
 import DetalleVacante from "./DetalleVacante";
 import PreguntasFiltro from "./PreguntasFiltro";
 import ConfirmacionCV from "./ConfirmacionCV";
+import CompartirModal from "./CompartirModal";
 
 const BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "") ?? "";
 
@@ -105,8 +107,10 @@ export default function PanelDetalle({
   yaPostulada = false,
   esGuardada = false,
   onGuardar,
+  onCompartir,
 }) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [compartirAbierto, setCompartirAbierto] = useState(false);
   const bodyRef = useRef(null);
 
   const handleScroll = useCallback(() => {
@@ -297,13 +301,15 @@ export default function PanelDetalle({
               </div>
             </div>
 
-            {/* Acciones: postularme + favorito — siempre visibles */}
+            {/* Acciones: postularme + favorito + compartir — siempre visibles */}
             <div className="flex items-center gap-2">
               <BotonPostular
                 expirada={expirada}
                 yaPostulada={yaPostulada}
                 onPostular={onPostular}
               />
+
+              {/* Botón favorito */}
               <button
                 type="button"
                 onClick={() => onGuardar?.(vacante.id)}
@@ -321,7 +327,32 @@ export default function PanelDetalle({
                   strokeWidth={2}
                 />
               </button>
+
+              {/* Botón compartir */}
+              <button
+                type="button"
+                onClick={() => setCompartirAbierto(true)}
+                title="Compartir vacante"
+                className="w-10 h-10 rounded-full flex items-center justify-center active:scale-95 transition-all cursor-pointer border bg-white border-gray-200 hover:bg-indigo-50 hover:border-indigo-200 group"
+              >
+                <ShareIcon
+                  className="w-5 h-5 text-gray-400 group-hover:text-indigo-500 transition-colors"
+                  strokeWidth={2}
+                />
+              </button>
+
+              {/* Contador de compartidos — extremo derecho */}
+              {vacante.compartidos_count > 0 && (
+                <span className="ml-auto flex items-center gap-1 text-xs text-gray-400">
+                  <ShareIcon className="w-3.5 h-3.5 shrink-0" strokeWidth={2} />
+                  {vacante.compartidos_count >= 1000
+                    ? `${(vacante.compartidos_count / 1000).toFixed(1)}k`
+                    : vacante.compartidos_count}{" "}
+                  compartido{vacante.compartidos_count !== 1 ? "s" : ""}
+                </span>
+              )}
             </div>
+
           </div>
         ) : (
           /* ── Header simple para estados loading / empty / error ── */
@@ -622,6 +653,15 @@ export default function PanelDetalle({
           </div>
         )}
       </div>
+
+      {/* Modal compartir */}
+      {compartirAbierto && vacante && (
+        <CompartirModal
+          vacante={vacante}
+          onClose={() => setCompartirAbierto(false)}
+          onCompartido={() => onCompartir?.(vacante.id)}
+        />
+      )}
     </div>
   );
 }

@@ -296,6 +296,23 @@ export default function Buscador() {
     if (seleccionadaId) handleSelect(seleccionadaId);
   }, [seleccionadaId, handleSelect]);
 
+  const handleCompartir = useCallback(
+    async (id) => {
+      try {
+        const res = await vacantesService.compartir(id);
+        // Actualizar el contador localmente en el detalle
+        setVacanteDetalle((prev) =>
+          prev && String(prev.id) === String(id)
+            ? { ...prev, compartidos_count: res.data?.compartidos_count ?? (prev.compartidos_count || 0) + 1 }
+            : prev
+        );
+      } catch {
+        /* silenciar: el usuario ya compartió aunque falle el registro */
+      }
+    },
+    [],
+  );
+
   const handleLogout = () => {
     authService.logout();
     setUser(null);
@@ -511,6 +528,7 @@ export default function Buscador() {
               yaPostulada={vacantesPostuladas.includes(seleccionadaId)}
               esGuardada={vacanteDetalle ? guardados.has(vacanteDetalle.id) : false}
               onGuardar={handleGuardar}
+              onCompartir={handleCompartir}
             />
           </main>
         </div>

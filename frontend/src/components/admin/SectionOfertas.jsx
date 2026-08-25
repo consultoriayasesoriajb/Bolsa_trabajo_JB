@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   Plus, Search, Edit3, Trash2, X, Lock,
-  ToggleLeft, ToggleRight, ChevronDown, ChevronUp
+  ToggleLeft, ToggleRight, ChevronDown, ChevronUp, Share2
 } from "lucide-react";
 import {
   getOffers, getCompanies, saveOffer, deleteOffer,
@@ -241,7 +241,18 @@ export default function SectionOfertas() {
                         <span className="lg:hidden text-slate-300">
                           {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                         </span>
-                        {o.titulo}
+                        <span className="flex flex-col gap-0.5">
+                          <span>{o.titulo}</span>
+                          {(o.compartidos_count > 0) && (
+                            <span className="flex items-center gap-1 text-[10px] font-semibold text-slate-400">
+                              <Share2 size={10} strokeWidth={2} />
+                              {o.compartidos_count >= 1000
+                                ? `${(o.compartidos_count / 1000).toFixed(1)}k`
+                                : o.compartidos_count}{" "}
+                              compartido{o.compartidos_count !== 1 ? "s" : ""}
+                            </span>
+                          )}
+                        </span>
                       </span>
                     </td>
                     <td className="px-5 py-3.5 text-slate-500">{o.empresa_nombre}</td>
