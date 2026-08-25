@@ -181,31 +181,37 @@ export default function Buscador() {
     [cargarLista],
   );
 
-  const handleSelect = useCallback(async (idOrSlug) => {
-    setPanelEstado("loading");
-    setVacanteDetalle(null);
-    setMensajePostulacion("");
-    setPostulacionStep(null);
-    setRespuestasFiltro({});
-
-    // Abrir el modal móvil inmediatamente (mostrará estado loading)
-    setModalMovilAbierto(true);
-
-    try {
-      const data = await vacantesService.detalle(idOrSlug);
-      setSeleccionadaId(String(data.id));
-      setVacanteDetalle(data);
-      setPanelEstado("detail");
-
-      // Actualizar la URL con el slug si es posible, sin añadir al historial
-      if (data.slug) {
-        navigate(`/buscar-empleo/${data.slug}`, { replace: true, preventScrollReset: true });
-      }
-    } catch {
-      setPanelEstado("error");
+  const handleSelect = useCallback(
+    async (idOrSlug) => {
+      setPanelEstado("loading");
       setVacanteDetalle(null);
-    }
-  }, [navigate]);
+      setMensajePostulacion("");
+      setPostulacionStep(null);
+      setRespuestasFiltro({});
+
+      // Abrir el modal móvil inmediatamente (mostrará estado loading)
+      setModalMovilAbierto(true);
+
+      try {
+        const data = await vacantesService.detalle(idOrSlug);
+        setSeleccionadaId(String(data.id));
+        setVacanteDetalle(data);
+        setPanelEstado("detail");
+
+        // Actualizar la URL con el slug si es posible, sin añadir al historial
+        if (data.slug) {
+          navigate(`/buscar-empleo/${data.slug}`, {
+            replace: true,
+            preventScrollReset: true,
+          });
+        }
+      } catch {
+        setPanelEstado("error");
+        setVacanteDetalle(null);
+      }
+    },
+    [navigate],
+  );
 
   const handleVolver = useCallback(() => {
     setModalMovilAbierto(false);
@@ -302,22 +308,24 @@ export default function Buscador() {
     if (seleccionadaId) handleSelect(seleccionadaId);
   }, [seleccionadaId, handleSelect]);
 
-  const handleCompartir = useCallback(
-    async (id) => {
-      try {
-        const res = await vacantesService.compartir(id);
-        // Actualizar el contador localmente en el detalle
-        setVacanteDetalle((prev) =>
-          prev && String(prev.id) === String(id)
-            ? { ...prev, compartidos_count: res.data?.compartidos_count ?? (prev.compartidos_count || 0) + 1 }
-            : prev
-        );
-      } catch {
-        /* silenciar: el usuario ya compartió aunque falle el registro */
-      }
-    },
-    [],
-  );
+  const handleCompartir = useCallback(async (id) => {
+    try {
+      const res = await vacantesService.compartir(id);
+      // Actualizar el contador localmente en el detalle
+      setVacanteDetalle((prev) =>
+        prev && String(prev.id) === String(id)
+          ? {
+              ...prev,
+              compartidos_count:
+                res.data?.compartidos_count ??
+                (prev.compartidos_count || 0) + 1,
+            }
+          : prev,
+      );
+    } catch {
+      /* silenciar: el usuario ya compartió aunque falle el registro */
+    }
+  }, []);
 
   const handleLogout = () => {
     authService.logout();
@@ -396,7 +404,7 @@ export default function Buscador() {
       )}
 
       <div className="max-w-7xl mx-auto w-full p-6 pt-6 flex flex-col">
-        <div ref={filtersRef} className="p-5 lg:sticky lg:top-0 z-20 bg-[#F9F9F9]">
+        <div ref={filtersRef} className="p-5 z-20 bg-[#F9F9F9]">
           <FiltrosVacantes
             filtros={filtros}
             onFilterChange={handleFilterChange}
@@ -404,11 +412,9 @@ export default function Buscador() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 lg:items-start">
-          <div
-            className="w-full lg:w-[42%] flex flex-col"
-          >
-            <div className="lg:sticky z-10" style={{ top: filtersHeight }}>
-              <div className="flex items-center justify-between py-3 bg-[#F9F9F9]">
+          <div className="w-full lg:w-[42%] flex flex-col">
+            <div className="lg:sticky z-10 lg:top-20 bg-[#F9F9F9] pt-4 pb-2 relative">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <BriefcaseIcon
                     className="w-6 h-6 text-naranja shrink-0"
@@ -425,7 +431,7 @@ export default function Buscador() {
                 </span>
               </div>
               {/* Degradado inferior: funde el fondo con el contenido sin borde visible */}
-              <div className="h-4 bg-linear-to-b from-[#F9F9F9] to-transparent pointer-events-none" />
+              <div className="absolute -bottom-4 left-0 right-0 h-4 bg-gradient-to-b from-[#F9F9F9] to-transparent pointer-events-none" />
             </div>
             <aside ref={listRef} className="flex flex-col w-full">
               <ListaVacantes
@@ -507,10 +513,9 @@ export default function Buscador() {
 
           {/* Panel detalle — solo visible en desktop (lg+) */}
           <main
-            className="hidden lg:flex w-full lg:flex-1 bg-white rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.07)] flex-col lg:sticky lg:overflow-y-auto lg:self-start mt-5"
+            className="hidden lg:flex w-full lg:flex-1 bg-white rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.07)] flex-col lg:sticky lg:overflow-hidden lg:self-start mt-5 lg:top-24"
             style={{
-              top: filtersHeight,
-              maxHeight: `calc(100vh - ${filtersHeight}px)`,
+              maxHeight: `calc(100vh - 120px)`,
             }}
           >
             <PanelDetalle
@@ -529,7 +534,9 @@ export default function Buscador() {
               onVolverAPreguntas={handleVolverAPreguntas}
               postulando={postulando}
               yaPostulada={vacantesPostuladas.includes(seleccionadaId)}
-              esGuardada={vacanteDetalle ? guardados.has(vacanteDetalle.id) : false}
+              esGuardada={
+                vacanteDetalle ? guardados.has(vacanteDetalle.id) : false
+              }
               onGuardar={handleGuardar}
               onCompartir={handleCompartir}
             />
@@ -553,7 +560,9 @@ export default function Buscador() {
             onVolverAPreguntas={handleVolverAPreguntas}
             postulando={postulando}
             yaPostulada={vacantesPostuladas.includes(seleccionadaId)}
-            esGuardada={vacanteDetalle ? guardados.has(vacanteDetalle.id) : false}
+            esGuardada={
+              vacanteDetalle ? guardados.has(vacanteDetalle.id) : false
+            }
             onGuardar={handleGuardar}
             onCompartir={handleCompartir}
           />

@@ -52,12 +52,15 @@ export default function PanelDetalleMovil({
       setCerrando(false);
       setDragY(0);
 
-      // Guardar posición actual y bloquear scroll SIN saltar al top
-      scrollYRef.current = window.scrollY;
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollYRef.current}px`;
-      document.body.style.width = "100%";
-      document.body.style.overflowY = "scroll"; // evita reflow por scrollbar
+      // Guardar posición actual y bloquear scroll SIN saltar al top (solo en móvil)
+      const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+      if (!isDesktop) {
+        scrollYRef.current = window.scrollY;
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollYRef.current}px`;
+        document.body.style.width = "100%";
+        document.body.style.overflowY = "scroll"; // evita reflow por scrollbar
+      }
 
       // Dos frames para que el DOM pinte translateY(100%) antes de animar
       const raf = requestAnimationFrame(() => {
@@ -70,11 +73,13 @@ export default function PanelDetalleMovil({
   // ── Función de cierre ──────────────────────────────────────────────────────
   // Utilidad para restaurar el scroll del body sin saltar
   const restaurarScroll = useCallback(() => {
-    document.body.style.position = "";
-    document.body.style.top = "";
-    document.body.style.width = "";
-    document.body.style.overflowY = "";
-    window.scrollTo({ top: scrollYRef.current, behavior: "instant" });
+    if (document.body.style.position === "fixed") {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflowY = "";
+      window.scrollTo({ top: scrollYRef.current, behavior: "instant" });
+    }
   }, []);
 
   const cerrar = useCallback(() => {
@@ -103,13 +108,30 @@ export default function PanelDetalleMovil({
   // Limpiar estilos del body si el componente se desmonta con el modal abierto
   useEffect(
     () => () => {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      document.body.style.overflowY = "";
+      if (document.body.style.position === "fixed") {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.style.overflowY = "";
+      }
     },
     [],
   );
+
+  // Restaurar scroll y cerrar modal si se redimensiona a desktop mientras estaba abierto en móvil
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const handleMediaChange = (e) => {
+      if (e.matches) {
+        restaurarScroll();
+        if (visible) {
+          onCerrar?.();
+        }
+      }
+    };
+    mq.addEventListener("change", handleMediaChange);
+    return () => mq.removeEventListener("change", handleMediaChange);
+  }, [restaurarScroll, onCerrar, visible]);
 
   // ── Drag-to-dismiss (solo desde la pastilla) ───────────────────────────────
   const handleTouchStart = useCallback((e) => {
