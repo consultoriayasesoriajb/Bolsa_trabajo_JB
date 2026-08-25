@@ -1,22 +1,29 @@
 import { useState } from "react";
-import { ChevronDownIcon, CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, CheckIcon, PlusIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 const inputCls = "w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] bg-white placeholder:text-slate-400";
 const labelCls = "text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block";
 
+function getInitials(nombre) {
+  return (nombre || "").split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
+}
+
 function EmpresaSelector({ companies, value, onChange }) {
-  const [open, setOpen] = useState(false);
+  const [open,   setOpen]   = useState(false);
+  const [query,  setQuery]  = useState("");
+
   const selected = companies.find(c => String(c.id) === String(value));
 
-  const getInitials = (nombre) =>
-    nombre.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
+  const filtradas = companies.filter(c =>
+    c.nombre.toLowerCase().includes(query.toLowerCase())
+  );
 
   return (
     <div className="relative">
       {/* Pill activo */}
       <button
         type="button"
-        onClick={() => setOpen(v => !v)}
+        onClick={() => { setOpen(v => !v); setQuery(""); }}
         className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:border-[#123498] transition-colors"
       >
         {selected ? (
@@ -24,7 +31,7 @@ function EmpresaSelector({ companies, value, onChange }) {
             <span className="w-6 h-6 rounded-full bg-[#123498] text-white text-[10px] font-black flex items-center justify-center shrink-0">
               {getInitials(selected.nombre)}
             </span>
-            <span className="max-w-30 truncate">{selected.nombre}</span>
+            <span className="max-w-[140px] truncate">{selected.nombre}</span>
           </>
         ) : (
           <span className="text-slate-400">Seleccionar empresa</span>
@@ -34,36 +41,59 @@ function EmpresaSelector({ companies, value, onChange }) {
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute left-0 top-full mt-2 w-72 bg-white rounded-2xl border border-slate-200 shadow-lg z-10 overflow-hidden">
-          <div className="p-2">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider px-3 py-2">
-              Tus empresas
-            </p>
-            {companies.map(c => (
-              <button
-                key={c.id}
-                type="button"
-                onClick={() => { onChange(c.id); setOpen(false); }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors ${
-                  String(c.id) === String(value)
-                    ? "bg-[#f2f5fc]"
-                    : "hover:bg-slate-50"
-                }`}
-              >
-                <span className="w-9 h-9 rounded-full bg-[#123498] text-white text-xs font-black flex items-center justify-center shrink-0">
-                  {getInitials(c.nombre)}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-slate-800 truncate">{c.nombre}</p>
-                  <p className="text-xs text-slate-400">{c.sector || "Sin sector"}</p>
-                </div>
-                {String(c.id) === String(value) && (
-                  <CheckIcon className="w-4 h-4 text-[#123498] shrink-0" />
-                )}
-              </button>
-            ))}
+        <>
+          {/* Overlay para cerrar */}
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+
+          <div className="absolute left-0 top-full mt-2 w-72 bg-white rounded-2xl border border-slate-200 shadow-lg z-20 overflow-hidden">
+            {/* Buscador interno */}
+            <div className="p-2 border-b border-slate-100">
+              <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl">
+                <MagnifyingGlassIcon className="w-4 h-4 text-slate-400 shrink-0" />
+                <input
+                  type="text"
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  placeholder="Buscar empresa..."
+                  className="flex-1 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 outline-none"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            {/* Lista */}
+            <div className="max-h-52 overflow-y-auto p-2">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider px-3 py-1.5">
+                Tus empresas
+              </p>
+              {filtradas.length > 0 ? filtradas.map(c => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => { onChange(c.id); setOpen(false); setQuery(""); }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors ${
+                    String(c.id) === String(value) ? "bg-[#f2f5fc]" : "hover:bg-slate-50"
+                  }`}
+                >
+                  <span className="w-9 h-9 rounded-full bg-[#123498] text-white text-xs font-black flex items-center justify-center shrink-0">
+                    {getInitials(c.nombre)}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-slate-800 truncate">{c.nombre}</p>
+                    <p className="text-xs text-slate-400">{c.sector || "Sin sector"}</p>
+                  </div>
+                  {String(c.id) === String(value) && (
+                    <CheckIcon className="w-4 h-4 text-[#123498] shrink-0" />
+                  )}
+                </button>
+              )) : (
+                <p className="text-xs text-slate-400 text-center py-4">
+                  No se encontraron empresas
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
@@ -75,9 +105,20 @@ export default function ModalOfertaPaso1({
   showNewCategory, setShowNewCategory,
   newCategoryName, setNewCategoryName,
   handleCreateCategory,
+  onChangeEmpresa,
 }) {
   return (
     <div className="flex flex-col gap-5">
+
+      {/* Selector de empresa */}
+      <div>
+        <label className={labelCls}>Publicando para</label>
+        <EmpresaSelector
+          companies={companies}
+          value={form.empresa_id}
+          onChange={onChangeEmpresa}
+        />
+      </div>
 
       {/* Título */}
       <div>
@@ -132,7 +173,7 @@ export default function ModalOfertaPaso1({
                 {categories.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
               </select>
               <button type="button" onClick={() => setShowNewCategory(true)}
-                className="px-2.5 py-2.5 bg-[#123498] hover:bg-[#0f2b7a] text-white rounded-xl text-sm font-bold shrink-0"
+                className="px-2.5 py-2.5 bg-[#123498] hover:bg-[#0f2b7a] text-white rounded-xl shrink-0"
                 title="Nueva categoría">
                 <PlusIcon className="w-4 h-4" />
               </button>
