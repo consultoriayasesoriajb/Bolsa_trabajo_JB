@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import {
-  Plus, Search, Edit3, Trash2, X, Lock,
-  ToggleLeft, ToggleRight, ChevronDown, ChevronUp
+import { 
+  Plus, Search, Edit3, Trash2, X, Lock, ToggleLeft, ToggleRight, ChevronDown, ChevronUp
 } from "lucide-react";
 import {
   getOffers, getCompanies, saveOffer, deleteOffer,
@@ -9,6 +8,7 @@ import {
   getQuestions, saveQuestion, deleteQuestionsByOffer
 } from "../../services/adminService";
 import { apiFetch } from "../../services/api";
+import ModalOferta from "./ModalOferta";
 
 const MAP_MODALIDAD = {
   presencial: "Presencial",
@@ -293,201 +293,26 @@ export default function SectionOfertas() {
       </div>
 
       {/* Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setModalOpen(false)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-sm font-black text-[#123498] uppercase tracking-wider">
-                {editingOffer ? "Editar Oferta" : "Nueva Oferta"}
-              </h2>
-              <button onClick={() => setModalOpen(false)} className="p-1 rounded-lg hover:bg-slate-100 text-slate-400"><X size={16} /></button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-
-              {/* Título */}
-              <div>
-                <label className={labelCls}>Título del puesto</label>
-                <input type="text" value={form.titulo} onChange={e => setForm({ ...form, titulo: e.target.value })} className={inputCls} placeholder="Ej: Desarrollador Frontend" required />
-              </div>
-
-              {/* Empresa */}
-              <div>
-                <label className={labelCls}>Empresa</label>
-                <select value={form.empresa_id} onChange={e => setForm({ ...form, empresa_id: e.target.value })} className={inputCls} required>
-                  <option value="">Seleccionar empresa</option>
-                  {companies.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-                </select>
-              </div>
-
-              {/* Ubicación + Categoría */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className={labelCls}>Ubicación</label>
-                  <input type="text" value={form.ubicacion} onChange={e => setForm({ ...form, ubicacion: e.target.value })} className={inputCls} placeholder="Lima, Perú" />
-                </div>
-                <div>
-                  <label className={labelCls}>Categoría</label>
-                  {showNewCategory ? (
-                    <div className="flex gap-1.5">
-                      <input type="text" value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} onKeyDown={e => e.key === "Enter" && (e.preventDefault(), handleCreateCategory())} className="flex-1 min-w-0 px-3 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]" placeholder="Nombre de categoría" autoFocus />
-                      <button type="button" onClick={handleCreateCategory} className="px-2.5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-bold shrink-0">✓</button>
-                      <button type="button" onClick={() => { setShowNewCategory(false); setNewCategoryName(""); }} className="px-2.5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-xl text-sm font-bold shrink-0">✕</button>
-                    </div>
-                  ) : (
-                    <div className="flex gap-1.5">
-                      <select value={form.categoria_id} onChange={e => setForm({ ...form, categoria_id: e.target.value })} className="flex-1 min-w-0 px-3 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]">
-                        <option value="">Sin categoría</option>
-                        {categories.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-                      </select>
-                      <button type="button" onClick={() => setShowNewCategory(true)} className="px-2.5 py-2.5 bg-[#123498] hover:bg-[#0f2b7a] text-white rounded-xl text-sm font-bold shrink-0" title="Nueva categoría">+</button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Salarios */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className={labelCls}>Salario mínimo (S/)</label>
-                  <input type="number" value={form.salario_min} onChange={e => setForm({ ...form, salario_min: e.target.value })} className={inputCls} placeholder="Ej: 2500" />
-                </div>
-                <div>
-                  <label className={labelCls}>Salario máximo (S/)</label>
-                  <input type="number" value={form.salario_max} onChange={e => setForm({ ...form, salario_max: e.target.value })} className={inputCls} placeholder="Ej: 4500" />
-                </div>
-              </div>
-
-              {/* Fechas */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className={labelCls}>Fecha de publicación</label>
-                  <input type="datetime-local" value={form.fecha_publicacion} onChange={e => setForm({ ...form, fecha_publicacion: e.target.value })} className={inputCls} />
-                  <p className="text-[9px] text-slate-400 mt-1">Vacío = publicación inmediata</p>
-                </div>
-                <div>
-                  <label className={labelCls}>Fecha de cierre</label>
-                  <input type="datetime-local" value={form.fecha_expiracion} onChange={e => setForm({ ...form, fecha_expiracion: e.target.value })} className={inputCls} />
-                  <p className="text-[9px] text-slate-400 mt-1">Vacío = 90 días desde hoy</p>
-                </div>
-              </div>
-
-              {/* Tipo contrato + Modalidad + Horario */}
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className={labelCls}>Tipo contrato</label>
-                  <select value={form.tipo_contrato} onChange={e => setForm({ ...form, tipo_contrato: e.target.value })} className={inputCls}>
-                    <option value="Tiempo completo">Tiempo completo</option>
-                    <option value="Permanente">Permanente</option>
-                    <option value="Medio tiempo">Medio tiempo</option>
-                    <option value="Freelance">Freelance</option>
-                    <option value="Prácticas">Prácticas</option>
-                    <option value="Temporal">Temporal</option>
-                  </select>
-                </div>
-                <div>
-                  <label className={labelCls}>Modalidad</label>
-                  <select value={form.modalidad} onChange={e => setForm({ ...form, modalidad: e.target.value })} className={inputCls}>
-                    <option value="presencial">Presencial</option>
-                    <option value="remoto">Remoto</option>
-                    <option value="Híbrida">Híbrida</option>
-                  </select>
-                </div>
-                <div>
-                  <label className={labelCls}>Horario</label>
-                  <select value={form.horario} onChange={e => setForm({ ...form, horario: e.target.value })} className={inputCls}>
-                    <option value="">No especificar</option>
-                    <option value="Tiempo completo">Tiempo completo</option>
-                    <option value="Medio tiempo">Medio tiempo</option>
-                    <option value="Flexible">Flexible</option>
-                    <option value="Por turnos">Por turnos</option>
-                    <option value="Nocturno">Nocturno</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Experiencia */}
-              <div>
-                <label className={labelCls}>Nivel de experiencia</label>
-                <select value={form.nivel_experiencia} onChange={e => setForm({ ...form, nivel_experiencia: e.target.value })} className={inputCls}>
-                  <option value="">No especificar</option>
-                  <option value="junior">Junior</option>
-                  <option value="semisenior">Semi-Senior</option>
-                  <option value="senior">Senior</option>
-                  <option value="gerente">Gerente</option>
-                </select>
-              </div>
-
-              {/* Descripción */}
-              <div>
-                <label className={labelCls}>Descripción</label>
-                <textarea value={form.descripcion} onChange={e => setForm({ ...form, descripcion: e.target.value })} rows={3} className={`${inputCls} resize-none`} placeholder="Descripción del puesto..." />
-              </div>
-
-              {/* Requisitos */}
-              <div>
-                <label className={labelCls}>Requisitos</label>
-                <textarea value={form.requisitos} onChange={e => setForm({ ...form, requisitos: e.target.value })} rows={3} className={`${inputCls} resize-none`} placeholder="• Requisito 1&#10;• Requisito 2" />
-              </div>
-
-              {/* Preguntas de filtro */}
-              <div className="border-t border-slate-100 pt-4">
-                <div className="flex items-center justify-between mb-3">
-                  <label className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                    Preguntas de filtro ({preguntas.length})
-                  </label>
-                  <button type="button" onClick={addPregunta} className="flex items-center gap-1 px-2.5 py-1.5 bg-[#123498] hover:bg-[#0f2b7a] text-white rounded-lg text-xs font-black uppercase tracking-wider transition-colors">
-                    <Plus size={11} strokeWidth={2.8} />Agregar
-                  </button>
-                </div>
-                {preguntas.length === 0 && (
-                  <p className="text-xs text-slate-400 italic">Sin preguntas.</p>
-                )}
-                <div className="space-y-3">
-                  {preguntas.map((q, idx) => (
-                    <div key={idx} className="bg-slate-50 rounded-xl p-3 space-y-2">
-                      <div className="flex items-start gap-2">
-                        <span className="text-xs font-black text-slate-400 mt-2.5 w-4 shrink-0">{idx + 1}.</span>
-                        <div className="flex-1 space-y-2">
-                          <input type="text" value={q.pregunta} onChange={e => updatePregunta(idx, "pregunta", e.target.value)} className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] bg-white" placeholder="Escribe la pregunta..." />
-                          <div className="flex items-center gap-2">
-                            <select value={q.tipo} onChange={e => { updatePregunta(idx, "tipo", e.target.value); if (e.target.value !== "opciones") updatePregunta(idx, "opciones", []); }} className="px-2 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none bg-white">
-                              <option value="texto">Texto libre</option>
-                              <option value="numero">Número</option>
-                              <option value="si_no">Sí / No</option>
-                              <option value="opciones">Opciones</option>
-                            </select>
-                            <label className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold cursor-pointer select-none">
-                              <input type="checkbox" checked={q.obligatoria === 1} onChange={e => updatePregunta(idx, "obligatoria", e.target.checked ? 1 : 0)} className="w-3.5 h-3.5 rounded border-slate-300" />
-                              Obligatoria
-                            </label>
-                          </div>
-                          {q.tipo === "opciones" && (
-                            <div className="space-y-1.5 pl-1">
-                              {(q.opciones || []).map((opt, oi) => (
-                                <div key={oi} className="flex items-center gap-1.5">
-                                  <input type="text" value={opt} onChange={e => { const newOpts = [...q.opciones]; newOpts[oi] = e.target.value; updatePregunta(idx, "opciones", newOpts); }} className="flex-1 px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 bg-white focus:outline-none" placeholder={`Opción ${oi + 1}`} />
-                                  <button type="button" onClick={() => updatePregunta(idx, "opciones", q.opciones.filter((_, i) => i !== oi))} className="p-1 text-slate-400 hover:text-red-500"><Trash2 size={10} /></button>
-                                </div>
-                              ))}
-                              <button type="button" onClick={() => updatePregunta(idx, "opciones", [...(q.opciones || []), ""])} className="text-xs font-bold text-[#123498] hover:text-[#0f2b7a]">+ Agregar opción</button>
-                            </div>
-                          )}
-                        </div>
-                        <button type="button" onClick={() => removePregunta(idx)} className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 shrink-0 mt-0.5"><Trash2 size={13} /></button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <button type="submit" disabled={loading} className="w-full bg-[#123498] hover:bg-[#0f2b7a] disabled:opacity-50 text-white py-3 rounded-xl text-sm font-black uppercase tracking-wider transition-colors">
-                {loading ? "Guardando..." : editingOffer ? "Guardar Cambios" : "Publicar Oferta"}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+      <ModalOferta
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        editingOffer={editingOffer}
+        form={form}
+        setForm={setForm}
+        companies={companies}
+        categories={categories}
+        showNewCategory={showNewCategory}
+        setShowNewCategory={setShowNewCategory}
+        newCategoryName={newCategoryName}
+        setNewCategoryName={setNewCategoryName}
+        handleCreateCategory={handleCreateCategory}
+        preguntas={preguntas}
+        addPregunta={addPregunta}
+        updatePregunta={updatePregunta}
+        removePregunta={removePregunta}
+        handleSubmit={handleSubmit}
+        loading={loading}
+      />
     </div>
   );
 }
