@@ -86,6 +86,7 @@ CREATE TABLE `ofertas_trabajo` (
   `categoria_id` int(11) DEFAULT NULL,
   `estado` enum('activa','pausada','eliminada') NOT NULL DEFAULT 'activa',
   `vistas_count` int(11) NOT NULL DEFAULT 0,
+  `compartidos_count` int(11) NOT NULL DEFAULT 0,
   `fecha_creacion` datetime NOT NULL DEFAULT current_timestamp(),
   `fecha_expiracion` datetime NOT NULL DEFAULT (current_timestamp() + interval 90 day)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

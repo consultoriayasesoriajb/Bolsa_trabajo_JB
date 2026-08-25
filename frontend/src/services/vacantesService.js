@@ -55,4 +55,11 @@ function misPostulacionesDetalle() {
   return apiFetch("/vacantes/?action=mis_postulaciones_detalle").then(r => r.data);
 }
 
-export const vacantesService = { listar, detalle, postular, sugerencias, listarCategorias, misPostulaciones, misPostulacionesDetalle };
+function compartir(id) {
+  return apiFetch("/vacantes/?action=compartir", {
+    method: "POST",
+    body: JSON.stringify({ vacante_id: id }),
+  });
+}
+
+export const vacantesService = { listar, detalle, postular, sugerencias, listarCategorias, misPostulaciones, misPostulacionesDetalle, compartir };
