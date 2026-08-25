@@ -132,11 +132,26 @@ export default function SectionOfertas() {
     e.preventDefault();
     if (!form.titulo || !form.empresa_id) return;
     setLoading(true);
+    
     try {
       const offerData = { ...form, ...(editingOffer ? { id: editingOffer.id } : {}) };
       const res = await saveOffer(offerData);
-      const offerId = editingOffer ? editingOffer.id : res.data.id;
 
+      // 1. Si PHP devuelve un JSON con "success: false", capturamos su mensaje real
+      if (res && res.success === false) {
+        throw new Error("PHP dice: " + (res.message || res.error || "Solicitud rechazada"));
+      }
+
+      const offerId = editingOffer 
+        ? editingOffer.id 
+        : (res?.data?.id || res?.id);
+
+      // 2. Si sigue sin haber ID, imprimimos la respuesta completa para depurar
+      if (!offerId) {
+        throw new Error("Respuesta cruda del servidor: " + JSON.stringify(res));
+      }
+
+      // Guardado de preguntas
       if (editingOffer) await deleteQuestionsByOffer(offerId);
 
       for (const q of preguntas) {
@@ -150,11 +165,14 @@ export default function SectionOfertas() {
           });
         }
       }
+      
       await reload();
       setModalOpen(false);
     } catch (err) {
+      // Ahora veremos el error verdadero en pantalla
       alert(err.message || "Error al guardar oferta");
     }
+    
     setLoading(false);
   };
 

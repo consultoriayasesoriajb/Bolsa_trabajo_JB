@@ -68,9 +68,15 @@ export const saveOffer = async (offer) => {
 
     if (offer.id) {
         data.id = offer.id;
-        return await ofertasService.editar(data);
+        return await apiFetch("/admin/?resource=ofertas&action=editar", {
+            method: "POST",
+            body: JSON.stringify(data)
+        });
     } else {
-        return await ofertasService.crear(data);
+        return await apiFetch("/admin/?resource=ofertas&action=crear", {
+            method: "POST",
+            body: JSON.stringify(data)
+        });
     }
 };
 
@@ -92,23 +98,30 @@ export const updateCandidateStage = async () => {};
 
 // --- CATEGORIES CRUD ---
 export const saveCategory = async (category) => {
+    const formData = new FormData();
+    formData.append("nombre", category.nombre);
+    
     if (category.id) {
+        formData.append("id", category.id);
         return await apiFetch("/admin/?resource=categorias&action=editar", {
             method: "POST",
-            body: JSON.stringify({ id: category.id, nombre: category.nombre })
+            body: formData // <- Ahora enviamos FormData
         });
     } else {
         return await apiFetch("/admin/?resource=categorias&action=crear", {
             method: "POST",
-            body: JSON.stringify({ nombre: category.nombre })
+            body: formData // <- Ahora enviamos FormData
         });
     }
 };
 
 export const deleteCategory = async (id) => {
+    const formData = new FormData();
+    formData.append("id", id);
+    
     return await apiFetch("/admin/?resource=categorias&action=eliminar", {
         method: "POST",
-        body: JSON.stringify({ id })
+        body: formData // <- Ahora enviamos FormData
     });
 };
 
@@ -119,6 +132,7 @@ export const getQuestions = async (oferta_id) => {
 };
 
 export const saveQuestion = async (question) => {
+    // Volvemos a usar JSON.stringify() porque el backend usa getBody() aquí
     if (question.id) {
         return await apiFetch("/admin/?resource=preguntas&action=editar", {
             method: "POST",
@@ -158,16 +172,24 @@ export const getPostulacionDetalle = async (id) => {
 };
 
 export const changePostulacionEstado = async (id, estado) => {
+    const formData = new FormData();
+    formData.append("id", id);
+    formData.append("estado", estado);
+    
     return await apiFetch("/admin/?resource=postulaciones&action=cambiar_estado", {
         method: "POST",
-        body: JSON.stringify({ id, estado })
+        body: formData // <- Ahora enviamos FormData
     });
 };
 
 export const savePostulacionNota = async (id, nota) => {
+    const formData = new FormData();
+    formData.append("id", id);
+    formData.append("nota", nota);
+    
     return await apiFetch("/admin/?resource=postulaciones&action=agregar_nota", {
         method: "POST",
-        body: JSON.stringify({ id, nota })
+        body: formData // <- Ahora enviamos FormData
     });
 };
 

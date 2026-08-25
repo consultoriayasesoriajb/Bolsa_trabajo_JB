@@ -1,52 +1,56 @@
 import { useState } from "react";
 import { ChevronDownIcon, CheckIcon, PlusIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
-const inputCls = "w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] bg-white placeholder:text-slate-400";
-const labelCls = "text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block";
+const inputCls = "w-full px-4 py-2.5 text-black/80 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul bg-white placeholder:text-slate-400";
+const labelCls = "text-sm font-bold text-naranja/80 mb-2 block";
 
 function getInitials(nombre) {
   return (nombre || "").split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
 }
 
-function EmpresaSelector({ companies, value, onChange }) {
-  const [open,   setOpen]   = useState(false);
-  const [query,  setQuery]  = useState("");
+export function EmpresaSelector({ companies, value, onChange, disabled }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
 
   const selected = companies.find(c => String(c.id) === String(value));
-
   const filtradas = companies.filter(c =>
     c.nombre.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
     <div className="relative">
-      {/* Pill activo */}
       <button
         type="button"
-        onClick={() => { setOpen(v => !v); setQuery(""); }}
-        className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:border-[#123498] transition-colors"
+        // 2. Bloqueamos el click si está disabled (en paso 2 o 3)
+        onClick={() => { if (!disabled) { setOpen(v => !v); setQuery(""); } }}
+        className={`flex items-center gap-2 px-3 py-1.5 bg-white border rounded-full text-xs font-semibold transition-colors ${
+          disabled 
+            ? "border-slate-100 text-slate-500 cursor-default shadow-none bg-slate-50/50" 
+            : "border-slate-200 text-slate-700 hover:border-[#123498] cursor-pointer"
+        }`}
       >
         {selected ? (
           <>
-            <span className="w-6 h-6 rounded-full bg-[#123498] text-white text-[10px] font-black flex items-center justify-center shrink-0">
+            <span className={`w-6 h-6 rounded-full text-white text-xs font-black flex items-center justify-center shrink-0 ${disabled ? 'bg-slate-400' : 'bg-[#123498]'}`}>
               {getInitials(selected.nombre)}
             </span>
-            <span className="max-w-[140px] truncate">{selected.nombre}</span>
+            <span className="max-w-35 truncate">{selected.nombre}</span>
           </>
         ) : (
           <span className="text-slate-400">Seleccionar empresa</span>
         )}
-        <ChevronDownIcon className={`w-3.5 h-3.5 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
+        
+        {/* 3. Ocultamos la flechita si está disabled */}
+        {!disabled && (
+          <ChevronDownIcon className={`w-3.5 h-3.5 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
+        )}
       </button>
 
-      {/* Dropdown */}
-      {open && (
+      {/* Dropdown (solo se renderiza si no está disabled y está abierto) */}
+      {!disabled && open && (
         <>
-          {/* Overlay para cerrar */}
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-
           <div className="absolute left-0 top-full mt-2 w-72 bg-white rounded-2xl border border-slate-200 shadow-lg z-20 overflow-hidden">
-            {/* Buscador interno */}
             <div className="p-2 border-b border-slate-100">
               <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl">
                 <MagnifyingGlassIcon className="w-4 h-4 text-slate-400 shrink-0" />
@@ -60,12 +64,8 @@ function EmpresaSelector({ companies, value, onChange }) {
                 />
               </div>
             </div>
-
-            {/* Lista */}
             <div className="max-h-52 overflow-y-auto p-2">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider px-3 py-1.5">
-                Tus empresas
-              </p>
+              <p className="text-xs font-black text-slate-400 uppercase tracking-wider px-3 py-1.5">Tus empresas</p>
               {filtradas.length > 0 ? filtradas.map(c => (
                 <button
                   key={c.id}
@@ -75,21 +75,17 @@ function EmpresaSelector({ companies, value, onChange }) {
                     String(c.id) === String(value) ? "bg-[#f2f5fc]" : "hover:bg-slate-50"
                   }`}
                 >
-                  <span className="w-9 h-9 rounded-full bg-[#123498] text-white text-xs font-black flex items-center justify-center shrink-0">
+                  <span className="w-7 h-7 rounded-full bg-[#123498] text-white text-xs font-black flex items-center justify-center shrink-0">
                     {getInitials(c.nombre)}
                   </span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-slate-800 truncate">{c.nombre}</p>
                     <p className="text-xs text-slate-400">{c.sector || "Sin sector"}</p>
                   </div>
-                  {String(c.id) === String(value) && (
-                    <CheckIcon className="w-4 h-4 text-[#123498] shrink-0" />
-                  )}
+                  {String(c.id) === String(value) && <CheckIcon className="w-4 h-4 text-[#123498] shrink-0" />}
                 </button>
               )) : (
-                <p className="text-xs text-slate-400 text-center py-4">
-                  No se encontraron empresas
-                </p>
+                <p className="text-xs text-slate-400 text-center py-4">No se encontraron empresas</p>
               )}
             </div>
           </div>
@@ -105,21 +101,9 @@ export default function ModalOfertaPaso1({
   showNewCategory, setShowNewCategory,
   newCategoryName, setNewCategoryName,
   handleCreateCategory,
-  onChangeEmpresa,
 }) {
   return (
-    <div className="flex flex-col gap-5">
-
-      {/* Selector de empresa */}
-      <div>
-        <label className={labelCls}>Publicando para</label>
-        <EmpresaSelector
-          companies={companies}
-          value={form.empresa_id}
-          onChange={onChangeEmpresa}
-        />
-      </div>
-
+    <div className="flex flex-col gap-7">
       {/* Título */}
       <div>
         <label className={labelCls}>Título del puesto *</label>
@@ -153,12 +137,12 @@ export default function ModalOfertaPaso1({
                 value={newCategoryName}
                 onChange={e => setNewCategoryName(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && (e.preventDefault(), handleCreateCategory())}
-                className="flex-1 min-w-0 px-3 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498]"
+                className="flex-1 min-w-0 px-3 py-2.5 text-black/80 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
                 placeholder="Nueva categoría"
                 autoFocus
               />
               <button type="button" onClick={handleCreateCategory}
-                className="px-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-bold shrink-0">✓</button>
+                className="px-2.5 bg-[#4CAF50] hover:bg-[#4CAF50]/80 text-white rounded-xl text-sm font-bold shrink-0">✓</button>
               <button type="button" onClick={() => { setShowNewCategory(false); setNewCategoryName(""); }}
                 className="px-2.5 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-xl text-sm font-bold shrink-0">✕</button>
             </div>
@@ -167,15 +151,15 @@ export default function ModalOfertaPaso1({
               <select
                 value={form.categoria_id}
                 onChange={e => setForm({ ...form, categoria_id: e.target.value })}
-                className="flex-1 min-w-0 px-3 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] bg-white"
+                className="flex-1 min-w-0 px-3 py-2.5 text-black/80 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul bg-white"
               >
                 <option value="">Sin categoría</option>
                 {categories.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
               </select>
               <button type="button" onClick={() => setShowNewCategory(true)}
-                className="px-2.5 py-2.5 bg-[#123498] hover:bg-[#0f2b7a] text-white rounded-xl shrink-0"
+                className="px-2.5 py-2.5 bg-white border border-slate-200 hover:bg-azul text-white rounded-xl shrink-0"
                 title="Nueva categoría">
-                <PlusIcon className="w-4 h-4" />
+                <PlusIcon className="w-4 h-4 text-slate-400 hover:text-white" />
               </button>
             </div>
           )}
@@ -186,7 +170,7 @@ export default function ModalOfertaPaso1({
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className={labelCls}>Rango salarial (S/)</label>
-          <span className="text-[10px] text-[#123498] font-semibold">
+          <span className="text-[10px] text-gris-oscuro font-semibold">
             Publicarlo aumenta las postulaciones
           </span>
         </div>

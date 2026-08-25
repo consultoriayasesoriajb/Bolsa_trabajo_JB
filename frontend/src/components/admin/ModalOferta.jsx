@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import ModalOfertaPaso1 from "./modal-oferta/ModalOfertaPaso1";
+import ModalOfertaPaso1, { EmpresaSelector } from "./modal-oferta/ModalOfertaPaso1";
 import ModalOfertaPaso2 from "./modal-oferta/ModalOfertaPaso2";
 import ModalOfertaPaso3 from "./modal-oferta/ModalOfertaPaso3";
 
@@ -15,28 +15,28 @@ function StepIndicator({ paso }) {
     { n: 3, label: "Preguntas" },
   ];
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center justify-between gap-3">
       {steps.map((s, i) => {
         const done   = s.n < paso;
         const active = s.n === paso;
         return (
-          <div key={s.n} className="flex items-center gap-2">
-            <div className={`flex items-center gap-2 ${active ? "text-[#123498]" : done ? "text-green-500" : "text-slate-300"}`}>
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-colors ${
-                active ? "bg-[#123498] text-white" :
-                done   ? "bg-green-500 text-white" :
+          <div key={s.n} className="flex items-center gap-6">
+            <div className={`flex items-center gap-2 ${active ? "text-azul" : done ? "text-[#4CAF50]" : "text-slate-300"}`}>
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black transition-colors ${
+                active ? "bg-azul text-white" :
+                done   ? "bg-[#4CAF50] text-white" :
                          "bg-slate-100 text-slate-400"
               }`}>
                 {done ? "✓" : s.n}
               </div>
               <span className={`text-sm font-bold hidden sm:block ${
-                active ? "text-[#123498]" : done ? "text-green-500" : "text-slate-400"
+                active ? "text-azul" : done ? "text-[#4CAF50]" : "text-slate-400"
               }`}>
                 {s.label}
               </span>
             </div>
             {i < steps.length - 1 && (
-              <div className={`h-px w-8 ${done ? "bg-green-400" : "bg-slate-200"}`} />
+              <div className={`h-px w-12 ${done ? "bg-[#4CAF50]/80 gap-0" : "bg-slate-200 gap-0"}`} />
             )}
           </div>
         );
@@ -59,6 +59,12 @@ export default function ModalOferta({
   loading,
 }) {
   const [paso, setPaso] = useState(1);
+
+  useEffect(() => {
+    if (isOpen) {
+      setPaso(1);
+    }
+  }, [isOpen]);
 
   const empresaActiva = companies.find(c => String(c.id) === String(form.empresa_id));
 
@@ -86,7 +92,7 @@ export default function ModalOferta({
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-slate-100 shrink-0">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-black text-[#1c2a52]">
+            <h2 className="text-base font-black text-azul">
               {editingOffer ? "Editar oferta" : "Nueva oferta"}
             </h2>
             <button onClick={handleClose} className="p-1 rounded-lg hover:bg-slate-100 text-slate-400">
@@ -95,20 +101,14 @@ export default function ModalOferta({
           </div>
 
           {/* Empresa activa */}
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-xs text-slate-400">Publicando para</span>
-            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-full">
-              {empresaActiva ? (
-                <>
-                  <span className="w-5 h-5 rounded-full bg-[#123498] text-white text-[9px] font-black flex items-center justify-center shrink-0">
-                    {getInitials(empresaActiva.nombre)}
-                  </span>
-                  <span className="text-xs font-bold text-slate-700">{empresaActiva.nombre}</span>
-                </>
-              ) : (
-                <span className="text-xs text-slate-400">Sin empresa</span>
-              )}
-            </div>
+          <div className="flex items-center gap-3 mb-6">
+              <span className="text-sm text-slate-400">Publicando para</span>
+              <EmpresaSelector 
+                companies={companies}
+                value={form.empresa_id}
+                onChange={(id) => setForm(prev => ({ ...prev, empresa_id: id }))}
+                disabled={paso > 1} // Paso es 2 o 3, se congela.
+              />
           </div>
 
           <StepIndicator paso={paso} />
@@ -140,25 +140,24 @@ export default function ModalOferta({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between gap-3 shrink-0">
+        <div className="px-6 py-4 border-t border-slate-100 bg-[#f8fafd] flex items-center justify-between gap-3 shrink-0">
+          <span className="text-xs text-slate-400">
+            Paso {paso} de 3</span>
           <div className="flex items-center gap-2">
             {paso > 1 && (
               <button type="button" onClick={() => setPaso(p => p - 1)}
-                className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">
-                ← Atrás
+                className="px-4 py-2.5 rounded-xl border border-azul text-sm font-bold text-azul hover:bg-gris-oscuro/20 transition-colors">
+                Atrás
               </button>
             )}
-            <span className="text-xs text-slate-400">Paso {paso} de 3</span>
-          </div>
-
-          {paso < 3 ? (
+            {paso < 3 ? (
             <button
               type="button"
               onClick={() => setPaso(p => p + 1)}
               disabled={(paso === 1 && !canNext1) || (paso === 2 && !canNext2)}
               className="px-6 py-2.5 rounded-xl bg-[#123498] hover:bg-[#0f2a80] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold transition-colors"
             >
-              Continuar →
+              Continuar
             </button>
           ) : (
             <button
@@ -170,6 +169,7 @@ export default function ModalOferta({
               {loading ? "Guardando..." : editingOffer ? "Guardar cambios" : "Publicar oferta"}
             </button>
           )}
+          </div>
         </div>
       </div>
     </div>

@@ -43,25 +43,18 @@ if ($resource === 'categorias') {
 
     // CREAR CATEGORÍA
     if ($method === 'POST' && $action === 'crear') {
-        $body = getBody();
-        $nombre = sanitizarTexto($body['nombre'] ?? '');
+        // Leemos directamente de $_POST porque React envía FormData
+        $nombre = sanitizarTexto($_POST['nombre'] ?? '');
         
         if (!$nombre) respondError('El nombre de la categoría es requerido.');
 
-        // Crear un slug básico a partir del nombre (ej: "Desarrollo Web" -> "desarrollo-web")
-        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $nombre)));
+        $slug = generarSlug($nombre);
 
         try {
-            $stmt = $db->prepare("
-                INSERT INTO empresas_clientes
-                    (nombre, slug, ruc, sector, logo_url, descripcion, ubicacion,
-                    anio_fundacion, num_empleados, sitio_web, beneficios, estado)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'activo')
-            ");
-            $stmt->execute([
-                $nombre, $slug, $ruc, $sector, $logo_url, $descripcion, $ubicacion,
-                $anio, $empleados ?: null, $web ?: null, $beneficios
-            ]);
+            // Consulta SQL corregida para la tabla categorias
+            $stmt = $db->prepare("INSERT INTO categorias (nombre, slug) VALUES (?, ?)");
+            $stmt->execute([$nombre, $slug]);
+            
             respond(true, ['id' => $db->lastInsertId(), 'nombre' => $nombre, 'slug' => $slug], 'Categoría creada con éxito.');
         } catch (PDOException $e) {
             if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
@@ -73,15 +66,14 @@ if ($resource === 'categorias') {
 
     // EDITAR CATEGORÍA
     if ($method === 'POST' && $action === 'editar') {
-        $body = getBody();
-        $id = $body['id'] ?? null;
-        $nombre = sanitizarTexto($body['nombre'] ?? '');
-        $slug = generarSlug($nombre);
-
+        // Leemos directamente de $_POST
+        $id = $_POST['id'] ?? null;
+        $nombre = sanitizarTexto($_POST['nombre'] ?? '');
+        
         if (!$id) respondError('ID de categoría requerido.');
         if (!$nombre) respondError('El nombre de la categoría es requerido.');
 
-        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $nombre)));
+        $slug = generarSlug($nombre);
 
         try {
             $stmt = $db->prepare("UPDATE categorias SET nombre = ?, slug = ? WHERE id = ?");
@@ -97,8 +89,9 @@ if ($resource === 'categorias') {
 
     // ELIMINAR CATEGORÍA
     if ($method === 'POST' && $action === 'eliminar') {
-        $body = getBody();
-        $id = $body['id'] ?? null;
+        // Leemos directamente de $_POST
+        $id = $_POST['id'] ?? null;
+        
         if (!$id) respondError('ID de categoría requerido.');
 
         $stmt = $db->prepare("SELECT COUNT(*) as total FROM ofertas_trabajo WHERE categoria_id = ?");

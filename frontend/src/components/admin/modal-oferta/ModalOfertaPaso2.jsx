@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-const labelCls = "text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block";
-const inputCls = "w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#123498]/10 focus:border-[#123498] bg-white placeholder:text-slate-400";
+const labelCls = "text-sm font-bold text-naranja/80 mb-2 block";
+const inputCls = "w-full px-4 py-2.5 text-black/80 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul bg-white placeholder:text-slate-400";
 
 const TIPOS_CONTRATO = [
   { value: "Permanente",    label: "Permanente" },
@@ -28,21 +28,24 @@ const NIVELES = [
 
 function ToggleGroup({ options, value, onChange }) {
   return (
-    <div className="flex flex-wrap gap-2">
-      {options.map(opt => (
-        <button
-          key={opt.value}
-          type="button"
-          onClick={() => onChange(opt.value)}
-          className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-colors ${
-            value === opt.value
-              ? "bg-[#123498] text-white border-[#123498]"
-              : "bg-white text-slate-600 border-slate-200 hover:border-[#123498] hover:text-[#123498]"
-          }`}
-        >
-          {opt.label}
-        </button>
-      ))}
+    <div className="flex w-full rounded-lg border border-slate-200 overflow-hidden bg-white">
+      {options.map((opt, index) => {
+        const isActive = value === opt.value;
+        return (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => onChange(opt.value)}
+            className={`flex-1 py-2.5 text-xs transition-colors border-r last:border-r-0 border-slate-200 ${
+              isActive
+                ? "bg-[#123498] text-white font-bold"
+                : "text-slate-500 hover:bg-slate-50 hover:text-[#123498] font-medium"
+            }`}
+          >
+            {opt.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -72,7 +75,7 @@ export default function ModalOfertaPaso2({ form, setForm }) {
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-7">
 
       {/* Tipo de contrato */}
       <div>
@@ -110,7 +113,7 @@ export default function ModalOfertaPaso2({ form, setForm }) {
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className={labelCls}>Vigencia de la publicación</label>
-          <span className="text-[10px] text-slate-400 font-medium">
+          <span className="text-[10px] text-gris-oscuro font-medium">
             Vacío: publica hoy y cierra en 90 días
           </span>
         </div>
@@ -137,7 +140,7 @@ export default function ModalOfertaPaso2({ form, setForm }) {
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className={labelCls}>Descripción *</label>
-          <span className="text-xs text-slate-400 font-medium">
+          <span className="text-xs text-gris-oscuro font-medium">
             {(form.descripcion || "").length}/2000
           </span>
         </div>
@@ -154,20 +157,20 @@ export default function ModalOfertaPaso2({ form, setForm }) {
       {/* Requisitos como chips */}
       <div>
         <label className={labelCls}>Requisitos</label>
-        <div className="rounded-xl border border-slate-200 overflow-hidden">
+        <div className="rounded-xl border border-gris-oscuro overflow-hidden">
           {/* Chips existentes */}
           {requisitosArray.length > 0 && (
             <div className="p-3 flex flex-col gap-1.5 border-b border-slate-100">
               {requisitosArray.map((req, i) => (
                 <div key={i} className="flex items-center gap-2 group">
-                  <span className="w-2 h-2 rounded-full bg-[#F46F0B] shrink-0" />
-                  <span className="flex-1 text-sm text-slate-700">{req}</span>
+                  <span className="w-2 h-2 rounded-full bg-naranja shrink-0" />
+                  <span className="flex-1 text-sm text-black/80">{req}</span>
                   <button
                     type="button"
                     onClick={() => eliminarRequisito(i)}
-                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-all"
+                    className="opacity-0 group-hover:opacity-100 text-gris-oscuro hover:text-red-500 transition-all"
                   >
-                    <XMarkIcon className="w-4 h-4" />
+                    <XMarkIcon className="w-4 h-4 text-gris-oscuro" />
                   </button>
                 </div>
               ))}
@@ -175,14 +178,14 @@ export default function ModalOfertaPaso2({ form, setForm }) {
           )}
           {/* Input para agregar */}
           <div className="flex items-center gap-2 px-3 py-2.5">
-            <span className="w-2 h-2 rounded-full bg-slate-200 shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-gris-oscuro/50 shrink-0" />
             <input
               type="text"
               value={requisitoInput}
               onChange={e => setRequisitoInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Escribe un requisito y presiona Enter"
-              className="flex-1 bg-transparent text-sm text-slate-600 placeholder:text-slate-400 outline-none"
+              className="flex-1 bg-transparent text-sm text-gris-oscuro placeholder:text-gris-oscuro outline-none"
             />
           </div>
         </div>
