@@ -62,4 +62,14 @@ function compartir(id) {
   });
 }
 
-export const vacantesService = { listar, detalle, postular, sugerencias, listarCategorias, misPostulaciones, misPostulacionesDetalle, compartir };
+function reportar(data) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Debes iniciar sesión para reportar una oferta");
+
+  return apiFetch("/vacantes/?action=reportar", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export const vacantesService = { listar, detalle, postular, sugerencias, listarCategorias, misPostulaciones, misPostulacionesDetalle, compartir, reportar };

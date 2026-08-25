@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import {
   Plus, Search, Edit3, Trash2, X, Lock,
-  ToggleLeft, ToggleRight, ChevronDown, ChevronUp, Share2
+  ToggleLeft, ToggleRight, ChevronDown, ChevronUp, Share2, Flag, CheckCircle, Briefcase, XCircle
 } from "lucide-react";
 import {
   getOffers, getCompanies, saveOffer, deleteOffer,
   toggleOfferStatus, closeOffer, saveCategory,
-  getQuestions, saveQuestion, deleteQuestionsByOffer
+  getQuestions, saveQuestion, deleteQuestionsByOffer,
+  getReportes, marcarReporteRevisado, marcarReporteDescartado
 } from "../../services/adminService";
 import { apiFetch } from "../../services/api";
 
@@ -38,6 +39,9 @@ export default function SectionOfertas() {
   const [showNewCategory,setShowNewCategory]= useState(false);
   const [newCategoryName,setNewCategoryName]= useState("");
   const [preguntas,      setPreguntas]      = useState([]);
+  const [vistaActual,    setVistaActual]    = useState("ofertas"); // 'ofertas' | 'reportes'
+  const [reportes,       setReportes]       = useState([]);
+  const [filtroReporte,  setFiltroReporte]  = useState("pendientes"); // 'pendientes' | 'revisados'
 
   const FORM_INICIAL = {
     titulo: "", empresa_id: "", ubicacion: "",
@@ -58,6 +62,7 @@ export default function SectionOfertas() {
       const res = await apiFetch("/admin/?resource=categorias&action=listar");
       setCategories(res.data || []);
     } catch { setCategories([]); }
+    try { setReportes(await getReportes()); } catch { setReportes([]); }
   };
 
   useEffect(() => { reload(); }, []);
@@ -195,12 +200,25 @@ export default function SectionOfertas() {
           <h1 className="text-xl font-black text-[#123498] uppercase tracking-wide">Gestión de Ofertas</h1>
           <p className="text-sm text-slate-400">Administra las convocatorias laborales</p>
         </div>
-        <button onClick={openNew} className="flex items-center justify-center gap-2 bg-[#F46F0B] hover:bg-[#d85f05] text-white px-5 py-3 rounded-xl text-sm font-black uppercase tracking-wider shadow-sm transition-all shrink-0">
-          <Plus size={14} strokeWidth={2.8} />Nueva Oferta
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setVistaActual(v => v === "ofertas" ? "reportes" : "ofertas")} 
+            className={`flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-black uppercase tracking-wider shadow-sm transition-all shrink-0 ${vistaActual === 'reportes' ? 'bg-[#123498] text-white hover:bg-blue-900' : 'bg-red-500 text-white hover:bg-red-600'}`}
+          >
+            {vistaActual === 'reportes' ? <Briefcase className="w-4 h-4" strokeWidth={2.8} /> : <Flag className="w-4 h-4" strokeWidth={2.8} />}
+            {vistaActual === 'reportes' ? 'Ver Ofertas' : 'Ver Reportes'}
+          </button>
+          {vistaActual === 'ofertas' && (
+            <button onClick={openNew} className="flex items-center justify-center gap-2 bg-[#F46F0B] hover:bg-[#d85f05] text-white px-5 py-3 rounded-xl text-sm font-black uppercase tracking-wider shadow-sm transition-all shrink-0">
+              <Plus size={14} strokeWidth={2.8} />Nueva Oferta
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Filtros */}
+      {vistaActual === 'ofertas' && (
+        <>
+          {/* Filtros */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative max-w-sm flex-1">
           <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -302,8 +320,98 @@ export default function SectionOfertas() {
           </table>
         </div>
       </div>
+      </>
+      )}
 
-      {/* Modal */}
+      {/* --- VISTA DE REPORTES --- */}
+      {vistaActual === 'reportes' && (
+        <div className="space-y-4">
+          <div className="flex gap-2 mb-4">
+            <button onClick={() => setFiltroReporte('pendientes')} className={`px-4 py-2 text-xs font-bold uppercase rounded-lg transition-colors ${filtroReporte === 'pendientes' ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-white text-gray-400 border border-gray-200'}`}>Pendientes</button>
+            <button onClick={() => setFiltroReporte('revisados')} className={`px-4 py-2 text-xs font-bold uppercase rounded-lg transition-colors ${filtroReporte === 'revisados' ? 'bg-blue-50 text-[#123498] border border-blue-200' : 'bg-white text-gray-400 border border-gray-200'}`}>Revisados</button>
+            <button onClick={() => setFiltroReporte('descartados')} className={`px-4 py-2 text-xs font-bold uppercase rounded-lg transition-colors ${filtroReporte === 'descartados' ? 'bg-gray-100 text-gray-600 border border-gray-300' : 'bg-white text-gray-400 border border-gray-200'}`}>Descartados</button>
+          </div>
+          
+          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-[9px] text-slate-400 uppercase tracking-widest border-b border-slate-100 bg-slate-50/50">
+                    <th className="px-5 py-3.5 font-black">Oferta</th>
+                    <th className="px-5 py-3.5 font-black">Motivo / Descripción</th>
+                    <th className="px-5 py-3.5 font-black">Fecha</th>
+                    <th className="px-5 py-3.5 font-black text-center">Estado</th>
+                    <th className="px-5 py-3.5 font-black text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reportes.filter(r => r.estado === (filtroReporte === 'pendientes' ? 'pendiente' : (filtroReporte === 'revisados' ? 'revisado' : 'descartado'))).map(r => (
+                    <tr key={r.id} className="border-t border-slate-50 hover:bg-slate-50/50 transition-colors">
+                      <td className="px-5 py-3.5">
+                        <div className="font-bold text-[#1A1A1A]">{r.oferta_titulo}</div>
+                        <div className="text-xs text-slate-500">{r.empresa_nombre}</div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="font-bold text-red-500 text-xs uppercase tracking-wide">{r.motivo}</div>
+                        <div className="text-slate-500 mt-1 line-clamp-2 max-w-md">{r.descripcion}</div>
+                      </td>
+                      <td className="px-5 py-3.5 text-slate-400 whitespace-nowrap">
+                        {new Date(r.fecha_reporte).toLocaleDateString('es-PE')}
+                      </td>
+                      <td className="px-5 py-3.5 text-center">
+                        <span className={`inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase ${r.estado === 'pendiente' ? 'bg-red-50 text-red-600' : (r.estado === 'revisado' ? 'bg-blue-50 text-[#123498]' : 'bg-gray-100 text-gray-500')}`}>
+                          {r.estado}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center justify-end gap-2">
+                        {r.estado === 'pendiente' && (
+                          <>
+                            <button 
+                              onClick={async () => {
+                                try {
+                                  await marcarReporteRevisado(r.id);
+                                  await reload();
+                                } catch (e) {
+                                  alert(e.message || "Error al marcar como revisado");
+                                }
+                              }}
+                              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-600 hover:bg-green-100 rounded-lg text-xs font-bold uppercase transition-colors"
+                              title="Aprobar / Revisar"
+                            >
+                              <CheckCircle size={14} /> Revisar
+                            </button>
+                            <button 
+                              onClick={async () => {
+                                try {
+                                  await marcarReporteDescartado(r.id);
+                                  await reload();
+                                } catch (e) {
+                                  alert(e.message || "Error al descartar");
+                                }
+                              }}
+                              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold uppercase transition-colors"
+                              title="Descartar reporte"
+                            >
+                              <XCircle size={14} /> Descartar
+                            </button>
+                          </>
+                        )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {reportes.filter(r => r.estado === (filtroReporte === 'pendientes' ? 'pendiente' : (filtroReporte === 'revisados' ? 'revisado' : 'descartado'))).length === 0 && (
+                    <tr><td colSpan="5" className="py-12 text-center text-slate-400 text-sm">No hay reportes {filtroReporte}.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- MODALES --- */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setModalOpen(false)}>
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
