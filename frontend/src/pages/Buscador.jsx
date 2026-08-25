@@ -6,6 +6,7 @@ import { favoritosService } from "../services/favoritosService";
 import FiltrosVacantes from "../components/buscador/FiltrosVacantes";
 import ListaVacantes from "../components/buscador/ListaVacantes";
 import PanelDetalle from "../components/buscador/PanelDetalle";
+import PanelDetalleMovil from "../components/buscador/PanelDetalleMovil";
 import { BriefcaseIcon } from "@heroicons/react/24/outline";
 
 const ITEMS_POR_PAGINA = 15;
@@ -45,6 +46,7 @@ export default function Buscador() {
   const [guardados, setGuardados] = useState(new Set());
   const [vacantesPostuladas, setVacantesPostuladas] = useState([]);
   const [pagina, setPagina] = useState(0);
+  const [modalMovilAbierto, setModalMovilAbierto] = useState(false);
 
   const cargarLista = useCallback(async (filtrosActuales) => {
     setListaLoading(true);
@@ -186,15 +188,18 @@ export default function Buscador() {
     setPostulacionStep(null);
     setRespuestasFiltro({});
 
+    // Abrir el modal móvil inmediatamente (mostrará estado loading)
+    setModalMovilAbierto(true);
+
     try {
       const data = await vacantesService.detalle(idOrSlug);
       setSeleccionadaId(String(data.id));
       setVacanteDetalle(data);
       setPanelEstado("detail");
-      
+
       // Actualizar la URL con el slug si es posible, sin añadir al historial
       if (data.slug) {
-        navigate(`/buscar-empleo/${data.slug}`, { replace: true });
+        navigate(`/buscar-empleo/${data.slug}`, { replace: true, preventScrollReset: true });
       }
     } catch {
       setPanelEstado("error");
@@ -203,12 +208,13 @@ export default function Buscador() {
   }, [navigate]);
 
   const handleVolver = useCallback(() => {
+    setModalMovilAbierto(false);
     setSeleccionadaId(null);
     setVacanteDetalle(null);
     setPanelEstado("empty");
     setPostulacionStep(null);
     setRespuestasFiltro({});
-    navigate("/buscar-empleo", { replace: true });
+    navigate("/buscar-empleo", { replace: true, preventScrollReset: true });
   }, [navigate]);
 
   const handleGuardar = useCallback(
@@ -390,7 +396,7 @@ export default function Buscador() {
       )}
 
       <div className="max-w-7xl mx-auto w-full p-6 pt-6 flex flex-col">
-        <div ref={filtersRef} className="p-5 sticky top-0 z-20 bg-[#F9F9F9]">
+        <div ref={filtersRef} className="p-5 lg:sticky lg:top-0 z-20 bg-[#F9F9F9]">
           <FiltrosVacantes
             filtros={filtros}
             onFilterChange={handleFilterChange}
@@ -399,11 +405,9 @@ export default function Buscador() {
 
         <div className="flex flex-col lg:flex-row gap-6 lg:items-start">
           <div
-            className={`w-full lg:w-[42%] flex flex-col ${
-              seleccionadaId ? "hidden lg:flex" : "flex"
-            }`}
+            className="w-full lg:w-[42%] flex flex-col"
           >
-            <div className="sticky z-10" style={{ top: filtersHeight }}>
+            <div className="lg:sticky z-10" style={{ top: filtersHeight }}>
               <div className="flex items-center justify-between py-3 bg-[#F9F9F9]">
                 <div className="flex items-center gap-2">
                   <BriefcaseIcon
@@ -501,10 +505,9 @@ export default function Buscador() {
             </aside>
           </div>
 
+          {/* Panel detalle — solo visible en desktop (lg+) */}
           <main
-            className={`w-full lg:flex-1 bg-white rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.07)] flex flex-col lg:sticky lg:overflow-y-auto lg:self-start mt-5 ${
-              seleccionadaId ? "flex" : "hidden lg:flex"
-            }`}
+            className="hidden lg:flex w-full lg:flex-1 bg-white rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.07)] flex-col lg:sticky lg:overflow-y-auto lg:self-start mt-5"
             style={{
               top: filtersHeight,
               maxHeight: `calc(100vh - ${filtersHeight}px)`,
@@ -531,6 +534,29 @@ export default function Buscador() {
               onCompartir={handleCompartir}
             />
           </main>
+
+          {/* Modal bottom-sheet — solo en móvil/tablet (< lg) */}
+          <PanelDetalleMovil
+            abierto={modalMovilAbierto}
+            onCerrar={handleVolver}
+            estado={panelEstado}
+            vacante={vacanteDetalle}
+            error={listaError && panelEstado === "error" ? listaError : ""}
+            onPostular={handleIniciarPostulacion}
+            onReintentar={handleReintentar}
+            postulacionStep={postulacionStep}
+            respuestasFiltro={respuestasFiltro}
+            setRespuestasFiltro={setRespuestasFiltro}
+            onPreguntasCompletadas={handlePreguntasCompletadas}
+            onPostularConCV={handlePostularConCV}
+            onCancelarPostulacion={handleCancelarPostulacion}
+            onVolverAPreguntas={handleVolverAPreguntas}
+            postulando={postulando}
+            yaPostulada={vacantesPostuladas.includes(seleccionadaId)}
+            esGuardada={vacanteDetalle ? guardados.has(vacanteDetalle.id) : false}
+            onGuardar={handleGuardar}
+            onCompartir={handleCompartir}
+          />
         </div>
       </div>
     </div>
