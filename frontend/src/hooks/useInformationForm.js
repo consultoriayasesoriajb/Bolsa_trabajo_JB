@@ -40,6 +40,21 @@ export function useInformationForm() {
             presentacion: presentacionCargada,
             cvArchivo: cvCargado,
           });
+
+          // Sincronizar localStorage para que ConfirmacionCV tenga los datos más recientes
+          const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+          let needsUpdate = false;
+          if (telefonoCargado && storedUser.telefono !== telefonoCargado) {
+            storedUser.telefono = telefonoCargado;
+            needsUpdate = true;
+          }
+          if (cv_url && storedUser.cv_url !== cv_url) {
+            storedUser.cv_url = cv_url;
+            needsUpdate = true;
+          }
+          if (needsUpdate) {
+            localStorage.setItem("user", JSON.stringify(storedUser));
+          }
         }
       } catch {
         // Si falla, los campos quedan vacíos
@@ -111,11 +126,22 @@ export function useInformationForm() {
         ...cambios,
       });
 
-      // Si se subió un CV, actualizamos cv_url en localStorage
+      // Si se subió un CV o se actualizó el teléfono, actualizamos en localStorage
       // para que ConfirmacionCV.jsx lo detecte al postular
+      const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+      let needsStorageUpdate = false;
+
       if (result?.data?.cv_url) {
-        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
         storedUser.cv_url = result.data.cv_url;
+        needsStorageUpdate = true;
+      }
+      
+      if (cambios.telefono) {
+        storedUser.telefono = cambios.telefono;
+        needsStorageUpdate = true;
+      }
+
+      if (needsStorageUpdate) {
         localStorage.setItem("user", JSON.stringify(storedUser));
       }
 

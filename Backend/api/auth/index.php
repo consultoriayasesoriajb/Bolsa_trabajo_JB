@@ -21,8 +21,8 @@ if ($method === 'POST' && $action === 'register') {
     $password = trim($body['password'] ?? '');
     $telefono = sanitizarTexto($body['telefono'] ?? '');
 
-    if (!$nombre_completo || !$correo || !$password || !$telefono)
-        respondError('Todos los campos son obligatorios.');
+    if (!$nombre_completo || !$correo || !$password)
+        respondError('Todos los campos principales son obligatorios.');
     if (!validarEmail($correo))
         respondError('Formato de correo inválido.');
     if (!validarPassword($password))

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link, useParams } from "react-router-dom";
 import { vacantesService } from "../services/vacantesService";
 import { authService } from "../services/authService";
 import { favoritosService } from "../services/favoritosService";
@@ -21,11 +21,15 @@ const FILTROS_INICIALES = {
 export default function Buscador() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { slug } = useParams();
 
   const [user, setUser] = useState(null);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const profileMenuRef = useRef(null);
+  const filtersRef = useRef(null);
+  const listRef = useRef(null);
+  const [filtersHeight, setFiltersHeight] = useState(0);
 
   const [vacantes, setVacantes] = useState([]);
   const [filtros, setFiltros] = useState(FILTROS_INICIALES);
@@ -48,23 +52,31 @@ export default function Buscador() {
     try {
       const data = await vacantesService.listar(filtrosActuales);
       setVacantes(data);
+      return data[0]?.id ?? null;
     } catch (e) {
       setListaError(e.message || "Error al cargar vacantes");
+      return null;
     } finally {
       setListaLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    cargarLista(FILTROS_INICIALES);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const vacanteId = params.get("vacante");
-    if (vacanteId) {
-      handleSelect(vacanteId);
+    if (slug) {
+      handleSelect(slug);
+      cargarLista(FILTROS_INICIALES);
+    } else {
+      // Compatibilidad con query param ?vacante=id
+      const params = new URLSearchParams(location.search);
+      const vacanteId = params.get("vacante");
+      if (vacanteId) {
+        handleSelect(vacanteId);
+        cargarLista(FILTROS_INICIALES);
+      } else {
+        cargarLista(FILTROS_INICIALES).then((primerId) => {
+          if (primerId) handleSelect(primerId);
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -110,6 +122,16 @@ export default function Buscador() {
   }, [location]);
 
   useEffect(() => {
+    const el = filtersRef.current;
+    if (!el) return;
+    const update = () => setFiltersHeight(el.offsetHeight);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (!mensajePostulacion) return;
     const timer = setTimeout(() => setMensajePostulacion(""), 4000);
     return () => clearTimeout(timer);
@@ -143,6 +165,12 @@ export default function Buscador() {
   const inicio = pagina * ITEMS_POR_PAGINA;
   const visibles = vacantes.slice(inicio, inicio + ITEMS_POR_PAGINA);
 
+  // Cambia de página y sube al inicio del listado
+  const irAPagina = useCallback((nuevaPagina) => {
+    setPagina(nuevaPagina);
+    listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
   const handleFilterChange = useCallback(
     async (nuevosFiltros) => {
       setFiltros(nuevosFiltros);
@@ -151,8 +179,7 @@ export default function Buscador() {
     [cargarLista],
   );
 
-  const handleSelect = useCallback(async (id) => {
-    setSeleccionadaId(String(id));
+  const handleSelect = useCallback(async (idOrSlug) => {
     setPanelEstado("loading");
     setVacanteDetalle(null);
     setMensajePostulacion("");
@@ -160,14 +187,20 @@ export default function Buscador() {
     setRespuestasFiltro({});
 
     try {
-      const data = await vacantesService.detalle(id);
+      const data = await vacantesService.detalle(idOrSlug);
+      setSeleccionadaId(String(data.id));
       setVacanteDetalle(data);
       setPanelEstado("detail");
+      
+      // Actualizar la URL con el slug si es posible, sin añadir al historial
+      if (data.slug) {
+        navigate(`/buscar-empleo/${data.slug}`, { replace: true });
+      }
     } catch {
       setPanelEstado("error");
       setVacanteDetalle(null);
     }
-  }, []);
+  }, [navigate]);
 
   const handleVolver = useCallback(() => {
     setSeleccionadaId(null);
@@ -175,7 +208,8 @@ export default function Buscador() {
     setPanelEstado("empty");
     setPostulacionStep(null);
     setRespuestasFiltro({});
-  }, []);
+    navigate("/buscar-empleo", { replace: true });
+  }, [navigate]);
 
   const handleGuardar = useCallback(
     async (id) => {
@@ -339,7 +373,7 @@ export default function Buscador() {
       )}
 
       <div className="max-w-7xl mx-auto w-full p-6 pt-6 flex flex-col">
-        <div className="p-5 mb-5 shrink-0">
+        <div ref={filtersRef} className="p-5 sticky top-0 z-20 bg-[#F9F9F9]">
           <FiltrosVacantes
             filtros={filtros}
             onFilterChange={handleFilterChange}
@@ -352,23 +386,27 @@ export default function Buscador() {
               seleccionadaId ? "hidden lg:flex" : "flex"
             }`}
           >
-            <div className="flex items-center justify-between py-3 mb-2 sticky top-0 z-10 bg-[#F9F9F9]">
-              <div className="flex items-center gap-2">
-                <BriefcaseIcon
-                  className="w-6 h-6 text-naranja shrink-0"
-                  strokeWidth={2}
-                />
-                <h2 className="font-heading font-black text-[#123498] tracking-tight uppercase text-lg sm:text-xl">
-                  Empleos para ti
-                </h2>
+            <div className="sticky z-10" style={{ top: filtersHeight }}>
+              <div className="flex items-center justify-between py-3 bg-[#F9F9F9]">
+                <div className="flex items-center gap-2">
+                  <BriefcaseIcon
+                    className="w-6 h-6 text-naranja shrink-0"
+                    strokeWidth={2}
+                  />
+                  <h2 className="font-heading font-black text-[#123498] tracking-tight uppercase text-lg sm:text-xl">
+                    Empleos para ti
+                  </h2>
+                </div>
+                <span className="font-heading font-bold text-azul text-sm sm:text-base">
+                  {listaLoading
+                    ? "Buscando..."
+                    : `${visibles.length} vacante${visibles.length !== 1 ? "s" : ""}`}
+                </span>
               </div>
-              <span className="font-heading font-bold text-azul text-sm sm:text-base">
-                {listaLoading
-                  ? "Buscando..."
-                  : `${visibles.length} vacante${visibles.length !== 1 ? "s" : ""}`}
-              </span>
+              {/* Degradado inferior: funde el fondo con el contenido sin borde visible */}
+              <div className="h-4 bg-linear-to-b from-[#F9F9F9] to-transparent pointer-events-none" />
             </div>
-            <aside className="flex flex-col w-full">
+            <aside ref={listRef} className="flex flex-col w-full">
               <ListaVacantes
                 vacantes={visibles}
                 seleccionadaId={seleccionadaId}
@@ -383,7 +421,7 @@ export default function Buscador() {
                 <div className="flex items-center justify-center gap-2 border-t border-gray-100 px-4 py-3">
                   <button
                     type="button"
-                    onClick={() => setPagina((p) => Math.max(0, p - 1))}
+                    onClick={() => irAPagina(Math.max(0, pagina - 1))}
                     disabled={pagina === 0}
                     className="flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:border-gray-300 disabled:opacity-40 disabled:cursor-default transition-all shadow-sm cursor-pointer"
                   >
@@ -407,7 +445,7 @@ export default function Buscador() {
                     <button
                       key={i}
                       type="button"
-                      onClick={() => setPagina(i)}
+                      onClick={() => irAPagina(i)}
                       className={`w-9 h-9 text-sm font-medium rounded-lg transition-all cursor-pointer ${
                         pagina === i
                           ? "bg-naranja text-white shadow-sm"
@@ -421,7 +459,7 @@ export default function Buscador() {
                   <button
                     type="button"
                     onClick={() =>
-                      setPagina((p) => Math.min(totalPaginas - 1, p + 1))
+                      irAPagina(Math.min(totalPaginas - 1, pagina + 1))
                     }
                     disabled={pagina >= totalPaginas - 1}
                     className="flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:border-gray-300 disabled:opacity-40 disabled:cursor-default transition-all shadow-sm cursor-pointer"
@@ -447,9 +485,13 @@ export default function Buscador() {
           </div>
 
           <main
-            className={`w-full lg:flex-1 bg-white rounded-lg shadow-sm flex flex-col lg:sticky lg:overflow-y-auto mt-5 ${
+            className={`w-full lg:flex-1 bg-white rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.07)] flex flex-col lg:sticky lg:overflow-y-auto lg:self-start mt-5 ${
               seleccionadaId ? "flex" : "hidden lg:flex"
-            } lg:top-5 lg:max-h-[calc(100vh-3rem)]`}
+            }`}
+            style={{
+              top: filtersHeight,
+              maxHeight: `calc(100vh - ${filtersHeight}px)`,
+            }}
           >
             <PanelDetalle
               estado={panelEstado}
@@ -467,6 +509,8 @@ export default function Buscador() {
               onVolverAPreguntas={handleVolverAPreguntas}
               postulando={postulando}
               yaPostulada={vacantesPostuladas.includes(seleccionadaId)}
+              esGuardada={vacanteDetalle ? guardados.has(vacanteDetalle.id) : false}
+              onGuardar={handleGuardar}
             />
           </main>
         </div>

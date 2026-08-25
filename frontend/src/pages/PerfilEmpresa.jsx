@@ -10,15 +10,37 @@ import EmpresaHeader from "../components/empresas/perfil/EmpresaHeader";
 import EmpresaBarraFiltros from "../components/empresas/perfil/EmpresaBarraFiltros";
 
 export default function PerfilEmpresa() {
-  const { slug }   = useParams();
-  const navigate   = useNavigate();
+  const { slug } = useParams();
+  const navigate = useNavigate();
 
   const {
-    empresa, ofertas, ofertasFiltradas, evaluacionesFiltradas, isLoading, yaEvaluo, pestana, setPestana,
-    drawerAbierto, abrirDrawer, cerrarDrawer, form, handleChange, errors,
-    enviando, exito, handleEnviar, irAOferta, busquedaOfertas, setBusquedaOfertas,
-    filtroModalidad, setFiltroModalidad, filtroRelacion, setFiltroRelacion,
-    filtroEstrellas, setFiltroEstrellas, limpiarFiltros,
+    empresa,
+    ofertas,
+    ofertasFiltradas,
+    evaluacionesFiltradas,
+    isLoading,
+    yaEvaluo,
+    pestana,
+    setPestana,
+    drawerAbierto,
+    abrirDrawer,
+    cerrarDrawer,
+    form,
+    handleChange,
+    errors,
+    enviando,
+    exito,
+    handleEnviar,
+    irAOferta,
+    busquedaOfertas,
+    setBusquedaOfertas,
+    filtroModalidad,
+    setFiltroModalidad,
+    filtroRelacion,
+    setFiltroRelacion,
+    filtroEstrellas,
+    setFiltroEstrellas,
+    limpiarFiltros,
   } = usePerfilEmpresa(slug);
 
   if (isLoading) {
@@ -38,9 +60,8 @@ export default function PerfilEmpresa() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f6fb] font-sans">
+    <div className="min-h-screen bg-[#f9f9f9] font-sans">
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
-
         {/* Volver */}
         <button
           onClick={() => navigate("/empresas")}
@@ -53,7 +74,6 @@ export default function PerfilEmpresa() {
         <EmpresaHeader empresa={empresa} totalOfertas={ofertas.length} />
 
         <div className="flex flex-col lg:flex-row gap-6 items-start">
-
           {/* Panel izquierdo */}
           <EmpresaInfoPanel empresa={empresa} />
 
@@ -70,15 +90,22 @@ export default function PerfilEmpresa() {
 
             <EmpresaBarraFiltros
               pestana={pestana}
-              busquedaOfertas={busquedaOfertas} setBusquedaOfertas={setBusquedaOfertas}
-              filtroModalidad={filtroModalidad} setFiltroModalidad={setFiltroModalidad}
-              filtroRelacion={filtroRelacion}   setFiltroRelacion={setFiltroRelacion}
-              filtroEstrellas={filtroEstrellas} setFiltroEstrellas={setFiltroEstrellas}
+              busquedaOfertas={busquedaOfertas}
+              setBusquedaOfertas={setBusquedaOfertas}
+              filtroModalidad={filtroModalidad}
+              setFiltroModalidad={setFiltroModalidad}
+              filtroRelacion={filtroRelacion}
+              setFiltroRelacion={setFiltroRelacion}
+              filtroEstrellas={filtroEstrellas}
+              setFiltroEstrellas={setFiltroEstrellas}
               limpiarFiltros={limpiarFiltros}
             />
 
             {pestana === "ofertas" && (
-              <EmpresaTabOfertas ofertas={ofertasFiltradas} onVerEmpleo={irAOferta} />
+              <EmpresaTabOfertas
+                ofertas={ofertasFiltradas}
+                onVerEmpleo={irAOferta}
+              />
             )}
             {pestana === "evaluaciones" && (
               <EmpresaTabEvaluaciones evaluaciones={evaluacionesFiltradas} />
