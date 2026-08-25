@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   MapPinIcon,
   BriefcaseIcon,
@@ -6,6 +7,8 @@ import {
   HeartIcon,
   FlagIcon,
 } from "@heroicons/react/24/outline";
+import ReportarModal from "./ReportarModal";
+import { vacantesService } from "../../services/vacantesService";
 
 // ── Fila de info con icono ────────────────────────────────────
 function InfoRow({ icon: Icon, label, value }) {
@@ -70,6 +73,8 @@ export default function DetalleVacante({
   esGuardada = false,
   onGuardar,
 }) {
+  const [reportarAbierto, setReportarAbierto] = useState(false);
+
   // Formatear salario
   const salarioTexto =
     vacante.salario_min && vacante.salario_max
@@ -188,6 +193,7 @@ export default function DetalleVacante({
         {/* Reportar empleo */}
         <button
           type="button"
+          onClick={() => setReportarAbierto(true)}
           className="ml-auto flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-red-400 transition-colors cursor-pointer"
           title="Reportar esta oferta"
         >
@@ -195,6 +201,17 @@ export default function DetalleVacante({
           Reportar empleo
         </button>
       </div>
+
+      {reportarAbierto && (
+        <ReportarModal
+          vacante={vacante}
+          onClose={() => setReportarAbierto(false)}
+          onReportado={() => {
+            // Podrías mostrar un toast de éxito aquí si tienes
+          }}
+          vacantesService={vacantesService}
+        />
+      )}
     </div>
   );
 }

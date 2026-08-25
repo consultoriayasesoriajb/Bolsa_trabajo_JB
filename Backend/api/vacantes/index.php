@@ -269,4 +269,33 @@ if ($method === 'POST' && $action === 'postular') {
     respond(true, ['id' => $postulacion_id], 'Te has postulado exitosamente.');
 }
 
+// ─── REPORTAR OFERTA ──────────────────────────────────────
+if ($method === 'POST' && $action === 'reportar') {
+    $user = requireAuth();
+
+    $body = getBody();
+    $vacante_id = $body['oferta_id'] ?? null;
+    $motivo = sanitizarTexto($body['motivo'] ?? '');
+    $descripcion = sanitizarTexto($body['descripcion'] ?? '');
+
+    if (!$vacante_id || !$motivo || !$descripcion) {
+        respondError('Todos los campos (oferta_id, motivo, descripcion) son requeridos.');
+    }
+
+    $stmt = $db->prepare("SELECT id FROM ofertas_trabajo WHERE id = ?");
+    $stmt->execute([$vacante_id]);
+    if (!$stmt->fetch()) respondError('Vacante no encontrada.', 404);
+
+    try {
+        $stmt = $db->prepare("
+            INSERT INTO reportes_empleos (oferta_id, usuario_id, motivo, descripcion, estado)
+            VALUES (?, ?, ?, ?, 'pendiente')
+        ");
+        $stmt->execute([$vacante_id, $user['id'], $motivo, $descripcion]);
+        respond(true, ['id' => $db->lastInsertId()], 'Reporte enviado correctamente.');
+    } catch (PDOException $e) {
+        respondError('Error al guardar el reporte: ' . $e->getMessage());
+    }
+}
+
 respondError('Acción no válida.', 404);
