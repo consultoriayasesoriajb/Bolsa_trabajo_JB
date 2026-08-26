@@ -1,11 +1,38 @@
 import { useState } from "react";
 import { ChevronDownIcon, CheckIcon, PlusIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
+const BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "") ?? "";
+
 const inputCls = "w-full px-4 py-2.5 text-black/80 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul bg-white placeholder:text-slate-400";
 const labelCls = "text-sm font-bold text-naranja/80 mb-2 block";
 
 function getInitials(nombre) {
   return (nombre || "").split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
+}
+
+function LogoEmpresa({ empresa, size = "md", disabled = false }) {
+  const sizeMap = {
+    sm: "w-7 h-7 text-xs",
+    md: "w-9 h-9 text-sm",
+    lg: "w-11 h-11 text-sm",
+  };
+  const cls = sizeMap[size] ?? sizeMap.md;
+  const fallbackBg = disabled ? "bg-slate-400" : "bg-[#123498]";
+
+  if (empresa?.logo_url) {
+    return (
+      <img
+        src={`${BASE_URL}/${empresa.logo_url}`}
+        alt={empresa.nombre}
+        className={`${cls} rounded-xl object-contain border border-slate-100 bg-white p-0.5 shrink-0 shadow-sm`}
+      />
+    );
+  }
+  return (
+    <span className={`${cls} rounded-xl ${fallbackBg} text-white font-black flex items-center justify-center shrink-0`}>
+      {getInitials(empresa?.nombre)}
+    </span>
+  );
 }
 
 export function EmpresaSelector({ companies, value, onChange, disabled }) {
@@ -23,18 +50,16 @@ export function EmpresaSelector({ companies, value, onChange, disabled }) {
         type="button"
         // 2. Bloqueamos el click si está disabled (en paso 2 o 3)
         onClick={() => { if (!disabled) { setOpen(v => !v); setQuery(""); } }}
-        className={`flex items-center gap-2 px-3 py-1.5 bg-white border rounded-full text-xs font-semibold transition-colors ${
+        className={`flex items-center gap-2 px-3 py-2 bg-white border rounded-2xl text-sm font-semibold transition-colors ${
           disabled 
             ? "border-slate-100 text-slate-500 cursor-default shadow-none bg-slate-50/50" 
-            : "border-slate-200 text-slate-700 hover:border-[#123498] cursor-pointer"
+            : "border-slate-200 text-slate-700 hover:border-[#123498] cursor-pointer shadow-sm"
         }`}
       >
         {selected ? (
           <>
-            <span className={`w-6 h-6 rounded-full text-white text-xs font-black flex items-center justify-center shrink-0 ${disabled ? 'bg-slate-400' : 'bg-[#123498]'}`}>
-              {getInitials(selected.nombre)}
-            </span>
-            <span className="max-w-35 truncate">{selected.nombre}</span>
+            <LogoEmpresa empresa={selected} size="md" disabled={disabled} />
+            <span className="max-w-40 truncate font-bold">{selected.nombre}</span>
           </>
         ) : (
           <span className="text-slate-400">Seleccionar empresa</span>
@@ -75,9 +100,7 @@ export function EmpresaSelector({ companies, value, onChange, disabled }) {
                     String(c.id) === String(value) ? "bg-[#f2f5fc]" : "hover:bg-slate-50"
                   }`}
                 >
-                  <span className="w-7 h-7 rounded-full bg-[#123498] text-white text-xs font-black flex items-center justify-center shrink-0">
-                    {getInitials(c.nombre)}
-                  </span>
+                  <LogoEmpresa empresa={c} size="sm" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-slate-800 truncate">{c.nombre}</p>
                     <p className="text-xs text-slate-400">{c.sector || "Sin sector"}</p>

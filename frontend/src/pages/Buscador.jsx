@@ -431,7 +431,7 @@ export default function Buscador() {
                 </span>
               </div>
               {/* Degradado inferior: funde el fondo con el contenido sin borde visible */}
-              <div className="absolute -bottom-4 left-0 right-0 h-4 bg-gradient-to-b from-[#F9F9F9] to-transparent pointer-events-none" />
+              <div className="absolute -bottom-4 left-0 right-0 h-4 bg-linear-to-b from-[#F9F9F9] to-transparent pointer-events-none" />
             </div>
             <aside ref={listRef} className="flex flex-col w-full">
               <ListaVacantes

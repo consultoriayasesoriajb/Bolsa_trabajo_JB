@@ -2,22 +2,9 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import PanelDetalle from "./PanelDetalle";
 
-/**
- * PanelDetalleMovil
- * Modal bottom-sheet para móvil/tablet (< lg).
- * Soporta:
- *   - Animación de entrada slide-up (desde translateY(100%) → translateY(0))
- *   - Animación de salida slide-down
- *   - Arrastrar la pastilla hacia abajo para cerrar (drag-to-dismiss)
- *   - Cerrar tocando el backdrop
- *   - Cerrar con botón ✕
- *   - Cerrar con tecla Escape
- * La flecha "volver" de PanelDetalle se oculta (onVolver=null).
- */
 export default function PanelDetalleMovil({
   abierto,
   onCerrar,
-  // Props de PanelDetalle
   estado,
   vacante,
   error,
@@ -178,7 +165,7 @@ export default function PanelDetalleMovil({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex flex-col justify-end lg:hidden"
+      className="fixed inset-0 z-9999 flex flex-col justify-end lg:hidden"
       role="dialog"
       aria-modal="true"
       aria-label="Detalle de vacante"
