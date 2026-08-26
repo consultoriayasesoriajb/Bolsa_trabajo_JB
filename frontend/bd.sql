@@ -86,6 +86,7 @@ CREATE TABLE `ofertas_trabajo` (
   `categoria_id` int(11) DEFAULT NULL,
   `estado` enum('activa','pausada','eliminada') NOT NULL DEFAULT 'activa',
   `vistas_count` int(11) NOT NULL DEFAULT 0,
+  `compartidos_count` int(11) NOT NULL DEFAULT 0,
   `fecha_creacion` datetime NOT NULL DEFAULT current_timestamp(),
   `fecha_expiracion` datetime NOT NULL DEFAULT (current_timestamp() + interval 90 day)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -347,6 +348,25 @@ ALTER TABLE `respuestas_postulacion`
 ALTER TABLE `usuarios`
   ADD CONSTRAINT `fk_usuario_rol` FOREIGN KEY (`rol_id`) REFERENCES `roles_sistema` (`id`);
 COMMIT;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `reportes_empleos`
+--
+
+CREATE TABLE `reportes_empleos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `oferta_id` int(11) NOT NULL,
+  `usuario_id` varchar(36) NOT NULL,
+  `motivo` varchar(150) NOT NULL,
+  `descripcion` text NOT NULL,
+  `estado` enum('pendiente','revisado','descartado') NOT NULL DEFAULT 'pendiente',
+  `fecha_reporte` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`oferta_id`) REFERENCES `ofertas_trabajo`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

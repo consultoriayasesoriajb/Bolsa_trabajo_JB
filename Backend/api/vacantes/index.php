@@ -118,7 +118,7 @@ if ($method === 'GET' && $action === 'detalle') {
     if (!$identificador) respondError('ID o slug de vacante requerido.');
 
     $stmt = $db->prepare("
-        SELECT o.*, e.nombre as empresa_nombre, e.slug as empresa_slug, e.logo_url, e.sector,
+        SELECT o.*, o.compartidos_count, e.nombre as empresa_nombre, e.slug as empresa_slug, e.logo_url, e.sector,
                e.descripcion as empresa_descripcion,
                c.nombre as categoria_nombre
         FROM ofertas_trabajo o
@@ -144,6 +144,25 @@ if ($method === 'GET' && $action === 'detalle') {
 
     respond(true, $row);
 }
+
+// ─── REGISTRAR COMPARTIDO ─────────────────────────────────
+if ($method === 'POST' && $action === 'compartir') {
+    $body = json_decode(file_get_contents('php://input'), true);
+    $vacante_id = $body['vacante_id'] ?? null;
+    if (!$vacante_id) respondError('ID de vacante requerido.');
+
+    $stmt = $db->prepare("UPDATE ofertas_trabajo SET compartidos_count = compartidos_count + 1 WHERE id = ? AND estado = 'activa'");
+    $stmt->execute([$vacante_id]);
+
+    if ($stmt->rowCount() === 0) respondError('Vacante no encontrada.', 404);
+
+    $stmtC = $db->prepare("SELECT compartidos_count FROM ofertas_trabajo WHERE id = ?");
+    $stmtC->execute([$vacante_id]);
+    $count = $stmtC->fetchColumn();
+
+    respond(true, ['compartidos_count' => (int)$count], 'Compartido registrado.');
+}
+
 
 // ─── MIS POSTULACIONES ────────────────────────────────────
 if ($method === 'GET' && $action === 'mis_postulaciones') {
@@ -248,6 +267,35 @@ if ($method === 'POST' && $action === 'postular') {
     }
 
     respond(true, ['id' => $postulacion_id], 'Te has postulado exitosamente.');
+}
+
+// ─── REPORTAR OFERTA ──────────────────────────────────────
+if ($method === 'POST' && $action === 'reportar') {
+    $user = requireAuth();
+
+    $body = getBody();
+    $vacante_id = $body['oferta_id'] ?? null;
+    $motivo = sanitizarTexto($body['motivo'] ?? '');
+    $descripcion = sanitizarTexto($body['descripcion'] ?? '');
+
+    if (!$vacante_id || !$motivo || !$descripcion) {
+        respondError('Todos los campos (oferta_id, motivo, descripcion) son requeridos.');
+    }
+
+    $stmt = $db->prepare("SELECT id FROM ofertas_trabajo WHERE id = ?");
+    $stmt->execute([$vacante_id]);
+    if (!$stmt->fetch()) respondError('Vacante no encontrada.', 404);
+
+    try {
+        $stmt = $db->prepare("
+            INSERT INTO reportes_empleos (oferta_id, usuario_id, motivo, descripcion, estado)
+            VALUES (?, ?, ?, ?, 'pendiente')
+        ");
+        $stmt->execute([$vacante_id, $user['id'], $motivo, $descripcion]);
+        respond(true, ['id' => $db->lastInsertId()], 'Reporte enviado correctamente.');
+    } catch (PDOException $e) {
+        respondError('Error al guardar el reporte: ' . $e->getMessage());
+    }
 }
 
 respondError('Acción no válida.', 404);

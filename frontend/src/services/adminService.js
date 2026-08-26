@@ -125,6 +125,26 @@ export const deleteCategory = async (id) => {
     });
 };
 
+// --- REPORTES ---
+export const getReportes = async () => {
+    const res = await apiFetch("/admin/?resource=reportes&action=listar");
+    return res.data || [];
+};
+
+export const marcarReporteRevisado = async (id) => {
+    return await apiFetch("/admin/?resource=reportes&action=marcar_revisado", {
+        method: "POST",
+        body: JSON.stringify({ id })
+    });
+};
+
+export const marcarReporteDescartado = async (id) => {
+    return await apiFetch("/admin/?resource=reportes&action=marcar_descartado", {
+        method: "POST",
+        body: JSON.stringify({ id })
+    });
+};
+
 // --- PREGUNTAS CRUD ---
 export const getQuestions = async (oferta_id) => {
     const result = await apiFetch(`/admin/?resource=preguntas&action=listar&oferta_id=${oferta_id}`);

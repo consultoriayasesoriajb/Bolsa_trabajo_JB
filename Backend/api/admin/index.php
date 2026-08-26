@@ -702,4 +702,42 @@ if ($resource === 'notificaciones') {
     }
 }
 
+// ============================================================
+// MÓDULO: REPORTES EMPLEOS
+// ============================================================
+if ($resource === 'reportes') {
+    if ($method === 'GET' && $action === 'listar') {
+        $stmt = $db->query("
+            SELECT r.*, o.titulo as oferta_titulo, o.slug as oferta_slug, e.nombre as empresa_nombre,
+                   u.nombre_completo as usuario_nombre, u.correo as usuario_correo
+            FROM reportes_empleos r
+            JOIN ofertas_trabajo o ON r.oferta_id = o.id
+            JOIN empresas_clientes e ON o.empresa_id = e.id
+            LEFT JOIN usuarios u ON r.usuario_id = u.id
+            ORDER BY r.fecha_reporte DESC
+        ");
+        respond(true, $stmt->fetchAll());
+    }
+
+    if ($method === 'POST' && $action === 'marcar_revisado') {
+        $body = getBody();
+        $id = $body['id'] ?? null;
+        if (!$id) respondError('ID de reporte requerido.');
+
+        $stmt = $db->prepare("UPDATE reportes_empleos SET estado = 'revisado' WHERE id = ?");
+        $stmt->execute([$id]);
+        respond(true, [], 'Reporte marcado como revisado.');
+    }
+
+    if ($method === 'POST' && $action === 'marcar_descartado') {
+        $body = getBody();
+        $id = $body['id'] ?? null;
+        if (!$id) respondError('ID de reporte requerido.');
+
+        $stmt = $db->prepare("UPDATE reportes_empleos SET estado = 'descartado' WHERE id = ?");
+        $stmt->execute([$id]);
+        respond(true, [], 'Reporte descartado.');
+    }
+}
+
 respondError('Recurso o acción no válida para el panel de administración.', 404);

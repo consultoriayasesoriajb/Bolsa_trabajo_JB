@@ -55,4 +55,21 @@ function misPostulacionesDetalle() {
   return apiFetch("/vacantes/?action=mis_postulaciones_detalle").then(r => r.data);
 }
 
-export const vacantesService = { listar, detalle, postular, sugerencias, listarCategorias, misPostulaciones, misPostulacionesDetalle };
+function compartir(id) {
+  return apiFetch("/vacantes/?action=compartir", {
+    method: "POST",
+    body: JSON.stringify({ vacante_id: id }),
+  });
+}
+
+function reportar(data) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Debes iniciar sesión para reportar una oferta");
+
+  return apiFetch("/vacantes/?action=reportar", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export const vacantesService = { listar, detalle, postular, sugerencias, listarCategorias, misPostulaciones, misPostulacionesDetalle, compartir, reportar };

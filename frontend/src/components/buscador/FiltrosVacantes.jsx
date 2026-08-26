@@ -208,9 +208,9 @@ export default function FiltrosVacantes({ filtros, onFilterChange }) {
       {/* ══════════════════════════════════════════════════════════════ */}
       {/* BARRA DE BÚSQUEDA UNIFICADA (Mobile + Desktop)                 */}
       {/* ══════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-225 mx-auto gap-3 md:gap-0 bg-transparent md:bg-white md:border md:border-gray-200 md:rounded-full md:shadow-sm md:p-1.5 transition-all relative z-40">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center w-full max-w-225 mx-auto bg-white border border-gray-200 rounded-3xl md:rounded-full shadow-sm md:p-1.5 transition-all relative z-50 -mt-2 md:mt-0">
         {/* ── Campo CARGO ── */}
-        <div className="relative flex items-center w-full md:flex-1 min-w-0 bg-white md:bg-transparent border border-gray-200 md:border-none rounded-lg md:rounded-none px-3 md:px-0 md:pl-3">
+        <div className="relative flex items-center w-full md:flex-1 min-w-0 px-4 md:px-0 md:pl-3 py-1 md:py-0 border-b border-gray-100 md:border-none">
           <svg
             className="w-5 h-5 text-gray-400 shrink-0"
             fill="none"
@@ -259,11 +259,11 @@ export default function FiltrosVacantes({ filtros, onFilterChange }) {
                 setInputCargoFoco(false);
               } else if (e.key === "Enter") handleBuscar();
             }}
-            className="w-full pl-2 pr-3 py-3 md:py-2.5 bg-transparent text-sm focus:outline-none"
+            className="w-full pl-2 pr-3 py-4 md:py-2.5 bg-transparent text-base md:text-sm focus:outline-none placeholder:text-gray-400"
           />
           {/* Menú Desplegable (Historial + Novedades / Sugerencias) */}
           {inputCargoFoco && (
-            <div className="absolute top-full left-0 mt-3.5 w-full md:min-w-100 bg-white border border-gray-200 rounded-xl md:rounded-2xl shadow-xl z-50 overflow-hidden">
+            <div className="absolute top-full left-0 mt-0 md:mt-3.5 w-full md:min-w-100 bg-white border border-gray-200 rounded-xl md:rounded-2xl shadow-xl z-50 overflow-hidden">
               {/* ── Historial (input vacío) ── */}
               {locales.cargo.length === 0 && busquedasRecientes.length > 0 && (
                 <div className="py-2 border-b border-gray-100">
@@ -421,10 +421,10 @@ export default function FiltrosVacantes({ filtros, onFilterChange }) {
         </div>
 
         {/* Separador Desktop */}
-        <div className="hidden md:block w-px h-6 bg-gray-200 shrink-0 mx-1" />
+        <div className="hidden md:block w-px h-6 bg-gray-200 shrink-0 mx-1 self-center" />
 
         {/* ── Campo LUGAR ── */}
-        <div className="relative flex items-center w-full md:w-56 bg-white md:bg-transparent border border-gray-200 md:border-none rounded-lg md:rounded-none px-3 md:px-0 md:pl-2 z-30">
+        <div className="relative flex items-center w-full md:w-56 px-4 md:px-0 md:pl-2 py-1 md:py-0 z-30">
           <svg
             className="w-5 h-5 text-gray-400 shrink-0"
             fill="none"
@@ -490,11 +490,11 @@ export default function FiltrosVacantes({ filtros, onFilterChange }) {
                 setInputUbicacionFoco(false);
               } else handleKeyDown(e);
             }}
-            className="w-full pl-2 pr-3 py-3 md:py-2.5 bg-transparent text-sm focus:outline-none"
+            className="w-full pl-2 pr-3 py-4 md:py-2.5 bg-transparent text-base md:text-sm focus:outline-none placeholder:text-gray-400"
           />
           {/* Dropdown Lugar */}
           {inputUbicacionFoco && sugerencias.length > 0 && (
-            <div className="absolute top-full left-0 mt-3.5 w-full md:min-w-65 bg-white border border-gray-200 rounded-xl md:rounded-2xl shadow-xl z-50 py-2 max-h-64 overflow-y-auto">
+            <div className="absolute top-full left-0 mt-0 md:mt-3.5 w-full md:min-w-65 bg-white border border-gray-200 rounded-xl md:rounded-2xl shadow-xl z-50 py-2 max-h-64 overflow-y-auto">
               <div className="px-4 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">
                 Ubicaciones
               </div>
@@ -530,28 +530,25 @@ export default function FiltrosVacantes({ filtros, onFilterChange }) {
           )}
         </div>
 
-        {/* ── Botón Buscar ── */}
+        {/* ── Botón Buscar Desktop (Oculto en móvil) ── */}
         <button
           type="button"
           onClick={handleBuscar}
-          className="w-full md:w-auto bg-naranja hover:bg-orange-600 text-white font-semibold md:font-normal text-sm py-3 md:p-3 rounded-lg md:rounded-full transition-colors flex items-center justify-center shrink-0 shadow-sm md:ml-1 cursor-pointer z-20"
+          className="hidden md:flex bg-naranja hover:bg-orange-600 text-white p-2.5 rounded-full transition-colors items-center justify-center shrink-0 shadow-sm ml-1 cursor-pointer z-20"
+          aria-label="Buscar empleos"
         >
-          <span className="md:hidden">Buscar empleos</span>
-          <svg
-            className="hidden md:block w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2.5}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </button>
       </div>
+      <button
+        type="button"
+        onClick={handleBuscar}
+        className="md:hidden w-full bg-naranja hover:bg-orange-600 text-white font-semibold text-base py-3.5 rounded-full transition-colors flex items-center justify-center shadow-sm cursor-pointer relative z-30 mt-2"
+      >
+        Buscar empleos
+      </button>
     </div>
   );
 }
