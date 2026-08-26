@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { 
+  Plus, Search, Edit3, Trash2, X, Lock, ToggleLeft, ToggleRight, ChevronDown, ChevronUp
 import {
   Plus, Search, Edit3, Trash2, X, Lock,
   ToggleLeft, ToggleRight, ChevronDown, ChevronUp, Share2, Flag, CheckCircle, Briefcase, XCircle
@@ -10,6 +12,7 @@ import {
   getReportes, marcarReporteRevisado, marcarReporteDescartado
 } from "../../services/adminService";
 import { apiFetch } from "../../services/api";
+import ModalOferta from "./ModalOferta";
 
 const MAP_MODALIDAD = {
   presencial: "Presencial",
@@ -137,11 +140,26 @@ export default function SectionOfertas() {
     e.preventDefault();
     if (!form.titulo || !form.empresa_id) return;
     setLoading(true);
+    
     try {
       const offerData = { ...form, ...(editingOffer ? { id: editingOffer.id } : {}) };
       const res = await saveOffer(offerData);
-      const offerId = editingOffer ? editingOffer.id : res.data.id;
 
+      // 1. Si PHP devuelve un JSON con "success: false", capturamos su mensaje real
+      if (res && res.success === false) {
+        throw new Error("PHP dice: " + (res.message || res.error || "Solicitud rechazada"));
+      }
+
+      const offerId = editingOffer 
+        ? editingOffer.id 
+        : (res?.data?.id || res?.id);
+
+      // 2. Si sigue sin haber ID, imprimimos la respuesta completa para depurar
+      if (!offerId) {
+        throw new Error("Respuesta cruda del servidor: " + JSON.stringify(res));
+      }
+
+      // Guardado de preguntas
       if (editingOffer) await deleteQuestionsByOffer(offerId);
 
       for (const q of preguntas) {
@@ -155,11 +173,14 @@ export default function SectionOfertas() {
           });
         }
       }
+      
       await reload();
       setModalOpen(false);
     } catch (err) {
+      // Ahora veremos el error verdadero en pantalla
       alert(err.message || "Error al guardar oferta");
     }
+    
     setLoading(false);
   };
 
@@ -411,6 +432,27 @@ export default function SectionOfertas() {
         </div>
       )}
 
+      {/* Modal */}
+      <ModalOferta
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        editingOffer={editingOffer}
+        form={form}
+        setForm={setForm}
+        companies={companies}
+        categories={categories}
+        showNewCategory={showNewCategory}
+        setShowNewCategory={setShowNewCategory}
+        newCategoryName={newCategoryName}
+        setNewCategoryName={setNewCategoryName}
+        handleCreateCategory={handleCreateCategory}
+        preguntas={preguntas}
+        addPregunta={addPregunta}
+        updatePregunta={updatePregunta}
+        removePregunta={removePregunta}
+        handleSubmit={handleSubmit}
+        loading={loading}
+      />
       {/* --- MODALES --- */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={() => setModalOpen(false)}>
