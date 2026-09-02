@@ -47,6 +47,10 @@ function listarCategorias() {
   return apiFetch("/vacantes/?action=categorias").then(r => r.data);
 }
 
+function ubicaciones() {
+  return apiFetch("/vacantes/?action=ubicaciones").then(r => r.data);
+}
+
 function misPostulaciones() {
   return apiFetch("/vacantes/?action=mis_postulaciones").then(r => r.data);
 }
@@ -72,4 +76,4 @@ function reportar(data) {
   });
 }
 
-export const vacantesService = { listar, detalle, postular, sugerencias, listarCategorias, misPostulaciones, misPostulacionesDetalle, compartir, reportar };
+export const vacantesService = { listar, detalle, postular, sugerencias, listarCategorias, ubicaciones, misPostulaciones, misPostulacionesDetalle, compartir, reportar };

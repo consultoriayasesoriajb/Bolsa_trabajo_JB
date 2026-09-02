@@ -5,6 +5,7 @@ import {
   getOffers,
   saveCompany,
   deleteCompany,
+  getUbicacionesUnicas,
 } from "../../services/adminService";
 import { UPLOADS_BASE_URL } from "../../services/api";
 
@@ -29,6 +30,8 @@ export default function SectionEmpresas() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCompany, setEditingCompany] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [ubicacionesDisponibles, setUbicacionesDisponibles] = useState([]);
+  const [showUbicacionesDropdown, setShowUbicacionesDropdown] = useState(false);
 
   // Campos del formulario
   const [formNombre, setFormNombre] = useState("");
@@ -52,6 +55,11 @@ export default function SectionEmpresas() {
       setOffers(await getOffers());
     } catch {
       setOffers([]);
+    }
+    try {
+      setUbicacionesDisponibles(await getUbicacionesUnicas());
+    } catch {
+      setUbicacionesDisponibles([]);
     }
   };
 
@@ -336,11 +344,38 @@ export default function SectionEmpresas() {
 
                   {/* Ubicación + N° empleados */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
+                    <div className="relative">
                       <label className="text-xs font-black text-naranja/80 uppercase tracking-wider mb-1.5 block">Ubicación</label>
-                      <input type="text" value={formUbicacion} onChange={(e) => setFormUbicacion(e.target.value)}
+                      <input type="text" value={formUbicacion} 
+                        onChange={(e) => {
+                          setFormUbicacion(e.target.value);
+                          setShowUbicacionesDropdown(true);
+                        }}
+                        onFocus={() => setShowUbicacionesDropdown(true)}
+                        onBlur={() => setTimeout(() => setShowUbicacionesDropdown(false), 200)}
                         className="w-full px-3 py-2.5 text-sm text-black/80 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
-                        placeholder="Lima, Perú" />
+                        placeholder="Ej: Lima, Perú" />
+                        
+                      {showUbicacionesDropdown && ubicacionesDisponibles.filter(u => (u || "").toLowerCase().includes((formUbicacion || "").toLowerCase()) && (u || "").toLowerCase() !== (formUbicacion || "").toLowerCase()).length > 0 && (
+                        <div className="absolute z-10 w-full bg-white border border-slate-200 rounded-xl shadow-lg mt-1 max-h-48 overflow-y-auto">
+                          {ubicacionesDisponibles
+                            .filter(u => (u || "").toLowerCase().includes((formUbicacion || "").toLowerCase()) && (u || "").toLowerCase() !== (formUbicacion || "").toLowerCase())
+                            .map(u => (
+                              <div
+                                key={u}
+                                className="px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer font-medium"
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  setFormUbicacion(u);
+                                  setShowUbicacionesDropdown(false);
+                                }}
+                              >
+                                {u}
+                              </div>
+                            ))
+                          }
+                        </div>
+                      )}
                     </div>
                     <div>
                       <label className="text-xs font-black text-naranja/80 uppercase tracking-wider mb-1.5 block">N° de empleados</label>

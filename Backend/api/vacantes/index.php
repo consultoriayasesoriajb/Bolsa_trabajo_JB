@@ -112,6 +112,17 @@ if ($method === 'GET' && $action === 'categorias') {
     respond(true, $stmt->fetchAll());
 }
 
+// ─── UBICACIONES (PÚBLICO) ─────────────────────────────────
+if ($method === 'GET' && $action === 'ubicaciones') {
+    $stmt = $db->query("
+        SELECT DISTINCT ubicacion 
+        FROM ofertas_trabajo 
+        WHERE ubicacion IS NOT NULL AND ubicacion != '' AND estado = 'activa'
+        ORDER BY ubicacion ASC
+    ");
+    respond(true, $stmt->fetchAll(PDO::FETCH_COLUMN));
+}
+
 // ─── DETALLE DE VACANTE ───────────────────────────────────
 if ($method === 'GET' && $action === 'detalle') {
     $identificador = $_GET['id'] ?? null;
@@ -221,6 +232,10 @@ if ($method === 'POST' && $action === 'postular') {
         $destino = __DIR__ . '/../../uploads/cvs/' . $filename;
         move_uploaded_file($_FILES['cv']['tmp_name'], $destino);
         $cv_url = 'uploads/cvs/' . $filename;
+    } else {
+        $stmtCv = $db->prepare("SELECT cv_url FROM usuarios WHERE id = ?");
+        $stmtCv->execute([$user['id']]);
+        $cv_url = $stmtCv->fetchColumn() ?: null;
     }
 
     $stmt = $db->prepare("

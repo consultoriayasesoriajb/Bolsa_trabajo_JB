@@ -29,24 +29,6 @@ function ChipFilter({ label, onRemove }) {
   );
 }
 
-const CIUDADES = [
-  "Remoto",
-  "Lima, Perú",
-  "Arequipa, Perú",
-  "Cusco, Perú",
-  "Trujillo, Perú",
-  "Piura, Perú",
-  "Chiclayo, Perú",
-  "Huancayo, Perú",
-  "Iquitos, Perú",
-  "Tacna, Perú",
-  "Ica, Perú",
-  "Cajamarca, Perú",
-  "Pucallpa, Perú",
-  "Juliaca, Perú",
-  "Ayacucho, Perú",
-];
-
 const TIPOS_LABEL = {
   cargo: "Cargos",
   categoria: "Categorías",
@@ -68,6 +50,12 @@ function agruparSugerencias(lista) {
 
 export default function FiltrosVacantes({ filtros, onFilterChange }) {
   const [locales, setLocales] = useState(filtros);
+  const [ubicacionesDisponibles, setUbicacionesDisponibles] = useState([]);
+
+  useEffect(() => {
+    vacantesService.ubicaciones().then(setUbicacionesDisponibles).catch(() => setUbicacionesDisponibles([]));
+  }, []);
+
 
   const [menuAbierto, setMenuAbierto] = useState(false); // Fecha
   const [menuTipoAbierto, setMenuTipoAbierto] = useState(false);
@@ -455,10 +443,10 @@ export default function FiltrosVacantes({ filtros, onFilterChange }) {
               handleInputChange("ubicacion", val);
               setSugerencias(
                 val.length >= 1
-                  ? CIUDADES.filter((c) =>
-                      c.toLowerCase().includes(val.toLowerCase()),
+                  ? ubicacionesDisponibles.filter((c) =>
+                      (c || "").toLowerCase().includes(val.toLowerCase()),
                     )
-                  : CIUDADES,
+                  : ubicacionesDisponibles,
               );
               setIndiceSugerencia(-1);
             }}
@@ -466,11 +454,11 @@ export default function FiltrosVacantes({ filtros, onFilterChange }) {
               setInputUbicacionFoco(true);
               setInputCargoFoco(false);
               setSugerencias(
-                locales.ubicacion.length >= 1
-                  ? CIUDADES.filter((c) =>
-                      c.toLowerCase().includes(locales.ubicacion.toLowerCase()),
+                (locales.ubicacion || "").length >= 1
+                  ? ubicacionesDisponibles.filter((c) =>
+                      (c || "").toLowerCase().includes((locales.ubicacion || "").toLowerCase()),
                     )
-                  : CIUDADES,
+                  : ubicacionesDisponibles,
               );
             }}
             onBlur={() => setTimeout(() => setInputUbicacionFoco(false), 200)}

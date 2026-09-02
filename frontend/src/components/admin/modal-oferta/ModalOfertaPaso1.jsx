@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDownIcon, CheckIcon, PlusIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { getUbicacionesUnicas } from "../../../services/adminService";
 
 const BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "") ?? "";
 
@@ -125,6 +126,13 @@ export default function ModalOfertaPaso1({
   newCategoryName, setNewCategoryName,
   handleCreateCategory,
 }) {
+  const [ubicacionesDisponibles, setUbicacionesDisponibles] = useState([]);
+  const [showUbicacionesDropdown, setShowUbicacionesDropdown] = useState(false);
+
+  useEffect(() => {
+    getUbicacionesUnicas().then(setUbicacionesDisponibles).catch(() => setUbicacionesDisponibles([]));
+  }, []);
+
   return (
     <div className="flex flex-col gap-7">
       {/* Título */}
@@ -141,15 +149,40 @@ export default function ModalOfertaPaso1({
 
       {/* Ubicación + Categoría */}
       <div className="grid grid-cols-2 gap-4">
-        <div>
+        <div className="relative">
           <label className={labelCls}>Ubicación *</label>
           <input
             type="text"
             value={form.ubicacion}
-            onChange={e => setForm({ ...form, ubicacion: e.target.value })}
+            onChange={e => {
+              setForm({ ...form, ubicacion: e.target.value });
+              setShowUbicacionesDropdown(true);
+            }}
+            onFocus={() => setShowUbicacionesDropdown(true)}
+            onBlur={() => setTimeout(() => setShowUbicacionesDropdown(false), 200)}
             className={inputCls}
-            placeholder="Lima, Perú"
+            placeholder="Ej: Lima, Perú"
           />
+          {showUbicacionesDropdown && ubicacionesDisponibles.filter(u => (u || "").toLowerCase().includes((form.ubicacion || "").toLowerCase()) && (u || "").toLowerCase() !== (form.ubicacion || "").toLowerCase()).length > 0 && (
+            <div className="absolute z-10 w-full bg-white border border-slate-200 rounded-xl shadow-lg mt-1 max-h-48 overflow-y-auto">
+              {ubicacionesDisponibles
+                .filter(u => (u || "").toLowerCase().includes((form.ubicacion || "").toLowerCase()) && (u || "").toLowerCase() !== (form.ubicacion || "").toLowerCase())
+                .map(u => (
+                  <div
+                    key={u}
+                    className="px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer font-medium"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setForm({ ...form, ubicacion: u });
+                      setShowUbicacionesDropdown(false);
+                    }}
+                  >
+                    {u}
+                  </div>
+                ))
+              }
+            </div>
+          )}
         </div>
         <div>
           <label className={labelCls}>Categoría</label>
