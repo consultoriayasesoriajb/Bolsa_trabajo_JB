@@ -9,6 +9,11 @@ export const getCompanies = async () => {
     return result.data || [];
 };
 
+export const getUbicacionesUnicas = async () => {
+    const result = await apiFetch("/admin/?resource=empresas&action=ubicaciones");
+    return result.data || [];
+};
+
 export const saveCompany = async (company, logoFile = null) => {
     const formData = new FormData();
     formData.append("nombre",      company.nombre);
