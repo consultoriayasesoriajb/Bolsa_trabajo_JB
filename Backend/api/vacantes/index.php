@@ -221,6 +221,10 @@ if ($method === 'POST' && $action === 'postular') {
         $destino = __DIR__ . '/../../uploads/cvs/' . $filename;
         move_uploaded_file($_FILES['cv']['tmp_name'], $destino);
         $cv_url = 'uploads/cvs/' . $filename;
+    } else {
+        $stmtCv = $db->prepare("SELECT cv_url FROM usuarios WHERE id = ?");
+        $stmtCv->execute([$user['id']]);
+        $cv_url = $stmtCv->fetchColumn() ?: null;
     }
 
     $stmt = $db->prepare("
