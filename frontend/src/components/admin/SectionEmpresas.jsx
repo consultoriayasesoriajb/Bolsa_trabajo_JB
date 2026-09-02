@@ -356,10 +356,10 @@ export default function SectionEmpresas() {
                         className="w-full px-3 py-2.5 text-sm text-black/80 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-azul/10 focus:border-azul"
                         placeholder="Ej: Lima, Perú" />
                         
-                      {showUbicacionesDropdown && formUbicacion.length > 0 && ubicacionesDisponibles.filter(u => u.toLowerCase().includes(formUbicacion.toLowerCase()) && u.toLowerCase() !== formUbicacion.toLowerCase()).length > 0 && (
+                      {showUbicacionesDropdown && ubicacionesDisponibles.filter(u => (u || "").toLowerCase().includes((formUbicacion || "").toLowerCase()) && (u || "").toLowerCase() !== (formUbicacion || "").toLowerCase()).length > 0 && (
                         <div className="absolute z-10 w-full bg-white border border-slate-200 rounded-xl shadow-lg mt-1 max-h-48 overflow-y-auto">
                           {ubicacionesDisponibles
-                            .filter(u => u.toLowerCase().includes(formUbicacion.toLowerCase()) && u.toLowerCase() !== formUbicacion.toLowerCase())
+                            .filter(u => (u || "").toLowerCase().includes((formUbicacion || "").toLowerCase()) && (u || "").toLowerCase() !== (formUbicacion || "").toLowerCase())
                             .map(u => (
                               <div
                                 key={u}

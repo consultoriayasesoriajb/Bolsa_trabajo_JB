@@ -127,9 +127,9 @@ if ($resource === 'empresas') {
     // LISTAR UBICACIONES ÚNICAS
     if ($method === 'GET' && $action === 'ubicaciones') {
         $stmt = $db->query("
-            SELECT DISTINCT ubicacion 
-            FROM empresas_clientes 
-            WHERE ubicacion IS NOT NULL AND ubicacion != ''
+            SELECT ubicacion COLLATE utf8mb4_unicode_ci AS ubicacion FROM empresas_clientes WHERE ubicacion IS NOT NULL AND ubicacion != ''
+            UNION
+            SELECT ubicacion COLLATE utf8mb4_unicode_ci AS ubicacion FROM ofertas_trabajo WHERE ubicacion IS NOT NULL AND ubicacion != ''
             ORDER BY ubicacion ASC
         ");
         $ubicaciones = $stmt->fetchAll(PDO::FETCH_COLUMN);
