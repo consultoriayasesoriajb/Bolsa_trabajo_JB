@@ -142,7 +142,15 @@ function base64url_decode(string $data): string
 function getBody(): array
 {
     $raw = file_get_contents('php://input');
-    return json_decode($raw, true) ?? [];
+    $json = json_decode($raw, true);
+    if (is_array($json)) {
+        return $json;
+    }
+    // Fallback para FormData (multipart/form-data o application/x-www-form-urlencoded)
+    if (!empty($_POST)) {
+        return $_POST;
+    }
+    return [];
 }
 
 function generateUUID(): string

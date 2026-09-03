@@ -23,6 +23,7 @@ import SectionEmpresas from "../components/admin/SectionEmpresas";
 import SectionOfertas from "../components/admin/SectionOfertas";
 
 import SectionReclamaciones from "../components/admin/SectionReclamaciones";
+import ModalConfirmEstado from "../components/admin/ModalConfirmEstado";
 
 const STAGES = ["recibido", "revisado", "entrevista", "aprobado", "rechazado"];
 
@@ -233,6 +234,10 @@ function SectionPostulantes() {
   const [expandedRowId, setExpandedRowId] = useState(null);
   const [notaSaved, setNotaSaved] = useState(false);
 
+  // ── Modal confirmar cambio de estado ──────────────────────
+  const [confirmModal, setConfirmModal] = useState({ open: false, candidate: null, newEstado: null });
+  const [loadingEstado, setLoadingEstado] = useState(false);
+
   const reload = async () => {
     try { setCandidates(await getPostulaciones()); } catch (e) { setCandidates([]); }
   };
@@ -244,16 +249,27 @@ function SectionPostulantes() {
     ? [...new Map(candidates.filter(c => c.empresa_nombre === filterEmpresa).map(c => [c.oferta_id, { id: c.oferta_id, titulo: c.oferta_titulo }])).values()].sort((a, b) => a.titulo.localeCompare(b.titulo))
     : [];
 
-  const handleStageChange = async (id, newStage) => {
+  // Abre el modal de confirmación (no ejecuta el cambio aún)
+  const handleStageChange = (candidate, newStage) => {
+    if (candidate.estado === newStage) return;
+    setConfirmModal({ open: true, candidate, newEstado: newStage });
+  };
+
+  // Ejecuta el cambio real tras confirmar en el modal
+  const handleConfirmStageChange = async () => {
+    const { candidate, newEstado } = confirmModal;
+    setLoadingEstado(true);
     try {
-      await changePostulacionEstado(id, newStage);
+      await changePostulacionEstado(candidate.id, newEstado);
       await reload();
-      if (selectedCandidate && selectedCandidate.id === id) {
-        setSelectedCandidate(prev => ({ ...prev, estado: newStage }));
+      if (selectedCandidate && selectedCandidate.id === candidate.id) {
+        setSelectedCandidate(prev => ({ ...prev, estado: newEstado }));
       }
+      setConfirmModal({ open: false, candidate: null, newEstado: null });
     } catch (err) {
       alert(err.message || "Error al cambiar estado");
     }
+    setLoadingEstado(false);
   };
 
   const openDetail = async (c) => {
@@ -363,7 +379,12 @@ function SectionPostulantes() {
                       <td className="hidden lg:table-cell px-5 py-3.5 text-slate-400 font-bold">{c.empresa_nombre}</td>
                       <td className="hidden lg:table-cell px-5 py-3.5 text-slate-400">{c.fecha_postulacion ? new Date(c.fecha_postulacion).toLocaleDateString() : "—"}</td>
                       <td className="hidden lg:table-cell px-5 py-3.5 text-center">
-                        <select value={c.estado} onChange={(e) => { e.stopPropagation(); handleStageChange(c.id, e.target.value); }} onClick={(e) => e.stopPropagation()} className={`px-2 py-1 rounded text-xs font-black uppercase tracking-wider border-0 cursor-pointer focus:outline-none ${ESTADO_STYLES[c.estado] || "text-slate-500 bg-slate-50"}`}>
+                        <select
+                          value={c.estado}
+                          onChange={(e) => { e.stopPropagation(); handleStageChange(c, e.target.value); }}
+                          onClick={(e) => e.stopPropagation()}
+                          className={`px-2 py-1 rounded text-xs font-black uppercase tracking-wider border-0 cursor-pointer focus:outline-none ${ESTADO_STYLES[c.estado] || "text-slate-500 bg-slate-50"}`}
+                        >
                           {STAGES.map(st => <option key={st} value={st}>{STAGE_LABELS[st]}</option>)}
                         </select>
                       </td>
@@ -388,7 +409,12 @@ function SectionPostulantes() {
                             <div>
                               <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Estado</span>
                               <div className="mt-1">
-                                <select value={c.estado} onChange={(e) => { e.stopPropagation(); handleStageChange(c.id, e.target.value); }} onClick={(e) => e.stopPropagation()} className={`px-2 py-1 rounded text-xs font-black uppercase tracking-wider border-0 cursor-pointer focus:outline-none ${ESTADO_STYLES[c.estado] || "text-slate-500 bg-slate-50"}`}>
+                                <select
+                                  value={c.estado}
+                                  onChange={(e) => { e.stopPropagation(); handleStageChange(c, e.target.value); }}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className={`px-2 py-1 rounded text-xs font-black uppercase tracking-wider border-0 cursor-pointer focus:outline-none ${ESTADO_STYLES[c.estado] || "text-slate-500 bg-slate-50"}`}
+                                >
                                   {STAGES.map(st => <option key={st} value={st}>{STAGE_LABELS[st]}</option>)}
                                 </select>
                               </div>
@@ -412,6 +438,16 @@ function SectionPostulantes() {
           </table>
         </div>
       </div>
+
+      {/* Modal confirmar cambio de estado */}
+      <ModalConfirmEstado
+        isOpen={confirmModal.open}
+        candidate={confirmModal.candidate}
+        newEstado={confirmModal.newEstado}
+        loading={loadingEstado}
+        onConfirm={handleConfirmStageChange}
+        onClose={() => setConfirmModal({ open: false, candidate: null, newEstado: null })}
+      />
 
       {/* Modal detalle */}
       {selectedCandidate && (
